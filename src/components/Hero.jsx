@@ -1,62 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowDown } from 'lucide-react';
-
-const HERO_SLIDES = [
-  {
-    id: 1,
-    url: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=1920&q=80',
-    title: 'Premium Optical Frames & Eyewear'
-  },
-  {
-    id: 2,
-    url: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=1920&q=80',
-    title: 'Precision Blue Cut & AR Lenses'
-  },
-  {
-    id: 3,
-    url: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=1920&q=80',
-    title: 'Advanced Eye Care & Lens Solutions'
-  },
-  {
-    id: 4,
-    url: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=1920&q=80',
-    title: 'Stylish Handcrafted Acetate Frames'
-  },
-  {
-    id: 5,
-    url: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=1920&q=80',
-    title: 'Executive & Classic Optical Eyewear'
-  }
-];
+import { getStoredHeroSlides } from '../data/heroSlides';
 
 const Hero = ({ onExploreClick }) => {
+  const [slides, setSlides] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  const loadActiveSlides = () => {
+    const all = getStoredHeroSlides();
+    const active = all.filter(s => s.isActive);
+    setSlides(active.length > 0 ? active : all);
+  };
+
+  useEffect(() => {
+    loadActiveSlides();
+
+    // Listen for live updates from Admin Dashboard
+    const handleUpdate = () => {
+      loadActiveSlides();
+    };
+    window.addEventListener('hero-slides-updated', handleUpdate);
+    return () => window.removeEventListener('hero-slides-updated', handleUpdate);
+  }, []);
 
   // Auto slide picture change every 3 seconds (3000ms)
   useEffect(() => {
+    if (slides.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrentSlide((prevIndex) => (prevIndex + 1) % HERO_SLIDES.length);
+      setCurrentSlide((prevIndex) => (prevIndex + 1) % slides.length);
     }, 3000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
   return (
     <section id="home" className="relative min-h-[85vh] sm:min-h-screen flex items-center justify-center overflow-hidden bg-slate-800">
       
       {/* 3-Second Automatic Optical Background Image Slideshow */}
-      {HERO_SLIDES.map((slide, index) => {
+      {slides.map((slide, index) => {
         const isActive = index === currentSlide;
         return (
           <div
-            key={slide.id}
+            key={slide.id || index}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
               isActive ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
             } transition-transform duration-[4000ms]`}
           >
             <img
               src={slide.url}
-              alt={slide.title}
+              alt={slide.title || 'Vision Care Background'}
               className="w-full h-full object-cover"
             />
           </div>
@@ -67,7 +59,7 @@ const Hero = ({ onExploreClick }) => {
       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/85 via-slate-800/65 to-slate-900/50" />
 
       {/* Hero Content Overlay */}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 pt-20">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 pt-28 sm:pt-36 pb-12">
         
         {/* Main Headline: Clear Vision. Better Life. */}
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-tight shadow-sm">
@@ -89,20 +81,22 @@ const Hero = ({ onExploreClick }) => {
         </div>
 
         {/* Slideshow 3-Second Indicator Dots */}
-        <div className="pt-6 flex items-center justify-center gap-2">
-          {HERO_SLIDES.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className={`h-2.5 rounded-full transition-all duration-500 ${
-                idx === currentSlide 
-                  ? 'w-8 bg-emerald-400' 
-                  : 'w-2.5 bg-white/40 hover:bg-white/70'
-              }`}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
-          ))}
-        </div>
+        {slides.length > 1 && (
+          <div className="pt-6 flex items-center justify-center gap-2">
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`h-2.5 rounded-full transition-all duration-500 ${
+                  idx === currentSlide 
+                    ? 'w-8 bg-emerald-400' 
+                    : 'w-2.5 bg-white/40 hover:bg-white/70'
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+        )}
 
       </div>
 
