@@ -1,5 +1,5 @@
 // API Client Bridge for Render Backend with localStorage fallback
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://optical-backend-duat.onrender.com';
 
 export const fetchFromAPI = async (endpoint, options = {}) => {
   try {
