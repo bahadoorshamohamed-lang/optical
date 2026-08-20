@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <circle cx="50" cy="50" r="46" fill="#0B4F37"/>
+  <!-- Glasses outline -->
+  <path d="M 22 46 C 22 36, 42 36, 42 46 C 42 56, 22 56, 22 46 Z" stroke="#FFFFFF" stroke-width="4.5" fill="#F0FDF4" fill-opacity="0.2"/>
+  <path d="M 58 46 C 58 36, 78 36, 78 46 C 78 56, 58 56, 58 46 Z" stroke="#FFFFFF" stroke-width="4.5" fill="#F0FDF4" fill-opacity="0.2"/>
+  <!-- Bridge -->
+  <path d="M 42 43 Q 50 38 58 43" stroke="#901A1E" stroke-width="5" stroke-linecap="round"/>
+  <!-- Iris dots -->
+  <circle cx="32" cy="46" r="4" fill="#901A1E"/>
+  <circle cx="68" cy="46" r="4" fill="#901A1E"/>
+  <!-- Shine -->
+  <circle cx="30" cy="44" r="1.5" fill="#FFFFFF"/>
+  <circle cx="66" cy="44" r="1.5" fill="#FFFFFF"/>
+</svg>
