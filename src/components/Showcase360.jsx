@@ -160,10 +160,10 @@ const Showcase360 = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Premium White Split Layout Box */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[560px] rounded-3xl border border-slate-200/90 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(11,79,55,0.08)] overflow-hidden relative">
+        <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[500px] sm:min-h-[560px] rounded-3xl border border-slate-200/90 bg-white/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(11,79,55,0.08)] overflow-hidden relative">
           
           {/* ================= LEFT SIDE — ONLY PRODUCT DESCRIPTION CONTENT ================= */}
-          <div className="lg:col-span-5 bg-slate-50/70 p-8 sm:p-12 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/80 z-20 relative">
+          <div className="lg:col-span-5 bg-slate-50/70 p-5 sm:p-12 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/80 z-20 relative">
             
             {/* Top Animatic Progress Line */}
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-slate-200/70 overflow-hidden">
@@ -173,11 +173,11 @@ const Showcase360 = () => {
               />
             </div>
 
-            <div className="space-y-6 pt-2 animate-fadeIn" key={activeIndex}>
+            <div className="space-y-4 sm:space-y-6 pt-2 animate-fadeIn" key={activeIndex}>
               
               {/* Category Badge & Slide Counter */}
               <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold text-optom-green uppercase tracking-widest px-3.5 py-1 rounded-full bg-emerald-100/90 border border-emerald-200 flex items-center gap-1.5 shadow-2xs">
+                <span className="text-xs font-extrabold text-optom-green uppercase tracking-widest px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full bg-emerald-100/90 border border-emerald-200 flex items-center gap-1.5 shadow-2xs">
                   <Scan className="w-3.5 h-3.5 text-optom-maroon animate-pulse" />
                   <span>{activeProduct.category}</span>
                 </span>
@@ -187,12 +187,12 @@ const Showcase360 = () => {
               </div>
 
               {/* Product Title */}
-              <h2 className="text-3xl sm:text-4xl font-serif font-bold text-optom-slate-heading tracking-tight leading-tight">
+              <h2 className="text-2xl sm:text-4xl font-serif font-bold text-optom-slate-heading tracking-tight leading-tight">
                 {activeProduct.title}
               </h2>
 
               {/* Synchronized Description Lines for Active Image */}
-              <div className="space-y-3 text-xs sm:text-sm text-optom-slate-body leading-relaxed font-medium">
+              <div className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm text-optom-slate-body leading-relaxed font-medium">
                 {activeProduct.descriptionLines.map((line, idx) => (
                   <p key={idx} className="flex items-start gap-2.5 group">
                     <span className="w-2 h-2 rounded-full bg-optom-green mt-1.5 flex-shrink-0 group-hover:scale-150 transition-transform shadow-xs" />
@@ -204,30 +204,30 @@ const Showcase360 = () => {
             </div>
 
             {/* Bottom Controls: Arrow Buttons & Indicator Bars */}
-            <div className="pt-8 space-y-6">
+            <div className="pt-6 sm:pt-8 space-y-4 sm:space-y-6">
               
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 sm:gap-4">
                 {/* Circular Arrow Left */}
                 <button
                   onClick={handlePrev}
-                  className="w-12 h-12 rounded-2xl border border-slate-200 bg-white text-optom-slate-heading hover:bg-optom-green hover:text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 focus:outline-none shadow-md group"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl border border-slate-200 bg-white text-optom-slate-heading hover:bg-optom-green hover:text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 focus:outline-none shadow-md group"
                   aria-label="Previous Image"
                 >
-                  <ChevronLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
+                  <ChevronLeft className="w-4.5 h-4.5 sm:w-5 sm:h-5 group-hover:-translate-x-0.5 transition-transform" />
                 </button>
 
                 {/* Circular Arrow Right */}
                 <button
                   onClick={handleNext}
-                  className="w-12 h-12 rounded-2xl border border-slate-200 bg-white text-optom-slate-heading hover:bg-optom-green hover:text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 focus:outline-none shadow-md group"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl border border-slate-200 bg-white text-optom-slate-heading hover:bg-optom-green hover:text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 focus:outline-none shadow-md group"
                   aria-label="Next Image"
                 >
-                  <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+                  <ChevronRight className="w-4.5 h-4.5 sm:w-5 sm:h-5 group-hover:translate-x-0.5 transition-transform" />
                 </button>
               </div>
 
               {/* Progress Step Bars */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1">
                 {GALLERY_PRODUCTS.map((_, idx) => {
                   const isActive = idx === activeIndex;
                   return (
@@ -237,10 +237,10 @@ const Showcase360 = () => {
                         setActiveIndex(idx);
                         lastInteractionRef.current = Date.now();
                       }}
-                      className={`h-1.5 rounded-full transition-all duration-500 ${
+                      className={`h-1.5 rounded-full transition-all duration-500 flex-shrink-0 ${
                         isActive 
-                          ? 'w-14 bg-optom-green shadow-sm ring-2 ring-emerald-300' 
-                          : 'w-8 bg-slate-300/80 hover:bg-slate-400'
+                          ? 'w-10 sm:w-14 bg-optom-green shadow-sm ring-2 ring-emerald-300' 
+                          : 'w-6 sm:w-8 bg-slate-300/80 hover:bg-slate-400'
                       }`}
                       aria-label={`Go to slide ${idx + 1}`}
                     />
@@ -255,7 +255,7 @@ const Showcase360 = () => {
 
           {/* ================= RIGHT SIDE — IMAGES ONLY WITH WHITE PREMIUM CAROUSEL ================= */}
           <div 
-            className="lg:col-span-7 bg-gradient-to-tr from-slate-100/90 via-slate-50 to-emerald-50/30 relative flex items-center justify-center p-6 sm:p-10 overflow-hidden cursor-grab active:cursor-grabbing min-h-[480px]"
+            className="lg:col-span-7 bg-gradient-to-tr from-slate-100/90 via-slate-50 to-emerald-50/30 relative flex items-center justify-center p-4 sm:p-10 overflow-hidden cursor-grab active:cursor-grabbing min-h-[380px] sm:min-h-[480px]"
             onMouseDown={(e) => handleStartDrag(e.clientX)}
             onMouseMove={(e) => handleMoveDrag(e.clientX)}
             onMouseUp={handleEndDrag}
@@ -266,15 +266,15 @@ const Showcase360 = () => {
           >
             
             {/* Corner Tech Watermarks */}
-            <div className="absolute top-4 left-4 font-mono text-[10px] font-extrabold text-optom-green tracking-widest pointer-events-none">
+            <div className="absolute top-3 left-3 font-mono text-[9px] sm:text-[10px] font-extrabold text-optom-green tracking-widest pointer-events-none">
               + OPTIC.360.GALLERY
             </div>
-            <div className="absolute top-4 right-4 font-mono text-[10px] font-extrabold text-slate-500 tracking-widest pointer-events-none">
+            <div className="absolute top-3 right-3 font-mono text-[9px] sm:text-[10px] font-extrabold text-slate-500 tracking-widest pointer-events-none">
               POS: {activeIndex + 1}/{GALLERY_PRODUCTS.length}
             </div>
 
             {/* Arched Image Carousel (IMAGES ONLY) */}
-            <div className="relative w-full h-full flex items-center justify-center min-h-[380px] perspective-1200">
+            <div className="relative w-full h-full flex items-center justify-center min-h-[320px] sm:min-h-[380px] perspective-1200">
               
               {GALLERY_PRODUCTS.map((product, idx) => {
                 const offset = (idx - activeIndex + GALLERY_PRODUCTS.length) % GALLERY_PRODUCTS.length;
@@ -287,11 +287,11 @@ const Showcase360 = () => {
                   isVisible = true;
                 } else if (offset === 1) {
                   // Next image preview on right: Smaller, dimmed
-                  positionClass = 'translate-x-[68%] sm:translate-x-[78%] scale-75 opacity-40 z-10 blur-[1px]';
+                  positionClass = 'translate-x-[48%] sm:translate-x-[78%] scale-75 opacity-40 z-10 blur-[1px]';
                   isVisible = true;
                 } else if (offset === GALLERY_PRODUCTS.length - 1) {
                   // Previous image preview on left: Smaller, dimmed
-                  positionClass = '-translate-x-[68%] sm:-translate-x-[78%] scale-75 opacity-40 z-10 blur-[1px]';
+                  positionClass = '-translate-x-[48%] sm:-translate-x-[78%] scale-75 opacity-40 z-10 blur-[1px]';
                   isVisible = true;
                 }
 
@@ -308,7 +308,7 @@ const Showcase360 = () => {
                         lastInteractionRef.current = Date.now();
                       }
                     }}
-                    className={`absolute rounded-t-[140px] sm:rounded-t-[180px] rounded-b-3xl overflow-hidden border-2 transition-cinematic cursor-pointer aspect-[4/5] w-[260px] sm:w-[340px] lg:w-[380px] ${
+                    className={`absolute rounded-t-[120px] sm:rounded-t-[180px] rounded-b-3xl overflow-hidden border-2 transition-cinematic cursor-pointer aspect-[4/5] w-[220px] sm:w-[340px] lg:w-[380px] ${
                       isActive 
                         ? 'border-optom-green ring-4 ring-emerald-300/40 bg-white' 
                         : 'border-slate-300/80 hover:opacity-75 bg-slate-100'

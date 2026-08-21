@@ -102,19 +102,19 @@ const Navbar = () => {
                 e.preventDefault();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded-xl p-1 inline-block"
+              className="focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded-xl p-0.5 inline-block"
             >
-              <Logo className="h-12 sm:h-14 md:h-16" />
+              <Logo className="h-10 sm:h-14 md:h-16" />
             </a>
 
             {/* Right: Phone & Location Icon Buttons with Interactive Popovers */}
-            <div className="flex items-center gap-3 sm:gap-4 relative">
+            <div className="flex items-center gap-2 sm:gap-4 relative">
               
               {/* Phone Icon & Popover */}
               <div className="relative group" ref={phoneRef}>
                 <button
                   onClick={togglePhone}
-                  className={`relative p-3 sm:p-3.5 rounded-2xl transition-all duration-500 focus:outline-none ${
+                  className={`relative p-2.5 sm:p-3.5 rounded-2xl transition-all duration-500 focus:outline-none ${
                     showPhonePopover 
                       ? 'bg-gradient-to-br from-emerald-500 to-optom-green text-white ring-4 ring-emerald-400/40 scale-105 shadow-[0_0_25px_rgba(16,185,129,0.45)]' 
                       : 'bg-slate-900/80 backdrop-blur-xl text-emerald-400 border border-emerald-500/30 hover:border-emerald-400/80 hover:bg-emerald-600 hover:text-white hover:shadow-[0_0_20px_rgba(16,185,129,0.35)] hover:-translate-y-0.5 shadow-md'
@@ -122,18 +122,18 @@ const Navbar = () => {
                   aria-label="Phone Direct Contact"
                   title="Phone Contact"
                 >
-                  <Phone className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300" />
+                  <Phone className="w-4.5 h-4.5 sm:w-6 sm:h-6 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300" />
                   
                   {/* Status Indicator Ping Dot */}
-                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5 sm:h-3 sm:w-3">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-slate-900"></span>
+                    <span className="relative inline-flex rounded-full h-full w-full bg-emerald-500 border-2 border-slate-900"></span>
                   </span>
                 </button>
 
                 {/* Phone Popover Dropdown Card */}
                 {showPhonePopover && (
-                  <div className="absolute right-0 mt-3 w-72 bg-white/95 backdrop-blur-xl rounded-3xl shadow-modal border border-slate-200/90 p-5 text-slate-800 animate-fadeIn z-50">
+                  <div className="absolute right-0 mt-3 w-[calc(100vw-2rem)] sm:w-72 max-w-xs bg-white/95 backdrop-blur-xl rounded-3xl shadow-modal border border-slate-200/90 p-4 sm:p-5 text-slate-800 animate-fadeIn z-50">
                     <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
                       <span className="text-xs font-black uppercase tracking-widest text-optom-green flex items-center gap-2">
                         <PhoneCall className="w-4 h-4 text-emerald-500 animate-pulse" /> Contact Direct
@@ -149,14 +149,14 @@ const Navbar = () => {
                     <div className="space-y-4">
                       <div>
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Optometrist Direct Line</div>
-                        <div className="text-xl font-extrabold text-optom-slate-heading tracking-tight mt-0.5">
+                        <div className="text-lg sm:text-xl font-extrabold text-optom-slate-heading tracking-tight mt-0.5">
                           +91 {BUSINESS_INFO.phone}
                         </div>
                       </div>
 
                       <a
                         href={`tel:${BUSINESS_INFO.phone}`}
-                        className="w-full inline-flex items-center justify-center gap-2.5 py-3 px-4 rounded-2xl bg-optom-green text-white font-extrabold text-xs uppercase tracking-wider hover:bg-optom-green-hover transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                        className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-optom-green text-white font-extrabold text-xs uppercase tracking-wider hover:bg-optom-green-hover transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
                       >
                         <Phone className="w-4 h-4" />
                         <span>Call Now ({BUSINESS_INFO.phone})</span>
@@ -170,7 +170,7 @@ const Navbar = () => {
               <div className="relative group" ref={locationRef}>
                 <button
                   onClick={toggleLocation}
-                  className={`relative p-3 sm:p-3.5 rounded-2xl transition-all duration-500 focus:outline-none ${
+                  className={`relative p-2.5 sm:p-3.5 rounded-2xl transition-all duration-500 focus:outline-none ${
                     showLocationPopover 
                       ? 'bg-gradient-to-br from-rose-600 to-optom-maroon text-white ring-4 ring-rose-400/40 scale-105 shadow-[0_0_25px_rgba(244,63,94,0.45)]' 
                       : 'bg-slate-900/80 backdrop-blur-xl text-rose-400 border border-rose-500/30 hover:border-rose-400/80 hover:bg-optom-maroon hover:text-white hover:shadow-[0_0_20px_rgba(244,63,94,0.35)] hover:-translate-y-0.5 shadow-md'
@@ -178,18 +178,18 @@ const Navbar = () => {
                   aria-label="Location Map Address"
                   title="Clinic Location"
                 >
-                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300" />
+                  <MapPin className="w-4.5 h-4.5 sm:w-6 sm:h-6 group-hover:-translate-y-1 group-hover:scale-110 transition-transform duration-300" />
                   
                   {/* Status Indicator Ping Dot */}
-                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5 sm:h-3 sm:w-3">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500 border-2 border-slate-900"></span>
+                    <span className="relative inline-flex rounded-full h-full w-full bg-rose-500 border-2 border-slate-900"></span>
                   </span>
                 </button>
 
                 {/* Location Popover Dropdown Card */}
                 {showLocationPopover && (
-                  <div className="absolute right-0 mt-3 w-80 bg-white/95 backdrop-blur-xl rounded-3xl shadow-modal border border-slate-200/90 p-5 text-slate-800 animate-fadeIn z-50">
+                  <div className="absolute right-0 mt-3 w-[calc(100vw-2rem)] sm:w-80 max-w-xs bg-white/95 backdrop-blur-xl rounded-3xl shadow-modal border border-slate-200/90 p-4 sm:p-5 text-slate-800 animate-fadeIn z-50">
                     <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
                       <span className="text-xs font-black uppercase tracking-widest text-optom-maroon flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-rose-500 animate-bounce" /> Clinic Location

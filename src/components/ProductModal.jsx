@@ -3,6 +3,13 @@ import { X, CheckCircle2, MapPin, Phone, ShieldCheck, Sparkles, AlertCircle } fr
 import { BUSINESS_INFO } from '../data/products';
 
 const ProductModal = ({ product, onClose }) => {
+  const hoverImage = product?.hoverImageUrl || product?.secondaryImageUrl || product?.hoverImage;
+  const [activeImage, setActiveImage] = React.useState(product?.imageUrl);
+
+  useEffect(() => {
+    setActiveImage(product?.imageUrl);
+  }, [product]);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
@@ -54,11 +61,11 @@ const ProductModal = ({ product, onClose }) => {
             
             {/* Left Image Section */}
             <div className="md:col-span-5 space-y-4">
-              <div className="relative rounded-2xl overflow-hidden aspect-square bg-slate-100 border border-slate-200/80 shadow-inner">
+              <div className="relative rounded-2xl overflow-hidden aspect-square bg-slate-100 border border-slate-200/80 shadow-inner group">
                 <img
-                  src={product.imageUrl}
+                  src={activeImage || product.imageUrl}
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-all duration-500"
                 />
                 <div className="absolute top-3 left-3">
                   <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-optom-green text-white shadow-md">
@@ -66,6 +73,46 @@ const ProductModal = ({ product, onClose }) => {
                   </span>
                 </div>
               </div>
+
+              {/* 2 Photos Thumbnail Switcher if 2nd image available */}
+              {hoverImage && (
+                <div className="space-y-1.5">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                    Product Photos (2 Views):
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveImage(product.imageUrl)}
+                      className={`relative aspect-[4/3] rounded-xl overflow-hidden border-2 transition-all p-0.5 ${
+                        activeImage === product.imageUrl 
+                          ? 'border-optom-green ring-2 ring-emerald-300 scale-102' 
+                          : 'border-slate-200 opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={product.imageUrl} alt="Photo 1" className="w-full h-full object-cover rounded-lg" />
+                      <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-black bg-slate-900/80 text-white">
+                        Photo 1 (Front)
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveImage(hoverImage)}
+                      className={`relative aspect-[4/3] rounded-xl overflow-hidden border-2 transition-all p-0.5 ${
+                        activeImage === hoverImage 
+                          ? 'border-optom-green ring-2 ring-emerald-300 scale-102' 
+                          : 'border-slate-200 opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={hoverImage} alt="Photo 2" className="w-full h-full object-cover rounded-lg" />
+                      <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-black bg-slate-900/80 text-emerald-400">
+                        Photo 2 (Hover View)
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Quality Guarantee Box */}
               <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200/80 flex items-center gap-3">

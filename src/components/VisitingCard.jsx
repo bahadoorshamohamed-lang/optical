@@ -10,7 +10,7 @@ const FRAME_SPECS = {
     coating: 'AR Multi-Coated',
     blueShield: '98% HEV Filter',
     pd: '64 mm',
-    strokeColor: '#0f172a',
+    strokeColor: '#02040aff',
     bridgeColor: '#1e293b',
     templeColor: '#0f172a',
     strokeWidth: '6',
@@ -92,7 +92,7 @@ const VisitingCard = () => {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-50 border-b border-slate-200/80 text-slate-800 overflow-hidden relative">
+    <section className="py-12 md:py-24 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-50 border-b border-slate-200/80 text-slate-800 overflow-hidden relative">
       
       {/* Decorative Ambient Radial Accents */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-full pointer-events-none">
@@ -100,16 +100,13 @@ const VisitingCard = () => {
         <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-rose-200/35 blur-3xl animate-float-optic" style={{ animationDelay: '2.5s' }} />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-100 text-optom-green border border-emerald-200 text-xs font-extrabold uppercase tracking-wider shadow-xs">
-            <Cpu className="w-3.5 h-3.5 text-optom-maroon animate-pulse" />
-            <span>Interactive Optical Studio</span>
-          </div>
+        <div className="text-center max-w-3xl mx-auto space-y-2.5 sm:space-y-3">
+         
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-optom-slate-heading tracking-tight leading-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-optom-slate-heading tracking-tight leading-tight">
             3D Virtual Try-On & Official Visiting Card
           </h2>
           <p className="text-xs sm:text-sm md:text-base text-optom-slate-body leading-relaxed font-medium">
@@ -118,28 +115,24 @@ const VisitingCard = () => {
         </div>
 
         {/* 2-Column Luxury Split Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-stretch">
           
           {/* ================= LEFT SIDE: INTERACTIVE 3D VIRTUAL TRY-ON STUDIO ================= */}
-          <div className="lg:col-span-6 bg-white/95 backdrop-blur-xl rounded-3xl p-6 border border-slate-200/90 shadow-2xl hover:shadow-[0_20px_50px_rgba(11,79,55,0.12)] transition-all duration-500 flex flex-col justify-between space-y-5">
+          <div className="lg:col-span-6 bg-white/95 backdrop-blur-xl rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-2xl hover:shadow-[0_20px_50px_rgba(11,79,55,0.12)] transition-all duration-500 flex flex-col justify-between space-y-4 sm:space-y-5">
             
             {/* Top Badge & Live AR HUD Indicator */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3.5">
-              <div className="flex items-center gap-2.5">
-                <span className="relative flex h-3 w-3">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5 sm:h-3 sm:w-3">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                  <span className="relative inline-flex rounded-full h-full w-full bg-emerald-500"></span>
                 </span>
-                <span className="text-xs font-extrabold uppercase tracking-wider text-optom-green flex items-center gap-1.5">
-                  <Scan className="w-4 h-4 text-emerald-600" /> 3D Virtual Try-On Studio
+                <span className="text-[11px] sm:text-xs font-extrabold uppercase tracking-wider text-optom-green flex items-center gap-1.5">
+                  <Scan className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" /> 3D Virtual Try-On
                 </span>
               </div>
 
-              {/* Dynamic HUD Status Tag */}
-              <div className="text-[11px] font-extrabold text-optom-slate-heading bg-emerald-50 text-emerald-800 px-3 py-1 rounded-full border border-emerald-200 flex items-center gap-1.5 shadow-2xs">
-                <ShieldCheck className="w-3.5 h-3.5 text-optom-green" />
-                <span>{scanMessage}</span>
-              </div>
+             
             </div>
 
             {/* Interactive Split Canvas Viewport */}
@@ -190,17 +183,7 @@ const VisitingCard = () => {
                 
               </div>
 
-              {/* HIGH-TECH AR CORNER HUD OVERLAY */}
-              <div className="absolute inset-4 pointer-events-none z-10 flex flex-col justify-between">
-                <div className="flex justify-between items-center text-emerald-400 font-mono text-[11px] font-extrabold tracking-widest drop-shadow-[0_2px_6px_rgba(0,0,0,0.85)]">
-                  <span>+ AR.RETICLE.3D</span>
-                  <span className="mr-12">POS: {Math.round(sliderPos)}%</span>
-                </div>
-                <div className="flex justify-between items-end text-slate-300/90 font-mono text-[11px] font-extrabold tracking-widest drop-shadow-[0_2px_6px_rgba(0,0,0,0.85)]">
-                  <span className="opacity-0">HIDDEN</span>
-                  <span>INDEX: 1.67 HD</span>
-                </div>
-              </div>
+              
 
               {/* LASER SCAN ANIMATION LAYER */}
               {isScanning && (
@@ -236,26 +219,7 @@ const VisitingCard = () => {
               </div>
             </div>
 
-            {/* LIVE AR SPECS HUD DATA CARD */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-extrabold uppercase text-slate-500 block">Weight</span>
-                <span className="text-xs font-extrabold text-optom-slate-heading">{currentSpec.weight}</span>
-              </div>
-              <div className="space-y-0.5 border-l border-slate-200">
-                <span className="text-[10px] font-extrabold uppercase text-slate-500 block">Material</span>
-                <span className="text-xs font-extrabold text-optom-green truncate block px-1">{currentSpec.material}</span>
-              </div>
-              <div className="space-y-0.5 border-l border-slate-200">
-                <span className="text-[10px] font-extrabold uppercase text-slate-500 block">Protection</span>
-                <span className="text-xs font-extrabold text-optom-maroon">{currentSpec.blueShield}</span>
-              </div>
-              <div className="space-y-0.5 border-l border-slate-200">
-                <span className="text-[10px] font-extrabold uppercase text-slate-500 block">Pupil Distance</span>
-                <span className="text-xs font-extrabold text-slate-800">{currentSpec.pd}</span>
-              </div>
-            </div>
-
+           
             {/* Interactive Frame Style Controls & Scan Button */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
               <div className="flex items-center gap-2">

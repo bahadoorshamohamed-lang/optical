@@ -109,6 +109,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     shortDescription: '',
     fullDescription: '',
     imageUrl: '',
+    hoverImageUrl: '',
   });
 
   const [frameFormData, setFrameFormData] = useState({
@@ -272,6 +273,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
       shortDescription: '',
       fullDescription: '',
       imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80',
+      hoverImageUrl: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=800&q=80',
     });
     setIsFormOpen(true);
   };
@@ -279,7 +281,10 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
   const handleOpenEditProductForm = (prod) => {
     setEditingItem(prod);
     setFormType('product');
-    setProductFormData({ ...prod });
+    setProductFormData({
+      ...prod,
+      hoverImageUrl: prod.hoverImageUrl || prod.secondaryImageUrl || prod.hoverImage || ''
+    });
     setIsFormOpen(true);
   };
 
@@ -1077,44 +1082,65 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
-                {products.map((product) => (
-                  <div
-                    key={product.id}
-                    className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all"
-                  >
-                    <div className="aspect-[4/3] bg-slate-100 relative overflow-hidden">
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/90 text-optom-green border border-slate-200 shadow-2xs">
-                        {product.categoryLabel || product.category}
-                      </span>
-                    </div>
+                {products.map((product) => {
+                  const hImg = product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage;
+                  return (
+                    <div
+                      key={product.id}
+                      className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all"
+                    >
+                      <div className="aspect-[4/3] bg-slate-100 relative overflow-hidden">
+                        <img 
+                          src={product.imageUrl} 
+                          alt={product.name} 
+                          className={`w-full h-full object-cover transition-all duration-500 ${
+                            hImg ? 'group-hover:opacity-0 group-hover:scale-105' : 'group-hover:scale-105'
+                          }`} 
+                        />
+                        {hImg && (
+                          <img 
+                            src={hImg} 
+                            alt={`${product.name} 2nd Photo`} 
+                            className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
+                          />
+                        )}
+                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/90 text-optom-green border border-slate-200 shadow-2xs">
+                          {product.categoryLabel || product.category}
+                        </span>
+                        {hImg && (
+                          <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-900/80 text-emerald-400 border border-emerald-500/40 backdrop-blur-md shadow-2xs">
+                            2 Photos
+                          </span>
+                        )}
+                      </div>
 
-                    <div className="p-3 space-y-1">
-                      <h5 className="text-xs font-bold text-optom-slate-heading line-clamp-1">{product.name}</h5>
-                      <p className="text-[10px] text-slate-500 line-clamp-1">{product.shortDescription}</p>
-                    </div>
+                      <div className="p-3 space-y-1">
+                        <h5 className="text-xs font-bold text-optom-slate-heading line-clamp-1">{product.name}</h5>
+                        <p className="text-[10px] text-slate-500 line-clamp-1">{product.shortDescription}</p>
+                      </div>
 
-                    <div className="p-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-1.5">
-                      <span className="text-[10px] font-mono text-slate-400">#{product.id}</span>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleOpenEditProductForm(product)}
-                          className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors"
-                          title="Edit Product"
-                        >
-                          <Pencil className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => setDeleteConfirmInfo({ id: product.id, type: 'product' })}
-                          className="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-colors"
-                          title="Delete Product"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                      <div className="p-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-1.5">
+                        <span className="text-[10px] font-mono text-slate-400">#{product.id}</span>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleOpenEditProductForm(product)}
+                            className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors"
+                            title="Edit Product"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirmInfo({ id: product.id, type: 'product' })}
+                            className="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-colors"
+                            title="Delete Product"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -1860,21 +1886,80 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Product Image URL *</label>
-                  <input
-                    type="url"
-                    required
-                    value={productFormData.imageUrl}
-                    onChange={(e) => setProductFormData({ ...productFormData, imageUrl: e.target.value })}
-                    placeholder="https://images.unsplash.com/photo-..."
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
+                {/* 2 Photos Upload Section */}
+                <div className="space-y-4 pt-2 border-t border-slate-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
+                      <ImageIcon className="w-4 h-4 text-emerald-600" />
+                      <span>Product Photos (2 Photo Support)</span>
+                    </span>
+                    <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">
+                      Hover Effect Ready
+                    </span>
+                  </div>
+
+                  {/* Field 1: Primary Image */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-optom-slate-heading block">
+                      Photo 1: Primary Image URL *
+                    </label>
+                    <input
+                      type="url"
+                      required
+                      value={productFormData.imageUrl}
+                      onChange={(e) => setProductFormData({ ...productFormData, imageUrl: e.target.value })}
+                      placeholder="https://images.unsplash.com/photo-..."
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+
+                  {/* Field 2: 2nd / Hover Image */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-optom-slate-heading block">
+                      Photo 2: 2nd Image URL (Shown on Hover)
+                    </label>
+                    <input
+                      type="url"
+                      value={productFormData.hoverImageUrl || ''}
+                      onChange={(e) => setProductFormData({ ...productFormData, hoverImageUrl: e.target.value })}
+                      placeholder="https://images.unsplash.com/photo-... (Optional 2nd Photo)"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+
+                  {/* Side by side Live Image Previews */}
+                  <div className="grid grid-cols-2 gap-3 pt-1">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        Preview: Photo 1 (Primary)
+                      </span>
+                      <div className="aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 relative">
+                        {productFormData.imageUrl ? (
+                          <img src={productFormData.imageUrl} alt="Photo 1 Preview" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs font-bold">No Image</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        Preview: Photo 2 (Hover View)
+                      </span>
+                      <div className="aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 relative">
+                        {productFormData.hoverImageUrl ? (
+                          <img src={productFormData.hoverImageUrl} alt="Photo 2 Preview" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-400 text-[10px] font-bold p-2 text-center">Add 2nd Photo URL</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="pt-2 flex items-center justify-end gap-3">
                   <button type="button" onClick={() => setIsFormOpen(false)} className="px-5 py-3 rounded-2xl bg-slate-100 text-slate-700 text-xs font-bold">Cancel</button>
-                  <button type="submit" className="px-6 py-3 rounded-2xl bg-emerald-600 text-white text-xs font-extrabold uppercase shadow-md hover:bg-emerald-700">Save Product</button>
+                  <button type="submit" className="px-6 py-3 rounded-2xl bg-emerald-600 text-white text-xs font-extrabold uppercase shadow-md hover:bg-emerald-700">Save Product (2 Photos)</button>
                 </div>
               </form>
             )}

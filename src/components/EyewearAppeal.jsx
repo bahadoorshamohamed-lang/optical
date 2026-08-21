@@ -32,7 +32,7 @@ const EyewearAppeal = ({ onSelectAppealCategory }) => {
   };
 
   return (
-    <section className="py-14 sm:py-20 bg-white border-b border-slate-200/80 relative overflow-hidden">
+    <section className="py-10 sm:py-20 bg-white border-b border-slate-200/80 relative overflow-hidden">
       
       {/* Dynamic Animated Background Accents */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-full pointer-events-none">
@@ -40,11 +40,11 @@ const EyewearAppeal = ({ onSelectAppealCategory }) => {
         <div className="absolute bottom-10 left-1/4 w-80 h-80 rounded-full bg-rose-200/25 blur-3xl animate-float-optic" style={{ animationDelay: '2.5s' }} />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-10 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 sm:space-y-10 relative z-10">
         
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto space-y-3">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-optom-slate-heading tracking-tight">
+        <div className="max-w-3xl mx-auto space-y-2 sm:space-y-3">
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-optom-slate-heading tracking-tight">
             Eyewear With Mass Appeal
           </h2>
           <p className="text-xs sm:text-sm md:text-base text-optom-slate-body leading-relaxed font-medium">
@@ -53,7 +53,7 @@ const EyewearAppeal = ({ onSelectAppealCategory }) => {
         </div>
 
         {/* Dynamic Circular Animatic Category Avatars */}
-        <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 max-w-5xl mx-auto">
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 max-w-5xl mx-auto">
           {categories.map((item, index) => (
             <button
               key={item.id || index}
@@ -62,7 +62,7 @@ const EyewearAppeal = ({ onSelectAppealCategory }) => {
               style={{ animationDelay: `${index * 0.4}s` }}
             >
               {/* Outer Animatic Rotating Conic Gradient Ring Container */}
-              <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-full p-[3px] bg-gradient-to-tr from-slate-200 via-emerald-200 to-rose-200 group-hover:from-optom-green group-hover:via-emerald-400 group-hover:to-rose-500 transition-all duration-700 shadow-md group-hover:shadow-[0_15px_35px_rgba(11,79,55,0.25)]">
+              <div className="relative w-24 h-24 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-full p-[3px] bg-gradient-to-tr from-slate-200 via-emerald-200 to-rose-200 group-hover:from-optom-green group-hover:via-emerald-400 group-hover:to-rose-500 transition-all duration-700 shadow-md group-hover:shadow-[0_15px_35px_rgba(11,79,55,0.25)]">
                 
                 {/* Expanding Sonar Ping Ring on Hover */}
                 <div className="absolute inset-0 rounded-full bg-emerald-400/0 group-hover:bg-emerald-400/20 group-hover:animate-ping transition-all pointer-events-none" />
@@ -81,24 +81,24 @@ const EyewearAppeal = ({ onSelectAppealCategory }) => {
 
                   {/* Dark Glass Overlay with Icon Badge */}
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-                    <div className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md text-optom-green border border-white flex items-center justify-center shadow-xl transform scale-50 group-hover:scale-100 transition-transform duration-300">
-                      <ArrowUpRight className="w-5 h-5 text-optom-green" />
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/90 backdrop-blur-md text-optom-green border border-white flex items-center justify-center shadow-xl transform scale-50 group-hover:scale-100 transition-transform duration-300">
+                      <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 text-optom-green" />
                     </div>
                   </div>
                 </div>
 
                 {/* Corner Sparkle Animatic Indicator */}
-                <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-optom-maroon text-white flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Sparkles className="w-3 h-3 animate-spin-slow" />
+                <div className="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-optom-maroon text-white flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 animate-spin-slow" />
                 </div>
               </div>
 
               {/* Category Title Below Circle */}
-              <div className="mt-3.5 text-center space-y-0.5">
-                <h3 className="text-base sm:text-lg font-extrabold text-optom-slate-heading group-hover:text-optom-green transition-colors flex items-center justify-center gap-1">
+              <div className="mt-2.5 sm:mt-3.5 text-center space-y-0.5 max-w-[110px] sm:max-w-none">
+                <h3 className="text-xs sm:text-base md:text-lg font-extrabold text-optom-slate-heading group-hover:text-optom-green transition-colors flex items-center justify-center gap-1 leading-tight">
                   <span>{item.label}</span>
                 </h3>
-                <span className="text-[11px] font-semibold text-optom-slate-muted block">
+                <span className="text-[10px] sm:text-[11px] font-semibold text-optom-slate-muted block truncate">
                   {item.subtitle}
                 </span>
               </div>

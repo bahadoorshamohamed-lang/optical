@@ -15,7 +15,8 @@ export const DEFAULT_PRODUCTS = [
       'Formula': 'Alcohol-free, pH neutral optical solution',
       'Usage': 'Daily lens maintenance'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?auto=format&fit=crop&w=800&q=80'
   },
   {
     id: 'eye-sol-02',
@@ -32,7 +33,8 @@ export const DEFAULT_PRODUCTS = [
       'Function': 'Clean, Rinse, Disinfect, Hydrate & Store',
       'Certification': 'Ophthalmic standard approved'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=800&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80'
   },
   {
     id: 'eye-sol-03',
@@ -49,7 +51,8 @@ export const DEFAULT_PRODUCTS = [
       'Ideal For': 'Computer workers, drivers, dry climate comfort',
       'Formulation': 'Sodium Hyaluronate ophthalmic blend'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80'
   },
 
   // ================= LENSES =================
@@ -68,7 +71,8 @@ export const DEFAULT_PRODUCTS = [
       'Coatings': 'Hard coat scratch resistance included',
       'Material': 'Optical grade Polycarbonate / Resin'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=800&q=80'
   },
   {
     id: 'lens-02',
@@ -85,7 +89,8 @@ export const DEFAULT_PRODUCTS = [
       'Clarity': 'Clear crystal base with subtle blue reflection tint',
       'Coating': 'Hydrophobic easy-clean finish'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=800&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80'
   },
   {
     id: 'lens-03',
@@ -102,7 +107,8 @@ export const DEFAULT_PRODUCTS = [
       'Surface Treatment': 'Oleophobic & Hydrophobic top coat',
       'Durability': 'High scratch resistance rating'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80'
   },
 
   // ================= FRAMES =================
@@ -121,7 +127,8 @@ export const DEFAULT_PRODUCTS = [
       'Face Shapes': 'Oval, Round, Heart, Square',
       'Weight': 'Lightweight ergonomic distribution'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80'
   },
   {
     id: 'frame-02',
@@ -138,7 +145,8 @@ export const DEFAULT_PRODUCTS = [
       'Nose Pads': 'Adjustable hypoallergenic silicone pads',
       'Style': 'Professional corporate / Smart casual'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80'
   },
   {
     id: 'frame-05',
@@ -155,7 +163,8 @@ export const DEFAULT_PRODUCTS = [
       'Hinges': '5-barrel German engineered steel hinges',
       'Finish': 'Hand-polished glossy texture'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80'
   },
   {
     id: 'frame-06',
@@ -172,7 +181,8 @@ export const DEFAULT_PRODUCTS = [
       'Age Group': 'Children 4 - 14 years',
       'Safety': 'Zero sharp metal edges or loose screws'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80'
+    imageUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80'
   }
 ];
 
@@ -191,7 +201,7 @@ export const BUSINESS_INFO = {
   mapQuery: "No.+814+MIG,+Neithal+Street,+New+Housing+Unit,+Thanjavur+-+613005"
 };
 
-const PRODUCTS_KEY = 'vision_care_products_v2';
+const PRODUCTS_KEY = 'vision_care_products_v3';
 
 export const getStoredProducts = () => {
   try {

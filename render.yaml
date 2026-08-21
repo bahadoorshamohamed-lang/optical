@@ -1,7 +1,7 @@
 services:
   - type: web
     name: vision-care-optical-api
-    env: node
+    runtime: node
     region: singapore
     plan: free
     buildCommand: cd server && npm install

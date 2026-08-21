@@ -54,6 +54,8 @@ const ItemSchema = new mongoose.Schema({
   coating: String,
   indexRate: String,
   imageUrl: String,
+  hoverImageUrl: String,
+  secondaryImageUrl: String,
   bgImage: String,
   targetTab: String,
   validUntil: String,
