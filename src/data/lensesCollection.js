@@ -1,3 +1,5 @@
+import { fetchFromAPI, saveToAPI } from '../services/api';
+
 // Default Lenses Collection Data for Vision Care Opticals
 export const DEFAULT_LENSES_COLLECTION = [
   {
@@ -75,10 +77,25 @@ export const getStoredLensesCollection = () => {
   return DEFAULT_LENSES_COLLECTION;
 };
 
+export const syncLensesCollectionWithAPI = async () => {
+  const remoteData = await fetchFromAPI('lenses');
+  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+    try {
+      localStorage.setItem(LENSES_KEY, JSON.stringify(remoteData));
+      window.dispatchEvent(new CustomEvent('lenses-collection-updated', { detail: remoteData }));
+    } catch (e) {
+      console.error(e);
+    }
+    return remoteData;
+  }
+  return getStoredLensesCollection();
+};
+
 export const saveLensesCollection = (lenses) => {
   try {
     localStorage.setItem(LENSES_KEY, JSON.stringify(lenses));
     window.dispatchEvent(new CustomEvent('lenses-collection-updated', { detail: lenses }));
+    saveToAPI('lenses', lenses);
   } catch (error) {
     console.error('Error saving lenses collection:', error);
   }

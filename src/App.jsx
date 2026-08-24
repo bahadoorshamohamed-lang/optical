@@ -11,11 +11,38 @@ import Footer from './components/Footer';
 import OpenPosterModal from './components/OpenPosterModal';
 import AdminLoginModal from './components/AdminLoginModal';
 import AdminDashboard from './components/AdminDashboard';
+import { syncHeroSlidesWithAPI } from './data/heroSlides';
+import { syncPostersWithAPI } from './data/posters';
+import { syncAppealCategoriesWithAPI } from './data/appealCategories';
+import { syncProductsWithAPI } from './data/products';
+import { syncFramesCollectionWithAPI } from './data/framesCollection';
+import { syncCorePurposeWithAPI } from './data/corePurpose';
+import { syncLensesCollectionWithAPI } from './data/lensesCollection';
+import { syncTopBarDataWithAPI, syncFooterDataWithAPI } from './data/siteConfig';
 
 function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [activeSection, setActiveSection] = useState('home');
   const [activeCategoryTab, setActiveCategoryTab] = useState(null);
+
+  // Live Multi-Device Sync Effect
+  useEffect(() => {
+    const runGlobalSync = () => {
+      syncHeroSlidesWithAPI();
+      syncPostersWithAPI();
+      syncAppealCategoriesWithAPI();
+      syncProductsWithAPI();
+      syncFramesCollectionWithAPI();
+      syncCorePurposeWithAPI();
+      syncLensesCollectionWithAPI();
+      syncTopBarDataWithAPI();
+      syncFooterDataWithAPI();
+    };
+
+    runGlobalSync();
+    const syncInterval = setInterval(runGlobalSync, 12000);
+    return () => clearInterval(syncInterval);
+  }, []);
 
   // Admin & Poster State Management
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {

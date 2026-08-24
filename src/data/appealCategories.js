@@ -1,3 +1,5 @@
+import { fetchFromAPI, saveToAPI } from '../services/api';
+
 // Default Eyewear With Mass Appeal categories for Vision Care Opticals
 export const DEFAULT_APPEAL_CATEGORIES = [
   {
@@ -70,10 +72,25 @@ export const getStoredAppealCategories = () => {
   return DEFAULT_APPEAL_CATEGORIES;
 };
 
+export const syncAppealCategoriesWithAPI = async () => {
+  const remoteData = await fetchFromAPI('appeal');
+  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(remoteData));
+      window.dispatchEvent(new CustomEvent('appeal-categories-updated', { detail: remoteData }));
+    } catch (e) {
+      console.error(e);
+    }
+    return remoteData;
+  }
+  return getStoredAppealCategories();
+};
+
 export const saveAppealCategories = (categories) => {
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(categories));
     window.dispatchEvent(new CustomEvent('appeal-categories-updated', { detail: categories }));
+    saveToAPI('appeal', categories);
   } catch (error) {
     console.error('Error saving appeal categories:', error);
   }

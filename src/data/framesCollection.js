@@ -1,3 +1,5 @@
+import { fetchFromAPI, saveToAPI } from '../services/api';
+
 // Default Frames Collection for "Our Frames Collection" Marquee Track in About Page
 export const DEFAULT_FRAMES_COLLECTION = [
   {
@@ -79,10 +81,25 @@ export const getStoredFramesCollection = () => {
   return DEFAULT_FRAMES_COLLECTION;
 };
 
+export const syncFramesCollectionWithAPI = async () => {
+  const remoteData = await fetchFromAPI('frames');
+  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+    try {
+      localStorage.setItem(FRAMES_KEY, JSON.stringify(remoteData));
+      window.dispatchEvent(new CustomEvent('frames-collection-updated', { detail: remoteData }));
+    } catch (e) {
+      console.error(e);
+    }
+    return remoteData;
+  }
+  return getStoredFramesCollection();
+};
+
 export const saveFramesCollection = (frames) => {
   try {
     localStorage.setItem(FRAMES_KEY, JSON.stringify(frames));
     window.dispatchEvent(new CustomEvent('frames-collection-updated', { detail: frames }));
+    saveToAPI('frames', frames);
   } catch (error) {
     console.error('Error saving marquee frames:', error);
   }

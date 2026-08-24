@@ -1,5 +1,14 @@
-// API Client Bridge for Render Backend with localStorage fallback
-const API_BASE = import.meta.env.VITE_API_URL || 'https://optical-backend-duat.onrender.com';
+// API Client Bridge for Render/Local Backend with MongoDB Atlas Multi-Device Live Sync
+
+const getApiBase = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:5000';
+  }
+  return 'https://optical-backend-duat.onrender.com';
+};
+
+export const API_BASE = getApiBase();
 
 export const fetchFromAPI = async (endpoint, options = {}) => {
   try {
@@ -13,7 +22,7 @@ export const fetchFromAPI = async (endpoint, options = {}) => {
     if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
     return await response.json();
   } catch (error) {
-    console.warn(`[API Client] Endpoint /api/${endpoint} unreachable or offline, utilizing local fallback.`, error.message);
+    console.warn(`[API Client] Endpoint /api/${endpoint} offline, using cached fallback.`, error.message);
     return null;
   }
 };
@@ -27,7 +36,7 @@ export const saveToAPI = async (endpoint, data) => {
     });
     return await response.json();
   } catch (error) {
-    console.warn(`[API Client] Sync to /api/${endpoint} failed, relying on local event broadcast.`, error.message);
+    console.warn(`[API Client] Sync to /api/${endpoint} failed, utilizing local fallback.`, error.message);
     return null;
   }
 };

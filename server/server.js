@@ -14,7 +14,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // MongoDB Atlas URI Configuration
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://suriya1252004_db_user:blYx9eckhdKCBWX7@cluster0.fl5gxjr.mongodb.net/vision_care_opticals?retryWrites=true&w=majority&appName=Cluster0';

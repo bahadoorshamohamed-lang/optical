@@ -1,3 +1,5 @@
+import { fetchFromAPI, saveToAPI } from '../services/api';
+
 export const DEFAULT_PRODUCTS = [
   // ================= EYE SOLUTIONS =================
   {
@@ -224,10 +226,25 @@ export const getStoredProducts = () => {
   return DEFAULT_PRODUCTS;
 };
 
+export const syncProductsWithAPI = async () => {
+  const remoteData = await fetchFromAPI('products');
+  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+    try {
+      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(remoteData));
+      window.dispatchEvent(new CustomEvent('products-updated', { detail: remoteData }));
+    } catch (e) {
+      console.error(e);
+    }
+    return remoteData;
+  }
+  return getStoredProducts();
+};
+
 export const saveProducts = (products) => {
   try {
     localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
     window.dispatchEvent(new CustomEvent('products-updated', { detail: products }));
+    saveToAPI('products', products);
   } catch (error) {
     console.error('Error saving products:', error);
   }

@@ -1,3 +1,5 @@
+import { fetchFromAPI, saveToAPI } from '../services/api';
+
 // Default Hero Background Images for Vision Care Opticals
 export const DEFAULT_HERO_SLIDES = [
   {
@@ -39,7 +41,6 @@ export const DEFAULT_HERO_SLIDES = [
 
 const LOCAL_STORAGE_KEY = 'vision_care_hero_slides_v1';
 
-// Helper function to get hero slides from localStorage or fallback to default
 export const getStoredHeroSlides = () => {
   try {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -53,7 +54,6 @@ export const getStoredHeroSlides = () => {
     console.error('Error loading hero slides from localStorage:', error);
   }
   
-  // Store default hero slides if none exist
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(DEFAULT_HERO_SLIDES));
   } catch (e) {
@@ -62,13 +62,26 @@ export const getStoredHeroSlides = () => {
   return DEFAULT_HERO_SLIDES;
 };
 
-// Helper function to save hero slides array to localStorage
+export const syncHeroSlidesWithAPI = async () => {
+  const remoteData = await fetchFromAPI('hero');
+  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(remoteData));
+      window.dispatchEvent(new CustomEvent('hero-slides-updated', { detail: remoteData }));
+    } catch (e) {
+      console.error(e);
+    }
+    return remoteData;
+  }
+  return getStoredHeroSlides();
+};
+
 export const saveHeroSlides = (slides) => {
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(slides));
-    // Trigger custom window event so Hero updates live everywhere
     window.dispatchEvent(new CustomEvent('hero-slides-updated', { detail: slides }));
+    saveToAPI('hero', slides);
   } catch (error) {
-    console.error('Error saving hero slides to localStorage:', error);
+    console.error('Error saving hero slides:', error);
   }
 };

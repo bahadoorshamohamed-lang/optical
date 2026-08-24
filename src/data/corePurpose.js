@@ -1,3 +1,5 @@
+import { fetchFromAPI, saveToAPI } from '../services/api';
+
 // Default Core Purpose Focus Areas for Vision Care Opticals
 export const DEFAULT_CORE_PURPOSE = [
   {
@@ -49,10 +51,25 @@ export const getStoredCorePurpose = () => {
   return DEFAULT_CORE_PURPOSE;
 };
 
+export const syncCorePurposeWithAPI = async () => {
+  const remoteData = await fetchFromAPI('purpose');
+  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+    try {
+      localStorage.setItem(CORE_PURPOSE_KEY, JSON.stringify(remoteData));
+      window.dispatchEvent(new CustomEvent('core-purpose-updated', { detail: remoteData }));
+    } catch (e) {
+      console.error(e);
+    }
+    return remoteData;
+  }
+  return getStoredCorePurpose();
+};
+
 export const saveCorePurpose = (purposeItems) => {
   try {
     localStorage.setItem(CORE_PURPOSE_KEY, JSON.stringify(purposeItems));
     window.dispatchEvent(new CustomEvent('core-purpose-updated', { detail: purposeItems }));
+    saveToAPI('purpose', purposeItems);
   } catch (error) {
     console.error('Error saving core purpose items:', error);
   }

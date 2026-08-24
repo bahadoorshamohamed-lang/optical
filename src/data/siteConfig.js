@@ -1,3 +1,5 @@
+import { fetchFromAPI, saveToAPI } from '../services/api';
+
 // Default Site Configuration for TopBar and Footer Sections
 export const DEFAULT_TOPBAR_DATA = {
   phone: '9047320092',
@@ -34,10 +36,26 @@ export const getStoredTopBarData = () => {
   return DEFAULT_TOPBAR_DATA;
 };
 
+export const syncTopBarDataWithAPI = async () => {
+  const remoteData = await fetchFromAPI('topbar');
+  if (remoteData && remoteData.phone) {
+    try {
+      const merged = { ...DEFAULT_TOPBAR_DATA, ...remoteData };
+      localStorage.setItem(TOPBAR_KEY, JSON.stringify(merged));
+      window.dispatchEvent(new CustomEvent('topbar-updated', { detail: merged }));
+      return merged;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return getStoredTopBarData();
+};
+
 export const saveTopBarData = (data) => {
   try {
     localStorage.setItem(TOPBAR_KEY, JSON.stringify(data));
     window.dispatchEvent(new CustomEvent('topbar-updated', { detail: data }));
+    saveToAPI('topbar', data);
   } catch (error) {
     console.error('Error saving top bar data:', error);
   }
@@ -56,10 +74,26 @@ export const getStoredFooterData = () => {
   return DEFAULT_FOOTER_DATA;
 };
 
+export const syncFooterDataWithAPI = async () => {
+  const remoteData = await fetchFromAPI('footer');
+  if (remoteData && remoteData.phone) {
+    try {
+      const merged = { ...DEFAULT_FOOTER_DATA, ...remoteData };
+      localStorage.setItem(FOOTER_KEY, JSON.stringify(merged));
+      window.dispatchEvent(new CustomEvent('footer-updated', { detail: merged }));
+      return merged;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return getStoredFooterData();
+};
+
 export const saveFooterData = (data) => {
   try {
     localStorage.setItem(FOOTER_KEY, JSON.stringify(data));
     window.dispatchEvent(new CustomEvent('footer-updated', { detail: data }));
+    saveToAPI('footer', data);
   } catch (error) {
     console.error('Error saving footer data:', error);
   }

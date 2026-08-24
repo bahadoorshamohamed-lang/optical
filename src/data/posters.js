@@ -1,3 +1,5 @@
+import { fetchFromAPI, saveToAPI } from '../services/api';
+
 // Default Image-Only Open Posters for Vision Care Opticals
 export const DEFAULT_POSTERS = [
   {
@@ -25,7 +27,6 @@ export const DEFAULT_POSTERS = [
 
 const LOCAL_STORAGE_KEY = 'vision_care_open_posters_v2';
 
-// Helper function to get posters from localStorage or fallback to default
 export const getStoredPosters = () => {
   try {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -39,7 +40,6 @@ export const getStoredPosters = () => {
     console.error('Error loading posters from localStorage:', error);
   }
   
-  // Store default posters if none exist
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(DEFAULT_POSTERS));
   } catch (e) {
@@ -48,13 +48,26 @@ export const getStoredPosters = () => {
   return DEFAULT_POSTERS;
 };
 
-// Helper function to save posters array to localStorage
+export const syncPostersWithAPI = async () => {
+  const remoteData = await fetchFromAPI('posters');
+  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(remoteData));
+      window.dispatchEvent(new CustomEvent('posters-updated', { detail: remoteData }));
+    } catch (e) {
+      console.error(e);
+    }
+    return remoteData;
+  }
+  return getStoredPosters();
+};
+
 export const savePosters = (posters) => {
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(posters));
-    // Trigger custom window event so UI updates live everywhere
     window.dispatchEvent(new CustomEvent('posters-updated', { detail: posters }));
+    saveToAPI('posters', posters);
   } catch (error) {
-    console.error('Error saving posters to localStorage:', error);
+    console.error('Error saving posters:', error);
   }
 };
