@@ -205,13 +205,32 @@ export const BUSINESS_INFO = {
 
 const PRODUCTS_KEY = 'vision_care_products_v3';
 
+export const restoreAdvancedLensSolution = (productsList) => {
+  if (!Array.isArray(productsList) || productsList.length === 0) return DEFAULT_PRODUCTS;
+  const originalAdvancedSolution = DEFAULT_PRODUCTS[0];
+  let found = false;
+  const restored = productsList.map(p => {
+    if (p.id === 'eye-sol-01' || p.name === 'Advanced Lens Cleaning Solution') {
+      found = true;
+      return { ...originalAdvancedSolution };
+    }
+    return p;
+  });
+  if (!found) {
+    restored.unshift({ ...originalAdvancedSolution });
+  }
+  return restored;
+};
+
 export const getStoredProducts = () => {
   try {
     const saved = localStorage.getItem(PRODUCTS_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        const restored = restoreAdvancedLensSolution(parsed);
+        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(restored));
+        return restored;
       }
     }
   } catch (error) {
@@ -230,21 +249,23 @@ export const syncProductsWithAPI = async () => {
   const remoteData = await fetchFromAPI('products');
   if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
     try {
-      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(remoteData));
-      window.dispatchEvent(new CustomEvent('products-updated', { detail: remoteData }));
+      const restored = restoreAdvancedLensSolution(remoteData);
+      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(restored));
+      window.dispatchEvent(new CustomEvent('products-updated', { detail: restored }));
+      return restored;
     } catch (e) {
       console.error(e);
     }
-    return remoteData;
   }
   return getStoredProducts();
 };
 
 export const saveProducts = (products) => {
   try {
-    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
-    window.dispatchEvent(new CustomEvent('products-updated', { detail: products }));
-    saveToAPI('products', products);
+    const restored = restoreAdvancedLensSolution(products);
+    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(restored));
+    window.dispatchEvent(new CustomEvent('products-updated', { detail: restored }));
+    saveToAPI('products', restored);
   } catch (error) {
     console.error('Error saving products:', error);
   }
