@@ -41,6 +41,7 @@ import { getStoredProducts, saveProducts } from '../data/products';
 import { getStoredFramesCollection, saveFramesCollection } from '../data/framesCollection';
 import { getStoredCorePurpose, saveCorePurpose } from '../data/corePurpose';
 import { getStoredLensesCollection, saveLensesCollection } from '../data/lensesCollection';
+import ImageUploaderInput from './ImageUploaderInput';
 
 const HERO_PRESET_IMAGES = [
   'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=1920&q=80',
@@ -1642,54 +1643,14 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
             {/* 1. HERO SLIDE FORM */}
             {formType === 'hero' && (
               <form onSubmit={handleSaveHeroSlide} className="space-y-5">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">
-                    Background Image URL *
-                  </label>
-                  <div className="relative">
-                    <ImageIcon className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="url"
-                      required
-                      value={heroFormData.url}
-                      onChange={(e) => setHeroFormData({ ...heroFormData, url: e.target.value })}
-                      placeholder="https://images.unsplash.com/photo-..."
-                      className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-optom-green/50 focus:border-optom-green"
-                    />
-                  </div>
-
-                  {heroFormData.url && (
-                    <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 mt-2">
-                      <img 
-                        src={heroFormData.url} 
-                        alt="Hero Live Preview" 
-                        className="w-full h-full object-cover"
-                        onError={(e) => { e.target.src = HERO_PRESET_IMAGES[0]; }}
-                      />
-                      <span className="absolute bottom-2 left-2 px-2.5 py-1 rounded-md bg-slate-950/70 text-white text-[10px] font-bold backdrop-blur-md">
-                        Hero Preview
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="space-y-1.5 pt-2">
-                    <span className="text-[11px] font-bold text-slate-500 block">Or Choose High-Res Optical Preset:</span>
-                    <div className="grid grid-cols-3 gap-2">
-                      {HERO_PRESET_IMAGES.map((img, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => setHeroFormData({ ...heroFormData, url: img })}
-                          className={`aspect-video rounded-xl overflow-hidden border-2 transition-all ${
-                            heroFormData.url === img ? 'border-optom-green scale-105 shadow-md' : 'border-slate-200 opacity-70 hover:opacity-100'
-                          }`}
-                        >
-                          <img src={img} alt={`Hero Preset ${idx + 1}`} className="w-full h-full object-cover" />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                <ImageUploaderInput
+                  label="Hero Background Image"
+                  value={heroFormData.url}
+                  onChange={(newUrl) => setHeroFormData({ ...heroFormData, url: newUrl })}
+                  required
+                  presetImages={HERO_PRESET_IMAGES}
+                  accentColor="emerald"
+                />
 
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">
@@ -1725,33 +1686,14 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
             {/* 2. OPEN POSTER FORM */}
             {formType === 'poster' && (
               <form onSubmit={handleSavePoster} className="space-y-5">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">
-                    Poster Image URL *
-                  </label>
-                  <div className="relative">
-                    <ImageIcon className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="url"
-                      required
-                      value={posterFormData.imageUrl}
-                      onChange={(e) => setPosterFormData({ ...posterFormData, imageUrl: e.target.value })}
-                      placeholder="https://images.unsplash.com/photo-..."
-                      className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-optom-green/50 focus:border-optom-green"
-                    />
-                  </div>
-
-                  {posterFormData.imageUrl && (
-                    <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 mt-2">
-                      <img 
-                        src={posterFormData.imageUrl} 
-                        alt="Poster Live Preview" 
-                        className="w-full h-full object-cover"
-                        onError={(e) => { e.target.src = POSTER_PRESET_IMAGES[0]; }}
-                      />
-                    </div>
-                  )}
-                </div>
+                <ImageUploaderInput
+                  label="Poster Image"
+                  value={posterFormData.imageUrl}
+                  onChange={(newUrl) => setPosterFormData({ ...posterFormData, imageUrl: newUrl })}
+                  required
+                  presetImages={POSTER_PRESET_IMAGES}
+                  accentColor="emerald"
+                />
 
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">
@@ -1810,17 +1752,13 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Category Image URL *</label>
-                  <input
-                    type="url"
-                    required
-                    value={appealFormData.imageUrl}
-                    onChange={(e) => setAppealFormData({ ...appealFormData, imageUrl: e.target.value })}
-                    placeholder="https://images.unsplash.com/photo-..."
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  />
-                </div>
+                <ImageUploaderInput
+                  label="Category Image"
+                  value={appealFormData.imageUrl}
+                  onChange={(newUrl) => setAppealFormData({ ...appealFormData, imageUrl: newUrl })}
+                  required
+                  accentColor="amber"
+                />
 
                 <div className="pt-2 flex items-center justify-end gap-3">
                   <button type="button" onClick={() => setIsFormOpen(false)} className="px-5 py-3 rounded-2xl bg-slate-100 text-slate-700 text-xs font-bold">Cancel</button>
@@ -1886,75 +1824,31 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
                   />
                 </div>
 
-                {/* 2 Photos Upload Section */}
                 <div className="space-y-4 pt-2 border-t border-slate-100">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
                       <ImageIcon className="w-4 h-4 text-emerald-600" />
-                      <span>Product Photos (2 Photo Support)</span>
+                      <span>Product Photos (2 Photo Support - Device, Camera or URL)</span>
                     </span>
                     <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">
                       Hover Effect Ready
                     </span>
                   </div>
 
-                  {/* Field 1: Primary Image */}
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-optom-slate-heading block">
-                      Photo 1: Primary Image URL *
-                    </label>
-                    <input
-                      type="url"
-                      required
-                      value={productFormData.imageUrl}
-                      onChange={(e) => setProductFormData({ ...productFormData, imageUrl: e.target.value })}
-                      placeholder="https://images.unsplash.com/photo-..."
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
-                  </div>
+                  <ImageUploaderInput
+                    label="Photo 1: Primary Product Image"
+                    value={productFormData.imageUrl}
+                    onChange={(newUrl) => setProductFormData({ ...productFormData, imageUrl: newUrl })}
+                    required
+                    accentColor="emerald"
+                  />
 
-                  {/* Field 2: 2nd / Hover Image */}
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-optom-slate-heading block">
-                      Photo 2: 2nd Image URL (Shown on Hover)
-                    </label>
-                    <input
-                      type="url"
-                      value={productFormData.hoverImageUrl || ''}
-                      onChange={(e) => setProductFormData({ ...productFormData, hoverImageUrl: e.target.value })}
-                      placeholder="https://images.unsplash.com/photo-... (Optional 2nd Photo)"
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
-                  </div>
-
-                  {/* Side by side Live Image Previews */}
-                  <div className="grid grid-cols-2 gap-3 pt-1">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                        Preview: Photo 1 (Primary)
-                      </span>
-                      <div className="aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 relative">
-                        {productFormData.imageUrl ? (
-                          <img src={productFormData.imageUrl} alt="Photo 1 Preview" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs font-bold">No Image</div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                        Preview: Photo 2 (Hover View)
-                      </span>
-                      <div className="aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 relative">
-                        {productFormData.hoverImageUrl ? (
-                          <img src={productFormData.hoverImageUrl} alt="Photo 2 Preview" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-400 text-[10px] font-bold p-2 text-center">Add 2nd Photo URL</div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  <ImageUploaderInput
+                    label="Photo 2: Secondary Image (Shown on Hover)"
+                    value={productFormData.hoverImageUrl || ''}
+                    onChange={(newUrl) => setProductFormData({ ...productFormData, hoverImageUrl: newUrl })}
+                    accentColor="emerald"
+                  />
                 </div>
 
                 <div className="pt-2 flex items-center justify-end gap-3">
@@ -1991,17 +1885,13 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Frame Image URL *</label>
-                  <input
-                    type="url"
-                    required
-                    value={frameFormData.imageUrl}
-                    onChange={(e) => setFrameFormData({ ...frameFormData, imageUrl: e.target.value })}
-                    placeholder="https://images.unsplash.com/photo-..."
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+                <ImageUploaderInput
+                  label="Frame Image"
+                  value={frameFormData.imageUrl}
+                  onChange={(newUrl) => setFrameFormData({ ...frameFormData, imageUrl: newUrl })}
+                  required
+                  accentColor="blue"
+                />
 
                 <div className="pt-2 flex items-center justify-end gap-3">
                   <button type="button" onClick={() => setIsFormOpen(false)} className="px-5 py-3 rounded-2xl bg-slate-100 text-slate-700 text-xs font-bold">Cancel</button>
@@ -2049,17 +1939,13 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Background Image URL *</label>
-                  <input
-                    type="url"
-                    required
-                    value={purposeFormData.bgImage}
-                    onChange={(e) => setPurposeFormData({ ...purposeFormData, bgImage: e.target.value })}
-                    placeholder="https://images.unsplash.com/photo-..."
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
+                <ImageUploaderInput
+                  label="Background Image"
+                  value={purposeFormData.bgImage}
+                  onChange={(newUrl) => setPurposeFormData({ ...purposeFormData, bgImage: newUrl })}
+                  required
+                  accentColor="purple"
+                />
 
                 <div className="pt-2 flex items-center justify-end gap-3">
                   <button type="button" onClick={() => setIsFormOpen(false)} className="px-5 py-3 rounded-2xl bg-slate-100 text-slate-700 text-xs font-bold">Cancel</button>
@@ -2120,17 +2006,13 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Lens Image URL *</label>
-                  <input
-                    type="url"
-                    required
-                    value={lensFormData.imageUrl}
-                    onChange={(e) => setLensFormData({ ...lensFormData, imageUrl: e.target.value })}
-                    placeholder="https://images.unsplash.com/photo-..."
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                  />
-                </div>
+                <ImageUploaderInput
+                  label="Lens Image"
+                  value={lensFormData.imageUrl}
+                  onChange={(newUrl) => setLensFormData({ ...lensFormData, imageUrl: newUrl })}
+                  required
+                  accentColor="cyan"
+                />
 
                 <div className="pt-2 flex items-center justify-end gap-3">
                   <button type="button" onClick={() => setIsFormOpen(false)} className="px-5 py-3 rounded-2xl bg-slate-100 text-slate-700 text-xs font-bold">Cancel</button>
