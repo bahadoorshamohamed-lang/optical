@@ -58,9 +58,9 @@ const ImageUploaderInput = ({
   // Helper to compress and resize image file or data URL to clean JPEG Data URL
   const compressAndSetImage = (fileOrDataUrl) => {
     setIsCompressing(true);
-    const maxWidth = 1400;
-    const maxHeight = 1400;
-    const quality = 0.85;
+    const maxWidth = 900;
+    const maxHeight = 900;
+    const quality = 0.78;
 
     const processImageSource = (src) => {
       const img = new Image();

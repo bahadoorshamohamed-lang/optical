@@ -41,7 +41,7 @@ const FooterSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const ItemSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
+  id: { type: String, required: true },
   label: String,
   title: String,
   name: String,
@@ -50,6 +50,7 @@ const ItemSchema = new mongoose.Schema({
   categoryLabel: String,
   shortDescription: String,
   description: String,
+  fullDescription: String,
   tagline: String,
   lensType: String,
   coating: String,
@@ -63,7 +64,7 @@ const ItemSchema = new mongoose.Schema({
   createdAt: String,
   url: String,
   isActive: { type: Boolean, default: true }
-}, { timestamps: true });
+}, { timestamps: true, strict: false });
 
 const TopBarModel = mongoose.model('TopBar', TopBarSchema);
 const FooterModel = mongoose.model('Footer', FooterSchema);
@@ -138,38 +139,64 @@ app.get('/api/health', (req, res) => {
 
 // TopBar API
 app.get('/api/topbar', async (req, res) => {
-  const data = await TopBarModel.findOne();
-  res.json(data || {});
+  try {
+    const data = await TopBarModel.findOne();
+    res.json(data || {});
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 app.post('/api/topbar', async (req, res) => {
-  const data = await TopBarModel.findOneAndUpdate({}, req.body, { upsert: true, new: true });
-  res.json({ success: true, data });
+  try {
+    const data = await TopBarModel.findOneAndUpdate({}, req.body, { upsert: true, new: true });
+    res.json({ success: true, data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Footer API
 app.get('/api/footer', async (req, res) => {
-  const data = await FooterModel.findOne();
-  res.json(data || {});
+  try {
+    const data = await FooterModel.findOne();
+    res.json(data || {});
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 app.post('/api/footer', async (req, res) => {
-  const data = await FooterModel.findOneAndUpdate({}, req.body, { upsert: true, new: true });
-  res.json({ success: true, data });
+  try {
+    const data = await FooterModel.findOneAndUpdate({}, req.body, { upsert: true, new: true });
+    res.json({ success: true, data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Collection Handler Creator
 const createMongoRoutes = (path, Model) => {
   app.get(`/api/${path}`, async (req, res) => {
-    const list = await Model.find().sort({ createdAt: -1 });
-    res.json(list);
+    try {
+      const list = await Model.find().sort({ createdAt: -1 });
+      res.json(list);
+    } catch (err) {
+      console.error(`Error fetching ${path}:`, err.message);
+      res.status(500).json({ error: err.message });
+    }
   });
   app.post(`/api/${path}`, async (req, res) => {
-    if (Array.isArray(req.body)) {
-      await Model.deleteMany({});
-      const list = await Model.insertMany(req.body);
-      return res.json({ success: true, data: list });
+    try {
+      if (Array.isArray(req.body)) {
+        await Model.deleteMany({});
+        const list = await Model.insertMany(req.body);
+        return res.json({ success: true, count: list.length, data: list });
+      }
+      const item = await Model.findOneAndUpdate({ id: req.body.id }, req.body, { upsert: true, new: true });
+      res.json({ success: true, data: item });
+    } catch (err) {
+      console.error(`Error saving ${path}:`, err.message);
+      res.status(500).json({ success: false, error: err.message });
     }
-    const item = await Model.findOneAndUpdate({ id: req.body.id }, req.body, { upsert: true, new: true });
-    res.json({ success: true, data: item });
   });
 };
 
