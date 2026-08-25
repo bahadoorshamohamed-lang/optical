@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import ProductCard from './ProductCard';
 import { getStoredProducts } from '../data/products';
+import { getStoredCategoryCards } from '../data/productCategoryCards';
 import { 
   Eye, 
   Glasses, 
@@ -20,6 +21,7 @@ import {
 
 const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) => {
   const [products, setProducts] = useState(getStoredProducts());
+  const [categoryCards, setCategoryCards] = useState(getStoredCategoryCards());
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'carousel'
@@ -27,43 +29,38 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
   const sliderRef = useRef(null);
 
   useEffect(() => {
-    const handleUpdate = () => {
+    const handleProductsUpdate = () => {
       setProducts(getStoredProducts());
     };
-    window.addEventListener('products-updated', handleUpdate);
-    return () => window.removeEventListener('products-updated', handleUpdate);
+    const handleCardsUpdate = () => {
+      setCategoryCards(getStoredCategoryCards());
+    };
+
+    window.addEventListener('products-updated', handleProductsUpdate);
+    window.addEventListener('category-cards-updated', handleCardsUpdate);
+    return () => {
+      window.removeEventListener('products-updated', handleProductsUpdate);
+      window.removeEventListener('category-cards-updated', handleCardsUpdate);
+    };
   }, []);
 
-  // Core Main Categories with visual details & icons
-  const coreCategories = [
-    { 
-      id: 'eye-solutions', 
-      label: 'Eye Solutions', 
-      tagline: 'Clinically Formulated Care',
-      description: 'Disinfecting drops, cleaning formulas, & hydration kits for lenses & eyes.',
-      icon: Droplets, 
-      imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80',
-      badgeColor: 'bg-cyan-500/90'
-    },
-    { 
-      id: 'lenses', 
-      label: 'Lenses Collection', 
-      tagline: 'High-Precision Optics',
-      description: 'Blue cut, anti-glare, single vision, & photochromic transition lenses.',
-      icon: Eye, 
-      imageUrl: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=800&q=80',
-      badgeColor: 'bg-emerald-500/90'
-    },
-    { 
-      id: 'frames', 
-      label: 'Frames Collection', 
-      tagline: 'Ergonomic Eyewear Styles',
-      description: 'Full rim, half rim, rimless titanium, Italian acetate & flexible kids frames.',
-      icon: Glasses, 
-      imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80',
-      badgeColor: 'bg-amber-500/90'
-    },
-  ];
+  // Core Main Categories with visual details & icons dynamically loaded from state/API
+  const coreCategories = useMemo(() => {
+    return categoryCards
+      .filter(c => c.isActive !== false)
+      .map(c => {
+        let icon = Glasses;
+        if (c.id === 'eye-solutions' || c.targetTab === 'eye-solutions') icon = Droplets;
+        else if (c.id === 'lenses' || c.targetTab === 'lenses') icon = Eye;
+        else if (c.id === 'frames' || c.targetTab === 'frames') icon = Glasses;
+
+        return {
+          ...c,
+          icon,
+          badgeColor: c.badgeColor || 'bg-emerald-500/90'
+        };
+      });
+  }, [categoryCards]);
 
   // Additional Demographic & Feature Filter Pills
   const quickFilters = [
@@ -264,110 +261,6 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
               </div>
             );
           })}
-        </div>
-
-        {/* Filter, Search & View Controls Bar */}
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200/90 shadow-md p-4 sm:p-6 max-w-5xl mx-auto space-y-4">
-          
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            
-            {/* Live Search Input Box */}
-            <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search lenses, frames, solutions..."
-                className="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold text-optom-slate-heading placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-optom-green/40 focus:border-optom-green transition-all"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-
-            {/* View Layout Switcher (Grid vs Carousel Mode) */}
-            <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider hidden sm:inline">
-                View Mode:
-              </span>
-              <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all ${
-                    viewMode === 'grid'
-                      ? 'bg-optom-green text-white shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <LayoutGrid className="w-3.5 h-3.5" />
-                  <span>Grid ({filteredProducts.length})</span>
-                </button>
-                <button
-                  onClick={() => setViewMode('carousel')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all ${
-                    viewMode === 'carousel'
-                      ? 'bg-optom-green text-white shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <SlidersHorizontal className="w-3.5 h-3.5" />
-                  <span>Showcase Carousel</span>
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Quick Demographic / Style Tag Filter Pills */}
-          <div className="flex items-center gap-1.5 sm:gap-2 pt-2 border-t border-slate-100 overflow-x-auto no-scrollbar pb-1 max-w-full">
-            <span className="text-xs font-extrabold text-slate-400 uppercase tracking-wider pr-1 hidden lg:inline flex-shrink-0">
-              Filter:
-            </span>
-            {quickFilters.map((filter) => {
-              const isSelected = activeTab === filter.id || (filter.id === 'all' && !activeTab);
-              const count = categoryCounts[filter.id] || (filter.id === 'all' ? products.length : 0);
-              const IconComp = filter.icon;
-
-              return (
-                <button
-                  key={filter.id}
-                  onClick={() => setActiveTab(filter.id === 'all' ? null : filter.id)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-extrabold transition-all duration-300 flex-shrink-0 ${
-                    isSelected
-                      ? 'bg-optom-green text-white shadow-md ring-2 ring-emerald-300'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/80'
-                  }`}
-                >
-                  <IconComp className="w-3.5 h-3.5" />
-                  <span className="whitespace-nowrap">{filter.label}</span>
-                  {count > 0 && (
-                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                      isSelected ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-600'
-                    }`}>
-                      {count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-
-            {(activeTab || searchQuery) && (
-              <button
-                onClick={clearFilters}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-extrabold text-optom-maroon hover:bg-rose-50 transition-colors ml-auto flex-shrink-0"
-              >
-                <X className="w-3.5 h-3.5" />
-                <span className="whitespace-nowrap">Reset</span>
-              </button>
-            )}
-          </div>
-
         </div>
 
         {/* Dynamic Context Header Bar */}

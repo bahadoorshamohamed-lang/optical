@@ -55,14 +55,20 @@ const ImageUploaderInput = ({
     }
   };
 
-  // Helper to compress and resize image file or data URL to clean JPEG Data URL
+  // Helper to convert & optimize image to HD quality (1080p Ultra-Sharp canvas render)
   const compressAndSetImage = (fileOrDataUrl) => {
     setIsCompressing(true);
-    const maxWidth = 900;
-    const maxHeight = 900;
-    const quality = 0.78;
+    const maxWidth = 1920;
+    const maxHeight = 1920;
+    const quality = 0.90; // High-Definition 90% JPEG quality
 
     const processImageSource = (src) => {
+      // Auto-boost Unsplash / external URLs to HD parameters
+      let hdSource = src;
+      if (typeof src === 'string' && src.includes('unsplash.com')) {
+        hdSource = src.replace(/w=\d+/, 'w=1600').replace(/q=\d+/, 'q=90');
+      }
+
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = () => {
@@ -83,19 +89,23 @@ const ImageUploaderInput = ({
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
+        
+        // High Quality HD Rendering settings
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, width, height);
 
-        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-        onChange(compressedDataUrl);
+        const hdDataUrl = canvas.toDataURL('image/jpeg', quality);
+        onChange(hdDataUrl);
         setIsCompressing(false);
       };
       img.onerror = () => {
         if (typeof fileOrDataUrl === 'string') {
-          onChange(fileOrDataUrl);
+          onChange(hdSource);
         }
         setIsCompressing(false);
       };
-      img.src = src;
+      img.src = hdSource;
     };
 
     if (typeof fileOrDataUrl === 'string') {
@@ -143,8 +153,8 @@ const ImageUploaderInput = ({
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: mode,
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
         },
         audio: false
       });

@@ -41,6 +41,7 @@ import { getStoredProducts, saveProducts } from '../data/products';
 import { getStoredFramesCollection, saveFramesCollection } from '../data/framesCollection';
 import { getStoredCorePurpose, saveCorePurpose } from '../data/corePurpose';
 import { getStoredLensesCollection, saveLensesCollection } from '../data/lensesCollection';
+import { getStoredCategoryCards, saveCategoryCards } from '../data/productCategoryCards';
 import ImageUploaderInput from './ImageUploaderInput';
 
 const HERO_PRESET_IMAGES = [
@@ -60,7 +61,7 @@ const POSTER_PRESET_IMAGES = [
 ];
 
 const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) => {
-  const [activeTab, setActiveTab] = useState('topbar'); // 'topbar' | 'footer' | 'appeal' | 'products' | 'frames' | 'purpose' | 'lenses' | 'hero' | 'posters'
+  const [activeTab, setActiveTab] = useState('topbar'); // 'topbar' | 'footer' | 'categoryCards' | 'appeal' | 'products' | 'frames' | 'purpose' | 'lenses' | 'hero' | 'posters'
   
   // Data states
   const [posters, setPosters] = useState([]);
@@ -68,6 +69,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
   const [topBarConfig, setTopBarConfig] = useState(getStoredTopBarData());
   const [footerConfig, setFooterConfig] = useState(getStoredFooterData());
   const [appealCategories, setAppealCategories] = useState([]);
+  const [categoryCards, setCategoryCards] = useState(getStoredCategoryCards());
   const [products, setProducts] = useState([]);
   const [framesCollection, setFramesCollection] = useState([]);
   const [corePurposeItems, setCorePurposeItems] = useState([]);
@@ -141,6 +143,17 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     isActive: true,
   });
 
+  const [categoryCardFormData, setCategoryCardFormData] = useState({
+    id: '',
+    label: '',
+    tagline: '',
+    description: '',
+    imageUrl: '',
+    badgeColor: 'bg-emerald-500/90',
+    targetTab: 'eye-solutions',
+    isActive: true,
+  });
+
   useEffect(() => {
     if (isOpen) {
       loadData();
@@ -153,6 +166,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     setTopBarConfig(getStoredTopBarData());
     setFooterConfig(getStoredFooterData());
     setAppealCategories(getStoredAppealCategories());
+    setCategoryCards(getStoredCategoryCards());
     setProducts(getStoredProducts());
     setFramesCollection(getStoredFramesCollection());
     setCorePurposeItems(getStoredCorePurpose());
@@ -162,6 +176,62 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 3000);
+  };
+
+  // --- CATEGORY BANNER CARDS CRUD HANDLERS ---
+  const handleOpenAddCategoryCardForm = () => {
+    setEditingItem(null);
+    setFormType('categoryCard');
+    setCategoryCardFormData({
+      id: `card-${Date.now()}`,
+      label: '',
+      tagline: '',
+      description: '',
+      imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80',
+      badgeColor: 'bg-emerald-500/90',
+      targetTab: 'eye-solutions',
+      isActive: true,
+    });
+    setIsFormOpen(true);
+  };
+
+  const handleOpenEditCategoryCardForm = (card) => {
+    setEditingItem(card);
+    setFormType('categoryCard');
+    setCategoryCardFormData({ ...card });
+    setIsFormOpen(true);
+  };
+
+  const handleSaveCategoryCardForm = (e) => {
+    e.preventDefault();
+    let updatedList;
+    if (editingItem) {
+      updatedList = categoryCards.map(c => c.id === editingItem.id ? categoryCardFormData : c);
+      showToast('Category card updated live!');
+    } else {
+      updatedList = [...categoryCards, categoryCardFormData];
+      showToast('New category card added live!');
+    }
+    setCategoryCards(updatedList);
+    saveCategoryCards(updatedList);
+    setIsFormOpen(false);
+  };
+
+  const handleToggleCategoryCardActive = (id) => {
+    const updatedList = categoryCards.map(item =>
+      item.id === id ? { ...item, isActive: !item.isActive } : item
+    );
+    setCategoryCards(updatedList);
+    saveCategoryCards(updatedList);
+    showToast('Category card visibility updated!');
+  };
+
+  const handleDeleteCategoryCard = (id) => {
+    const updatedList = categoryCards.filter(item => item.id !== id);
+    setCategoryCards(updatedList);
+    saveCategoryCards(updatedList);
+    setDeleteConfirmInfo(null);
+    showToast('Category card deleted.');
   };
 
   // --- TOPBAR & FOOTER SAVE HANDLERS ---
@@ -664,6 +734,18 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
             </button>
 
             <button
+              onClick={() => setActiveTab('categoryCards')}
+              className={`px-4 py-2.5 rounded-2xl text-xs transition-all duration-200 flex items-center gap-2 ${
+                activeTab === 'categoryCards'
+                  ? 'bg-slate-900 text-white font-black shadow-md scale-[1.02]'
+                  : 'bg-white/70 text-slate-600 hover:bg-white hover:text-slate-900 font-bold border border-slate-200/60'
+              }`}
+            >
+              <LayoutGrid className="w-4 h-4 text-cyan-500" />
+              <span>Category Banner Cards ({categoryCards.length})</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('appeal')}
               className={`px-4 py-2.5 rounded-2xl text-xs transition-all duration-200 flex items-center gap-2 ${
                 activeTab === 'appeal'
@@ -980,6 +1062,95 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
 
               </div>
             </form>
+          )}
+
+          {/* TAB: PRODUCT CATEGORY BANNER CARDS CRUD */}
+          {activeTab === 'categoryCards' && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs">
+                <div>
+                  <h3 className="text-lg font-serif font-extrabold text-optom-slate-heading flex items-center gap-2">
+                    <LayoutGrid className="w-5 h-5 text-cyan-600" />
+                    <span>Product Category Banner Cards ({categoryCards.length})</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5 font-medium">
+                    Manage the main Category Banner Cards (Eye Solutions, Lenses Collection, Frames Collection, etc.) shown on the storefront.
+                  </p>
+                </div>
+                <button
+                  onClick={handleOpenAddCategoryCardForm}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-cyan-600 text-white text-xs font-extrabold uppercase tracking-wider hover:bg-cyan-700 transition-all shadow-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Category Card</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {categoryCards.map((card) => (
+                  <div
+                    key={card.id}
+                    className={`bg-white rounded-3xl overflow-hidden border transition-all flex flex-col justify-between ${
+                      card.isActive !== false ? 'border-cyan-300 shadow-md' : 'border-slate-200 opacity-60'
+                    }`}
+                  >
+                    <div className="relative aspect-[16/10] bg-slate-900 overflow-hidden">
+                      <img src={card.imageUrl} alt={card.label} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                      <div className="absolute top-3 left-3">
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black text-white ${card.badgeColor || 'bg-cyan-500/90'}`}>
+                          {card.targetTab || card.id}
+                        </span>
+                      </div>
+                      <div className="absolute top-3 right-3">
+                        <button
+                          onClick={() => handleToggleCategoryCardActive(card.id)}
+                          className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1.5 shadow-md ${
+                            card.isActive !== false ? 'bg-emerald-500 text-white' : 'bg-white text-slate-600'
+                          }`}
+                        >
+                          <Power className="w-3 h-3" />
+                          <span>{card.isActive !== false ? 'Live' : 'Hidden'}</span>
+                        </button>
+                      </div>
+                      <div className="absolute bottom-3 left-3 right-3 text-white">
+                        <span className="text-[10px] font-extrabold text-emerald-400 uppercase tracking-widest block">
+                          {card.tagline}
+                        </span>
+                        <h4 className="text-base font-extrabold font-serif">{card.label}</h4>
+                      </div>
+                    </div>
+
+                    <div className="p-4 space-y-2">
+                      <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{card.description}</p>
+                    </div>
+
+                    <div className="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-2">
+                      <button
+                        onClick={() => handleToggleCategoryCardActive(card.id)}
+                        className="flex-1 py-1.5 px-2 rounded-xl text-[11px] font-bold bg-white border border-slate-200 text-slate-700 hover:bg-slate-100"
+                      >
+                        {card.isActive !== false ? 'Hide' : 'Show'}
+                      </button>
+                      <button
+                        onClick={() => handleOpenEditCategoryCardForm(card)}
+                        className="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-cyan-600"
+                        title="Edit Card"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setDeleteConfirmInfo({ id: card.id, type: 'categoryCard' })}
+                        className="p-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-600 hover:text-white"
+                        title="Delete Card"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* TAB 3: EYEWEAR WITH MASS APPEAL CRUD */}
@@ -2021,6 +2192,92 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
               </form>
             )}
 
+            {/* 8. CATEGORY BANNER CARD FORM */}
+            {formType === 'categoryCard' && (
+              <form onSubmit={handleSaveCategoryCardForm} className="space-y-5">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Category Title / Label *</label>
+                  <input
+                    type="text"
+                    required
+                    value={categoryCardFormData.label}
+                    onChange={(e) => setCategoryCardFormData({ ...categoryCardFormData, label: e.target.value })}
+                    placeholder="e.g. Eye Solutions, Lenses Collection, Frames Collection"
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Tagline Subtitle *</label>
+                  <input
+                    type="text"
+                    required
+                    value={categoryCardFormData.tagline}
+                    onChange={(e) => setCategoryCardFormData({ ...categoryCardFormData, tagline: e.target.value })}
+                    placeholder="e.g. CLINICALLY FORMULATED CARE, HIGH-PRECISION OPTICS"
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Card Description Paragraph</label>
+                  <textarea
+                    rows="3"
+                    value={categoryCardFormData.description}
+                    onChange={(e) => setCategoryCardFormData({ ...categoryCardFormData, description: e.target.value })}
+                    placeholder="Provide overview of products in this category..."
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                </div>
+
+                <ImageUploaderInput
+                  label="Category Card Background Image"
+                  value={categoryCardFormData.imageUrl}
+                  onChange={(newUrl) => setCategoryCardFormData({ ...categoryCardFormData, imageUrl: newUrl })}
+                  required
+                  accentColor="cyan"
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Target Filter Tab</label>
+                    <select
+                      value={categoryCardFormData.targetTab}
+                      onChange={(e) => setCategoryCardFormData({ ...categoryCardFormData, targetTab: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    >
+                      <option value="eye-solutions">Eye Solutions</option>
+                      <option value="lenses">Lenses</option>
+                      <option value="frames">Frames</option>
+                      <option value="sunglasses">Sunglasses</option>
+                      <option value="kids">Kids</option>
+                      <option value="all">All Catalogue</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Badge Theme</label>
+                    <select
+                      value={categoryCardFormData.badgeColor}
+                      onChange={(e) => setCategoryCardFormData({ ...categoryCardFormData, badgeColor: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    >
+                      <option value="bg-cyan-500/90">Cyan Theme</option>
+                      <option value="bg-emerald-500/90">Emerald Theme</option>
+                      <option value="bg-amber-500/90">Amber Theme</option>
+                      <option value="bg-purple-500/90">Purple Theme</option>
+                      <option value="bg-blue-500/90">Blue Theme</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="pt-2 flex items-center justify-end gap-3">
+                  <button type="button" onClick={() => setIsFormOpen(false)} className="px-5 py-3 rounded-2xl bg-slate-100 text-slate-700 text-xs font-bold">Cancel</button>
+                  <button type="submit" className="px-6 py-3 rounded-2xl bg-cyan-600 text-white text-xs font-extrabold uppercase shadow-md hover:bg-cyan-700">Save Category Card</button>
+                </div>
+              </form>
+            )}
+
           </div>
         </div>
       )}
@@ -2034,7 +2291,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
             </div>
             <div className="space-y-1">
               <h4 className="text-lg font-serif font-extrabold text-optom-slate-heading">
-                Delete {deleteConfirmInfo.type === 'hero' ? 'Hero Background' : 'Poster'}?
+                Delete Item?
               </h4>
               <p className="text-xs text-slate-500 font-medium">This action cannot be undone. Are you sure you want to delete this item?</p>
             </div>
@@ -2053,6 +2310,8 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
                     handleDeletePoster(deleteConfirmInfo.id);
                   } else if (deleteConfirmInfo.type === 'appeal') {
                     handleDeleteAppealCategory(deleteConfirmInfo.id);
+                  } else if (deleteConfirmInfo.type === 'categoryCard') {
+                    handleDeleteCategoryCard(deleteConfirmInfo.id);
                   } else if (deleteConfirmInfo.type === 'product') {
                     handleDeleteProduct(deleteConfirmInfo.id);
                   } else if (deleteConfirmInfo.type === 'frame') {

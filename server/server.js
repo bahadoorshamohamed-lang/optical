@@ -200,6 +200,8 @@ const createMongoRoutes = (path, Model) => {
   });
 };
 
+const CategoryCardModel = mongoose.model('CategoryCard', ItemSchema);
+
 createMongoRoutes('appeal', AppealModel);
 createMongoRoutes('products', ProductModel);
 createMongoRoutes('frames', FrameModel);
@@ -207,6 +209,7 @@ createMongoRoutes('purpose', PurposeModel);
 createMongoRoutes('lenses', LensModel);
 createMongoRoutes('hero', HeroModel);
 createMongoRoutes('posters', PosterModel);
+createMongoRoutes('category-cards', CategoryCardModel);
 
 app.listen(PORT, () => {
   console.log(`🚀 Vision Care Opticals API running on port ${PORT}`);

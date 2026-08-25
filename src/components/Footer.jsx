@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Logo from './Logo';
 import { ShieldCheck, Lock } from 'lucide-react';
 import { getStoredFooterData } from '../data/siteConfig';
 
 const Footer = ({ onNavClick, onOpenAdmin, isAdminLoggedIn }) => {
   const [footerData, setFooterData] = useState(getStoredFooterData());
+  
+  const tapCountRef = useRef(0);
+  const tapTimerRef = useRef(null);
 
   useEffect(() => {
     const handleUpdate = (e) => {
@@ -16,8 +19,28 @@ const Footer = ({ onNavClick, onOpenAdmin, isAdminLoggedIn }) => {
     };
 
     window.addEventListener('footer-updated', handleUpdate);
-    return () => window.removeEventListener('footer-updated', handleUpdate);
+    return () => {
+      window.removeEventListener('footer-updated', handleUpdate);
+      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+    };
   }, []);
+
+  // Secret Silent Triple Tap Handler
+  const handleAdminTripleTap = (e) => {
+    e.preventDefault();
+    tapCountRef.current += 1;
+
+    if (tapCountRef.current === 1) {
+      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+      tapTimerRef.current = setTimeout(() => {
+        tapCountRef.current = 0;
+      }, 700);
+    } else if (tapCountRef.current >= 3) {
+      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+      tapCountRef.current = 0;
+      onOpenAdmin();
+    }
+  };
 
   return (
     <footer className="bg-slate-800 text-slate-300 pt-12 pb-10 border-t-4 border-optom-green">
@@ -67,11 +90,11 @@ const Footer = ({ onNavClick, onOpenAdmin, isAdminLoggedIn }) => {
               About Showcase
             </button>
             <button 
-              onClick={onOpenAdmin}
+              onClick={handleAdminTripleTap}
               className="text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1 font-bold"
             >
               {isAdminLoggedIn ? <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> : <Lock className="w-3.5 h-3.5 text-amber-400" />}
-              <span>{isAdminLoggedIn ? "Admin Dashboard" : "Admin Login"}</span>
+              <span>{isAdminLoggedIn ? "Admin Dashboard" : "vision care opticals"}</span>
             </button>
           </div>
 

@@ -14,6 +14,7 @@ import AdminDashboard from './components/AdminDashboard';
 import { syncHeroSlidesWithAPI } from './data/heroSlides';
 import { syncPostersWithAPI } from './data/posters';
 import { syncAppealCategoriesWithAPI } from './data/appealCategories';
+import { syncCategoryCardsWithAPI } from './data/productCategoryCards';
 import { syncProductsWithAPI } from './data/products';
 import { syncFramesCollectionWithAPI } from './data/framesCollection';
 import { syncCorePurposeWithAPI } from './data/corePurpose';
@@ -31,6 +32,7 @@ function App() {
       syncHeroSlidesWithAPI();
       syncPostersWithAPI();
       syncAppealCategoriesWithAPI();
+      syncCategoryCardsWithAPI();
       syncProductsWithAPI();
       syncFramesCollectionWithAPI();
       syncCorePurposeWithAPI();
