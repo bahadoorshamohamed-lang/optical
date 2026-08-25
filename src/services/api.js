@@ -1,6 +1,6 @@
 // Live Cloud API Bridge connected to MongoDB Atlas for Real-Time Multi-Device Sync
 
-const PRIMARY_CLOUD_API = import.meta.env.VITE_API_URL || 'https://optical-backend-duat.onrender.com';
+const PRIMARY_CLOUD_API = import.meta.env.VITE_API_URL || 'https://optical-vykh.onrender.com';
 const LOCAL_DEV_API = 'http://localhost:5000';
 
 export const API_BASE = PRIMARY_CLOUD_API;
