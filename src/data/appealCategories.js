@@ -3,53 +3,44 @@ import { fetchFromAPI, saveToAPI } from '../services/api';
 // Default Eyewear With Mass Appeal categories for Vision Care Opticals
 export const DEFAULT_APPEAL_CATEGORIES = [
   {
-    id: 'appeal-women',
-    label: 'Women',
-    subtitle: 'Chic & Elegant Frames',
-    targetTab: 'women',
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=500&q=80',
+    id: 'cat-eyeglasses',
+    label: 'Eyeglasses',
+    subtitle: 'Trendy, Durable & Lightweight',
+    targetTab: 'eyeglasses',
+    imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=600&q=80',
     isActive: true,
     createdAt: '2026-08-20'
   },
   {
-    id: 'appeal-men',
-    label: 'Men',
-    subtitle: 'Executive & Classic',
-    targetTab: 'men',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80',
+    id: 'cat-lenses',
+    label: 'Lenses',
+    subtitle: 'Anti-Glare & Blue Light Protection',
+    targetTab: 'lenses',
+    imageUrl: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=600&q=80',
     isActive: true,
     createdAt: '2026-08-20'
   },
   {
-    id: 'appeal-kids',
+    id: 'cat-kids',
     label: 'Kids',
-    subtitle: 'Flexible & Breakproof',
+    subtitle: 'Flexible, Safe & Scratch Resistant',
     targetTab: 'kids',
-    imageUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=500&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=600&q=80',
     isActive: true,
     createdAt: '2026-08-20'
   },
   {
-    id: 'appeal-sunglasses',
+    id: 'cat-sunglasses',
     label: 'Sunglasses',
-    subtitle: 'UV400 Polarized',
+    subtitle: 'UV Protection & Polarization',
     targetTab: 'sunglasses',
-    imageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=500&q=80',
-    isActive: true,
-    createdAt: '2026-08-20'
-  },
-  {
-    id: 'appeal-clip-on',
-    label: 'Clip-on',
-    subtitle: '2-in-1 Versatile Optics',
-    targetTab: 'clipon',
-    imageUrl: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=500&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=600&q=80',
     isActive: true,
     createdAt: '2026-08-20'
   }
 ];
 
-const LOCAL_STORAGE_KEY = 'vision_care_appeal_categories_v1';
+const LOCAL_STORAGE_KEY = 'vision_care_appeal_categories_v2';
 
 export const getStoredAppealCategories = () => {
   try {

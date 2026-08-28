@@ -105,9 +105,25 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
       // 1. Tab / Category Filter
       let matchesTab = true;
       if (activeTab && activeTab !== 'all') {
-        const isCategoryMatch = product.category === activeTab;
-        const isTagMatch = product.tags && product.tags.includes(activeTab);
-        matchesTab = isCategoryMatch || isTagMatch;
+        const queryTab = activeTab.toLowerCase().trim();
+        const isCategoryMatch = product.category?.toLowerCase() === queryTab;
+        const isTagMatch = product.tags && product.tags.some(t => t.toLowerCase() === queryTab);
+        
+        let isAliasMatch = false;
+        if (queryTab === 'spectacles' || queryTab === 'eyeglasses' || queryTab === 'frames') {
+          isAliasMatch = product.category === 'frames' || product.category === 'eyeglasses' || product.category === 'spectacles' ||
+            (product.tags && product.tags.some(t => ['frames', 'eyeglasses', 'spectacles'].includes(t.toLowerCase())));
+        } else if (queryTab === 'sunglasses') {
+          isAliasMatch = product.category === 'sunglasses' || (product.tags && product.tags.includes('sunglasses'));
+        } else if (queryTab === 'kids') {
+          isAliasMatch = product.category === 'kids' || (product.tags && product.tags.includes('kids'));
+        } else if (queryTab === 'lenses') {
+          isAliasMatch = product.category === 'lenses' || (product.tags && product.tags.includes('lenses'));
+        } else if (queryTab === 'eye-solutions' || queryTab === 'care' || queryTab === 'solutions') {
+          isAliasMatch = product.category === 'eye-solutions' || (product.tags && product.tags.includes('eye-solutions'));
+        }
+
+        matchesTab = isCategoryMatch || isTagMatch || isAliasMatch;
       }
 
       // 2. Search Query Filter
@@ -129,7 +145,8 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
   }, [products, activeTab, searchQuery]);
 
   // Current category info object if activeTab matches core category
-  const currentCategoryInfo = coreCategories.find(c => c.id === activeTab);
+  const currentCategoryInfo = coreCategories.find(c => c.id === activeTab || c.targetTab === activeTab) ||
+    ((activeTab === 'eyeglasses' || activeTab === 'spectacles') ? coreCategories.find(c => c.id === 'frames') : null);
 
   // Reset slider index whenever filters or search change
   useEffect(() => {
@@ -259,6 +276,30 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
                   </p>
                 </div>
               </div>
+            );
+          })}
+        </div>
+
+        {/* Category Quick Filter Pills Bar */}
+        <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto no-scrollbar py-2 max-w-7xl mx-auto px-1">
+          {quickFilters.map((filter) => {
+            const IconComp = filter.icon;
+            const isSelected = (activeTab === filter.id) || 
+              (filter.id === 'all' && !activeTab) || 
+              ((filter.id === 'eyeglasses' || filter.id === 'frames') && (activeTab === 'spectacles' || activeTab === 'eyeglasses' || activeTab === 'frames'));
+            return (
+              <button
+                key={filter.id}
+                onClick={() => handleCategoryClick(filter.id === 'all' ? null : filter.id)}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-extrabold whitespace-nowrap transition-all duration-300 shadow-xs cursor-pointer ${
+                  isSelected
+                    ? 'bg-optom-green text-white ring-2 ring-emerald-400 scale-105 shadow-md'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80 hover:border-emerald-300'
+                }`}
+              >
+                <IconComp className="w-3.5 h-3.5" />
+                <span>{filter.label}</span>
+              </button>
             );
           })}
         </div>

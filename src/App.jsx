@@ -90,8 +90,12 @@ function App() {
   };
 
   const handleAppealCategorySelect = (item) => {
-    if (item.targetTab) {
-      setActiveCategoryTab(item.targetTab);
+    const target = item?.targetTab || 
+      (item?.id ? item.id.replace('cat-', '').replace('appeal-', '') : null) || 
+      (item?.label ? item.label.toLowerCase() : null);
+    
+    if (target) {
+      setActiveCategoryTab(target);
     }
     setActiveSection('categories');
   };

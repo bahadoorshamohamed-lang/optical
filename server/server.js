@@ -107,7 +107,7 @@ const seedDatabase = async () => {
     const appealCount = await AppealModel.countDocuments();
     if (appealCount === 0) {
       await AppealModel.insertMany([
-        { id: 'cat-eyeglasses', label: 'Eyeglasses', title: 'Eyeglasses', subtitle: 'Trendy, Durable & Lightweight', imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=600&q=80', targetTab: 'spectacles', isActive: true },
+        { id: 'cat-eyeglasses', label: 'Eyeglasses', title: 'Eyeglasses', subtitle: 'Trendy, Durable & Lightweight', imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=600&q=80', targetTab: 'eyeglasses', isActive: true },
         { id: 'cat-lenses', label: 'Lenses', title: 'Lenses', subtitle: 'Anti-Glare & Blue Light Protection', imageUrl: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=600&q=80', targetTab: 'lenses', isActive: true },
         { id: 'cat-sunglasses', label: 'Sunglasses', title: 'Sunglasses', subtitle: 'UV Protection & Polarization', imageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=600&q=80', targetTab: 'sunglasses', isActive: true },
         { id: 'cat-kids', label: 'Kids', title: 'Kids', subtitle: 'Flexible, Safe & Scratch Resistant', imageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=600&q=80', targetTab: 'kids', isActive: true }

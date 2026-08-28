@@ -81,7 +81,7 @@ export const DEFAULT_PRODUCTS = [
     name: 'Blue Cut Digital Lenses',
     category: 'lenses',
     categoryLabel: 'Lenses',
-    tags: ['lenses', 'blue-cut', 'women', 'men'],
+    tags: ['lenses', 'blue-cut', 'kids', 'women', 'men'],
     shortDescription: 'Advanced blue light filtering lenses designed to shield your eyes from digital screens, laptops, and smartphones.',
     fullDescription: 'Engineered specifically for the modern digital era. Blue Cut Lenses filter harmful high-energy visible (HEV) blue ray wavelengths (400-450nm) emitted by digital screens, reducing digital eye fatigue, headaches, and sleep disruption.',
     features: ['99% HEV Blue Light Shield', 'Anti-Digital Fatigue', 'Flicker Reduction', 'UV400 Integrated Protection'],
@@ -113,13 +113,13 @@ export const DEFAULT_PRODUCTS = [
     hoverImageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80'
   },
 
-  // ================= FRAMES =================
+  // ================= FRAMES / EYEGLASSES =================
   {
     id: 'frame-01',
     name: 'Full Rim Architectural Frames',
     category: 'frames',
-    categoryLabel: 'Frames',
-    tags: ['frames', 'women', 'men'],
+    categoryLabel: 'Eyeglasses',
+    tags: ['frames', 'eyeglasses', 'spectacles', 'women', 'men'],
     shortDescription: 'Sturdy full-frame design surrounding the entire lens, offering max durability, bold aesthetics, and high protection.',
     fullDescription: 'Classic full rim frames provide complete structural enclosure for all lens thickness profiles. Crafted with precision acetate and light metal alloys, combining bold styling with long-lasting daily durability.',
     features: ['Complete Lens Enclosure', 'Maximum Durability', 'Hides Thick Lens Edges', 'Bold Aesthetic'],
@@ -136,8 +136,8 @@ export const DEFAULT_PRODUCTS = [
     id: 'frame-02',
     name: 'Half Rim Executive Frames',
     category: 'frames',
-    categoryLabel: 'Frames',
-    tags: ['frames', 'men', 'executive'],
+    categoryLabel: 'Eyeglasses',
+    tags: ['frames', 'eyeglasses', 'spectacles', 'men', 'executive'],
     shortDescription: 'Sophisticated browline framing featuring a top rim structure and minimalist nylon lower cord design.',
     fullDescription: 'The perfect blend of professional elegance and lightness. Half rim frames secure the lens across the upper browline while leaving the bottom edge rimless, lightening visual weight on the face.',
     features: ['Lightweight Feel', 'Executive Browline Styling', 'Unobstructed Lower View', 'Spring Hinge Temples'],
@@ -154,8 +154,8 @@ export const DEFAULT_PRODUCTS = [
     id: 'frame-05',
     name: 'Premium Italian Acetate Frames',
     category: 'frames',
-    categoryLabel: 'Frames',
-    tags: ['frames', 'women', 'acetate'],
+    categoryLabel: 'Eyeglasses',
+    tags: ['frames', 'eyeglasses', 'spectacles', 'women', 'acetate'],
     shortDescription: 'Richly patterned, hypoallergenic organic cellulose acetate frames offering vibrant color depth and polished elegance.',
     fullDescription: 'Crafted from high-density bio-based cellulose acetate, these frames feature deep tortoise, marble, and crystal translucent colorways. Polished to a mirror sheen with integrated core-wire temple reinforcement.',
     features: ['Hypoallergenic Organic Resin', 'Rich Tortoise & Crystal Colors', 'Warm Comfort Touch', 'Core Wire Strength'],
@@ -172,8 +172,8 @@ export const DEFAULT_PRODUCTS = [
     id: 'frame-06',
     name: 'Flexible Junior Kids Frames',
     category: 'frames',
-    categoryLabel: 'Frames',
-    tags: ['frames', 'kids', 'flexible'],
+    categoryLabel: 'Kids',
+    tags: ['frames', 'eyeglasses', 'spectacles', 'kids', 'flexible'],
     shortDescription: 'Ultra-flexible, break-resistant, non-toxic frames designed specifically for active children and youth.',
     fullDescription: 'Engineered for kids\' active lifestyles! Constructed from flexible TR90 rubberized polymers without sharp metal screws or hinges. Extremely durable, comfortable, and available in vibrant color combinations.',
     features: ['180° Flexible Bending', 'Shatterproof Rubberized TR90', 'Non-Toxic & BPA Free', 'Head Strap Compatible'],
@@ -185,6 +185,62 @@ export const DEFAULT_PRODUCTS = [
     },
     imageUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80',
     hoverImageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80'
+  },
+
+  // ================= SUNGLASSES =================
+  {
+    id: 'sunglass-01',
+    name: 'Polarized UV400 Dark Charcoal Aviator',
+    category: 'sunglasses',
+    categoryLabel: 'Sunglasses',
+    tags: ['sunglasses', 'polarized', 'men', 'women'],
+    shortDescription: 'Classic aviator design featuring UV400 protection and high-contrast polarized lenses to eliminate glare.',
+    fullDescription: 'Engineered with TAC 7-layer polarized lenses that block 100% of UV rays (UVA & UVB) while eliminating harsh glare from water, roads, and snow. Built with lightweight alloy frame and comfortable silicone nose pads.',
+    features: ['TAC Polarized Filter', 'UV400 100% Protection', 'High Contrast Optics', 'Impact Resistant'],
+    specifications: {
+      'Category': 'Polarized Sunglasses',
+      'UV Shield': 'UV400 (200nm - 400nm)',
+      'Frame Material': 'Premium Stainless Steel Alloy',
+      'Lens Type': 'Triacetate Cellulose (TAC) Polarized'
+    },
+    imageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'sunglass-02',
+    name: 'Retro Round Gold Metal Sunglasses',
+    category: 'sunglasses',
+    categoryLabel: 'Sunglasses',
+    tags: ['sunglasses', 'retro', 'women', 'men'],
+    shortDescription: 'Chic round gold metal sunglasses with dark tinted UV400 protective lenses for stylish outdoor sun wear.',
+    fullDescription: 'A timeless vintage silhouette with a modern optical upgrade. Features dark gradient UV-blocking lenses set in a sleek gold wire frame with soft translucent temple tips for all-day comfort.',
+    features: ['Retro Round Silhouette', 'UV400 Sun Protection', 'Adjustable Nose Pads', 'Lightweight Wire Frame'],
+    specifications: {
+      'Category': 'Fashion Sunglasses',
+      'UV Rating': 'UV400 Grade 3 Tint',
+      'Frame Color': 'Polished Metallic Gold',
+      'Fit': 'Unisex medium fit'
+    },
+    imageUrl: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'sunglass-03',
+    name: 'Junior UV Protected Kids Sunglasses',
+    category: 'sunglasses',
+    categoryLabel: 'Kids & Sunglasses',
+    tags: ['sunglasses', 'kids', 'flexible', 'sport'],
+    shortDescription: 'Flexible rubberized kids sunglasses with 100% UV protection and shatterproof lenses for outdoor play.',
+    fullDescription: 'Keep young eyes safe in bright sunlight! Features rubberized bendable frames that can flex without breaking, combined with 100% UV400 category 3 dark lenses designed for sensitive young eyes.',
+    features: ['Shatterproof Lenses', 'Bendable Flex Frame', '100% UV400 Shield', 'Comfort Nose Bridge'],
+    specifications: {
+      'Category': 'Kids Polarized Sunglasses',
+      'Age Group': 'Children 3 - 12 years',
+      'Material': 'Flexible TPEE Rubberized Material',
+      'UV Protection': 'UV400 Ophthalmic Standard'
+    },
+    imageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80'
   }
 ];
 
@@ -203,7 +259,7 @@ export const BUSINESS_INFO = {
   mapQuery: "No.+814+MIG,+Neithal+Street,+New+Housing+Unit,+Thanjavur+-+613005"
 };
 
-const PRODUCTS_KEY = 'vision_care_products_v3';
+const PRODUCTS_KEY = 'vision_care_products_v4';
 
 export const restoreAdvancedLensSolution = (productsList) => {
   if (!Array.isArray(productsList) || productsList.length === 0) return DEFAULT_PRODUCTS;
@@ -227,7 +283,7 @@ export const getStoredProducts = () => {
     const saved = localStorage.getItem(PRODUCTS_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed) && parsed.length >= 8) {
         const restored = restoreAdvancedLensSolution(parsed);
         localStorage.setItem(PRODUCTS_KEY, JSON.stringify(restored));
         return restored;
@@ -270,3 +326,4 @@ export const saveProducts = (products) => {
     console.error('Error saving products:', error);
   }
 };
+
