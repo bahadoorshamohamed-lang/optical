@@ -21,7 +21,7 @@ const Showcase360 = () => {
   }, []);
 
   // Filter Active Items Only
-  const activeProducts = useMemo ? showcaseItems.filter(item => item.isActive !== false) : showcaseItems.filter(item => item.isActive !== false);
+  const activeProducts = showcaseItems.filter(item => item.isActive !== false);
 
   // Safety check on activeIndex range
   useEffect(() => {
