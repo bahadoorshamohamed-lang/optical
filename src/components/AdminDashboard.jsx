@@ -339,8 +339,10 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     setProductFormData({
       id: `prod-${Date.now()}`,
       name: '',
-      category: 'lenses',
-      categoryLabel: 'Lenses',
+      category: 'sunglasses',
+      categoryLabel: 'Sunglasses',
+      gender: 'unisex',
+      tags: ['sunglasses', 'men', 'male', 'women', 'female'],
       shortDescription: '',
       fullDescription: '',
       imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80',
@@ -354,6 +356,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     setFormType('product');
     setProductFormData({
       ...prod,
+      gender: prod.gender || (prod.tags?.includes('kids') ? 'kids' : prod.tags?.includes('men') && !prod.tags?.includes('women') ? 'male' : prod.tags?.includes('women') && !prod.tags?.includes('men') ? 'female' : 'unisex'),
       hoverImageUrl: prod.hoverImageUrl || prod.secondaryImageUrl || prod.hoverImage || ''
     });
     setIsFormOpen(true);
@@ -361,12 +364,29 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
 
   const handleSaveProductForm = (e) => {
     e.preventDefault();
+    const cat = productFormData.category || 'sunglasses';
+    const gender = productFormData.gender || 'unisex';
+    const autoTags = [cat];
+    if (cat === 'sunglasses') autoTags.push('sunglasses');
+    if (cat === 'frames' || cat === 'spectacles') autoTags.push('frames', 'eyeglasses');
+    if (cat === 'lenses') autoTags.push('lenses');
+    if (cat === 'eye-solutions') autoTags.push('eye-solutions');
+
+    if (gender === 'male' || gender === 'unisex') autoTags.push('men', 'male');
+    if (gender === 'female' || gender === 'unisex') autoTags.push('women', 'female');
+    if (gender === 'kids') autoTags.push('kids', 'junior');
+
+    const finalProduct = {
+      ...productFormData,
+      tags: Array.from(new Set([...(productFormData.tags || []), ...autoTags]))
+    };
+
     let updatedList;
     if (editingItem) {
-      updatedList = products.map(p => p.id === editingItem.id ? productFormData : p);
+      updatedList = products.map(p => p.id === editingItem.id ? finalProduct : p);
       showToast('Product details updated!');
     } else {
-      updatedList = [productFormData, ...products];
+      updatedList = [finalProduct, ...products];
       showToast('New optical product added!');
     }
     setProducts(updatedList);
@@ -1955,20 +1975,30 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Category Key</label>
+                    <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Category Key *</label>
                     <select
                       value={productFormData.category}
-                      onChange={(e) => setProductFormData({ 
-                        ...productFormData, 
-                        category: e.target.value,
-                        categoryLabel: e.target.options[e.target.selectedIndex].text 
-                      })}
+                      onChange={(e) => {
+                        const selectedVal = e.target.value;
+                        let labelText = 'Sunglasses';
+                        if (selectedVal === 'frames' || selectedVal === 'spectacles') labelText = 'Eyeglasses';
+                        else if (selectedVal === 'lenses') labelText = 'Lenses';
+                        else if (selectedVal === 'eye-solutions') labelText = 'Eye Solutions';
+                        else if (selectedVal === 'kids') labelText = 'Kids Eyewear';
+                        
+                        setProductFormData({ 
+                          ...productFormData, 
+                          category: selectedVal,
+                          categoryLabel: labelText 
+                        });
+                      }}
                       className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     >
-                      <option value="spectacles">Spectacles</option>
-                      <option value="lenses">Lenses</option>
                       <option value="sunglasses">Sunglasses</option>
-                      <option value="kids">Kids</option>
+                      <option value="frames">Frames / Eyeglasses</option>
+                      <option value="lenses">Lenses</option>
+                      <option value="eye-solutions">Eye Care Solutions</option>
+                      <option value="kids">Kids Eyewear</option>
                     </select>
                   </div>
 
@@ -1978,10 +2008,24 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
                       type="text"
                       value={productFormData.categoryLabel || productFormData.category}
                       onChange={(e) => setProductFormData({ ...productFormData, categoryLabel: e.target.value })}
-                      placeholder="e.g. Lenses"
+                      placeholder="e.g. Sunglasses"
                       className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                   </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Target Demographic / Gender *</label>
+                  <select
+                    value={productFormData.gender || 'unisex'}
+                    onChange={(e) => setProductFormData({ ...productFormData, gender: e.target.value })}
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  >
+                    <option value="unisex">Unisex (Both Male & Female)</option>
+                    <option value="male">Male (Men's Only)</option>
+                    <option value="female">Female (Women's Only)</option>
+                    <option value="kids">Kids (Children)</option>
+                  </select>
                 </div>
 
                 <div className="space-y-1">

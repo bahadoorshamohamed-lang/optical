@@ -152,23 +152,26 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
       let matchesCategory = true;
       if (selectedCategory && selectedCategory !== 'all') {
         const catQuery = selectedCategory.toLowerCase().trim();
+        const catLabel = (product.categoryLabel || '').toLowerCase();
+        const prodCat = (product.category || '').toLowerCase();
+        
         if (catQuery === 'sunglasses') {
-          matchesCategory = product.category?.toLowerCase() === 'sunglasses' ||
-            (product.tags && product.tags.some(t => t.toLowerCase() === 'sunglasses'));
+          matchesCategory = prodCat === 'sunglasses' || catLabel.includes('sunglass') ||
+            (product.tags && product.tags.some(t => t.toLowerCase().includes('sunglass')));
         } else if (catQuery === 'frames' || catQuery === 'eyeglasses' || catQuery === 'spectacles') {
-          matchesCategory = ['frames', 'eyeglasses', 'spectacles'].includes(product.category?.toLowerCase()) ||
+          matchesCategory = ['frames', 'eyeglasses', 'spectacles'].includes(prodCat) || catLabel.includes('frame') || catLabel.includes('eyeglass') || catLabel.includes('spectacle') ||
             (product.tags && product.tags.some(t => ['frames', 'eyeglasses', 'spectacles'].includes(t.toLowerCase())));
         } else if (catQuery === 'lenses') {
-          matchesCategory = product.category?.toLowerCase() === 'lenses' ||
-            (product.tags && product.tags.some(t => t.toLowerCase() === 'lenses'));
+          matchesCategory = prodCat === 'lenses' || catLabel.includes('lens') ||
+            (product.tags && product.tags.some(t => t.toLowerCase().includes('lens')));
         } else if (catQuery === 'eye-solutions' || catQuery === 'care' || catQuery === 'solutions') {
-          matchesCategory = product.category?.toLowerCase() === 'eye-solutions' ||
-            (product.tags && product.tags.some(t => t.toLowerCase() === 'eye-solutions'));
+          matchesCategory = prodCat === 'eye-solutions' || catLabel.includes('solution') || catLabel.includes('care') ||
+            (product.tags && product.tags.some(t => t.toLowerCase().includes('eye-solutions')));
         } else if (catQuery === 'kids') {
-          matchesCategory = product.category?.toLowerCase() === 'kids' ||
-            (product.tags && product.tags.some(t => t.toLowerCase() === 'kids'));
+          matchesCategory = prodCat === 'kids' || catLabel.includes('kid') ||
+            (product.tags && product.tags.some(t => t.toLowerCase().includes('kids')));
         } else {
-          matchesCategory = product.category?.toLowerCase() === catQuery ||
+          matchesCategory = prodCat === catQuery || catLabel.includes(catQuery) ||
             (product.tags && product.tags.some(t => t.toLowerCase() === catQuery));
         }
       }
@@ -177,6 +180,13 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
       let matchesGender = true;
       if (genderFilter && genderFilter !== 'all') {
         const gQuery = genderFilter.toLowerCase().trim();
+        
+        // Check if product has explicit demographic tags
+        const hasExplicitGenderTag = product.tags && product.tags.some(t => {
+          const tLower = t.toLowerCase();
+          return ['male', 'men', 'mens', 'man', 'female', 'women', 'womens', 'woman', 'lady', 'kids', 'junior', 'child', 'children'].includes(tLower);
+        });
+
         const tagMatch = product.tags && product.tags.some(t => {
           const tLower = t.toLowerCase();
           if (gQuery === 'male' || gQuery === 'men') {
@@ -193,12 +203,14 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
 
         const nameLower = product.name?.toLowerCase() || '';
         const descLower = product.shortDescription?.toLowerCase() || '';
+        const catLabelLower = product.categoryLabel?.toLowerCase() || '';
         const textMatch = 
-          ((gQuery === 'male' || gQuery === 'men') && (nameLower.includes('men') || nameLower.includes('male') || descLower.includes('men') || descLower.includes('male'))) ||
-          ((gQuery === 'female' || gQuery === 'women') && (nameLower.includes('women') || nameLower.includes('female') || descLower.includes('women') || descLower.includes('female'))) ||
+          ((gQuery === 'male' || gQuery === 'men') && (nameLower.includes('men') || nameLower.includes('male') || descLower.includes('men') || descLower.includes('male') || catLabelLower.includes('men'))) ||
+          ((gQuery === 'female' || gQuery === 'women') && (nameLower.includes('women') || nameLower.includes('female') || descLower.includes('women') || descLower.includes('female') || catLabelLower.includes('women'))) ||
           (gQuery === 'kids' && (nameLower.includes('kids') || nameLower.includes('junior') || descLower.includes('kids')));
 
-        matchesGender = tagMatch || textMatch;
+        // If product has no explicit demographic tag (freshly created by admin), include it so it doesn't get hidden
+        matchesGender = tagMatch || textMatch || !hasExplicitGenderTag;
       }
 
       // 3. Search Query Filter
