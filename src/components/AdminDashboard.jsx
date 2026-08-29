@@ -458,8 +458,10 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     if (gender === 'female' || gender === 'unisex') autoTags.push('women', 'female');
     if (gender === 'kids') autoTags.push('kids', 'junior');
 
+    const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
     const finalProduct = {
       ...productFormData,
+      imageUrl: productFormData.imageUrl && productFormData.imageUrl.trim() ? productFormData.imageUrl.trim() : DEFAULT_FALLBACK_IMAGE,
       tags: Array.from(new Set([...(productFormData.tags || []), ...autoTags]))
     };
 

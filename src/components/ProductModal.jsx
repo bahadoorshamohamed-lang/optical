@@ -2,12 +2,15 @@ import React, { useEffect } from 'react';
 import { X, CheckCircle2, MapPin, Phone, ShieldCheck, Sparkles, AlertCircle } from 'lucide-react';
 import { BUSINESS_INFO } from '../data/products';
 
+const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
+
 const ProductModal = ({ product, onClose }) => {
   const hoverImage = product?.hoverImageUrl || product?.secondaryImageUrl || product?.hoverImage;
-  const [activeImage, setActiveImage] = React.useState(product?.imageUrl);
+  const initialImg = product?.imageUrl && product?.imageUrl.trim() ? product?.imageUrl : DEFAULT_FALLBACK_IMAGE;
+  const [activeImage, setActiveImage] = React.useState(initialImg);
 
   useEffect(() => {
-    setActiveImage(product?.imageUrl);
+    setActiveImage(product?.imageUrl && product?.imageUrl.trim() ? product?.imageUrl : DEFAULT_FALLBACK_IMAGE);
   }, [product]);
 
   useEffect(() => {
@@ -63,8 +66,9 @@ const ProductModal = ({ product, onClose }) => {
             <div className="md:col-span-5 space-y-4">
               <div className="relative rounded-2xl overflow-hidden aspect-square bg-slate-100 border border-slate-200/80 shadow-inner group">
                 <img
-                  src={activeImage || product.imageUrl}
+                  src={activeImage || DEFAULT_FALLBACK_IMAGE}
                   alt={product.name}
+                  onError={() => setActiveImage(DEFAULT_FALLBACK_IMAGE)}
                   className="w-full h-full object-cover transition-all duration-500"
                 />
                 <div className="absolute top-3 left-3">

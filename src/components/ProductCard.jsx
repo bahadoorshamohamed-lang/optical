@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
+const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
 
 const ProductCard = ({ product, onSelect }) => {
   const hoverImage = product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage;
+  const rawImage = product.imageUrl && product.imageUrl.trim() ? product.imageUrl : DEFAULT_FALLBACK_IMAGE;
+
+  const [mainSrc, setMainSrc] = useState(rawImage);
+  const [hoverSrc, setHoverSrc] = useState(hoverImage);
+
+  useEffect(() => {
+    setMainSrc(product.imageUrl && product.imageUrl.trim() ? product.imageUrl : DEFAULT_FALLBACK_IMAGE);
+    setHoverSrc(hoverImage);
+  }, [product.imageUrl, hoverImage]);
 
   return (
     <div 
@@ -11,10 +22,11 @@ const ProductCard = ({ product, onSelect }) => {
     >
       {/* Primary Optical Product Image */}
       <img
-        src={product.imageUrl}
+        src={mainSrc}
         alt={product.name}
+        onError={() => setMainSrc(DEFAULT_FALLBACK_IMAGE)}
         className={`w-full h-full object-cover transition-all duration-700 ease-out ${
-          hoverImage 
+          hoverSrc 
             ? 'group-hover:opacity-0 group-hover:scale-105' 
             : 'group-hover:scale-110'
         }`}
@@ -22,14 +34,27 @@ const ProductCard = ({ product, onSelect }) => {
       />
 
       {/* 2nd Hover Image (Uploaded by Admin) */}
-      {hoverImage && (
+      {hoverSrc && (
         <img
-          src={hoverImage}
+          src={hoverSrc}
           alt={`${product.name} - Hover View`}
+          onError={() => setHoverSrc(null)}
           className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out"
           loading="lazy"
         />
       )}
+
+      {/* Product Title Label Overlay Strip */}
+      <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent text-white pointer-events-none z-10">
+        <h4 className="text-[11px] sm:text-xs font-bold font-serif line-clamp-1 text-white shadow-xs">
+          {product.name}
+        </h4>
+        {product.categoryLabel && (
+          <span className="text-[9px] font-extrabold text-emerald-400 uppercase tracking-wider block font-mono">
+            {product.categoryLabel}
+          </span>
+        )}
+      </div>
 
       {/* Subtle Gradient Sheen Overlay on Hover */}
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10" />
@@ -38,7 +63,7 @@ const ProductCard = ({ product, onSelect }) => {
       <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 animate-shimmer-sheen pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
 
       {/* 2nd View Badge Indicator */}
-      {hoverImage && (
+      {hoverSrc && (
         <div className="absolute top-3 right-3 z-20 pointer-events-none">
           <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-slate-950/80 text-emerald-400 border border-emerald-500/40 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-md shadow-md">
             2nd View
