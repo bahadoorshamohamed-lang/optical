@@ -19,6 +19,7 @@ import { syncProductsWithAPI } from './data/products';
 import { syncFramesCollectionWithAPI } from './data/framesCollection';
 import { syncCorePurposeWithAPI } from './data/corePurpose';
 import { syncLensesCollectionWithAPI } from './data/lensesCollection';
+import { syncShowcase360WithAPI } from './data/showcase360';
 import { syncTopBarDataWithAPI, syncFooterDataWithAPI } from './data/siteConfig';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
       syncFramesCollectionWithAPI();
       syncCorePurposeWithAPI();
       syncLensesCollectionWithAPI();
+      syncShowcase360WithAPI();
       syncTopBarDataWithAPI();
       syncFooterDataWithAPI();
     };

@@ -1,88 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, MoveHorizontal, Scan, Sparkles } from 'lucide-react';
-
-const GALLERY_PRODUCTS = [
-  {
-    id: '01',
-    code: '01 / 06',
-    title: 'Handcrafted Acetate Eyewear',
-    category: 'PREMIUM FRAMES',
-    descriptionLines: [
-      'Handcrafted bio-cellulose acetate frame engineered for superior durability and shape retention.',
-      'Features 5-barrel German stainless steel hinges for smooth, long-lasting temple movement.',
-      'Ergonomically contoured nose bridge distributes frame weight evenly across all facial shapes.',
-      'Rich deep tortoise finish with polished gloss texture suited for daily executive wear.'
-    ],
-    imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=1200&q=80',
-  },
-  {
-    id: '02',
-    code: '02 / 06',
-    title: 'Blue Cut Digital Filter Lenses',
-    category: 'LENSES COLLECTION',
-    descriptionLines: [
-      'Advanced blue ray absorption technology shielding your eyes from HEV light (400nm - 450nm).',
-      'Reduces digital eye fatigue, headaches, and sleep disruption during extended screen time.',
-      'Includes multi-layer anti-reflective coating eliminating monitor flickers and screen glares.',
-      'Prescribes crystal-clear optics essential for software engineers, students, and desk professionals.'
-    ],
-    imageUrl: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=1200&q=80',
-  },
-  {
-    id: '03',
-    code: '03 / 06',
-    title: 'Heritage Classic Frames',
-    category: 'CLASSIC FRAMES',
-    descriptionLines: [
-      'Timeless unisex rectangular framing offering versatile elegance for every occasion.',
-      'Constructed with lightweight composite materials providing effortless all-day wearing comfort.',
-      'Compatible with single vision, progressive multi-focal, and reading optical power fittings.',
-      'Proven structural reliability backed by Abdul Wahab B.Sc. Optom. vision fitting standards.'
-    ],
-    imageUrl: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=1200&q=80',
-  },
-  {
-    id: '04',
-    code: '04 / 06',
-    title: 'Ultra-Minimalist Rimless Optics',
-    category: 'RIMLESS FRAMES',
-    descriptionLines: [
-      'Featherlight frameless optics weighing less than 10 grams for an almost invisible appearance.',
-      'Flexible beta-titanium temples absorb accidental bends while maintaining custom temple tension.',
-      'Provides an unobstructed panoramic visual field without heavy outer rim boundaries.',
-      'Custom drilled and fitted with high-impact polycarbonate optical lens materials.'
-    ],
-    imageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=1200&q=80',
-  },
-  {
-    id: '05',
-    code: '05 / 06',
-    title: 'Polarized Designer Sunglasses',
-    category: 'SUNGLASSES',
-    descriptionLines: [
-      '100% UVA and UVB total solar defense shielding corneal and retinal tissues from harsh rays.',
-      'Precision polarized film eliminates blinded road reflections and daytime glare artifacts.',
-      'Scratch-resistant optical coating ensures long-lasting clarity during outdoor activities.',
-      'Stylish dark charcoal gradient tint styled for driving, travel, and outdoor comfort.'
-    ],
-    imageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=1200&q=80',
-  },
-  {
-    id: '06',
-    code: '06 / 06',
-    title: 'Flexible Junior Kids Eyewear',
-    category: 'KIDS FRAMES',
-    descriptionLines: [
-      'Shatterproof TR90 rubberized polymer frames designed specifically for active children.',
-      '180-degree flexible temple hinges flex without breaking or losing original structural alignment.',
-      '100% non-toxic, hypoallergenic, and free from sharp metal screws or dangerous hard edges.',
-      'Lightweight ergonomic fit ensuring glasses stay secure during school and outdoor play.'
-    ],
-    imageUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=80',
-  },
-];
+import { getStoredShowcase360 } from '../data/showcase360';
 
 const Showcase360 = () => {
+  const [showcaseItems, setShowcaseItems] = useState(getStoredShowcase360());
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
@@ -90,8 +11,28 @@ const Showcase360 = () => {
 
   const lastInteractionRef = useRef(Date.now());
 
+  // Real-time Event Listener for Admin Data Updates
+  useEffect(() => {
+    const handleUpdate = () => {
+      setShowcaseItems(getStoredShowcase360());
+    };
+    window.addEventListener('showcase360-updated', handleUpdate);
+    return () => window.removeEventListener('showcase360-updated', handleUpdate);
+  }, []);
+
+  // Filter Active Items Only
+  const activeProducts = useMemo ? showcaseItems.filter(item => item.isActive !== false) : showcaseItems.filter(item => item.isActive !== false);
+
+  // Safety check on activeIndex range
+  useEffect(() => {
+    if (activeIndex >= activeProducts.length && activeProducts.length > 0) {
+      setActiveIndex(0);
+    }
+  }, [activeProducts.length, activeIndex]);
+
   // Automatic Gallery Timer & Smooth Animatic Progress Line
   useEffect(() => {
+    if (activeProducts.length <= 1) return;
     setProgress(0);
     const intervalTime = 50; // Update progress bar every 50ms
     const totalTime = 4500;
@@ -101,7 +42,7 @@ const Showcase360 = () => {
       if (timeSinceInteraction >= 2000 && !isDragging) {
         setProgress((prev) => {
           if (prev >= 100) {
-            setActiveIndex((old) => (old + 1) % GALLERY_PRODUCTS.length);
+            setActiveIndex((old) => (old + 1) % activeProducts.length);
             return 0;
           }
           return prev + (intervalTime / totalTime) * 100;
@@ -110,7 +51,11 @@ const Showcase360 = () => {
     }, intervalTime);
 
     return () => clearInterval(progressTimer);
-  }, [activeIndex, isDragging]);
+  }, [activeIndex, isDragging, activeProducts.length]);
+
+  if (!activeProducts || activeProducts.length === 0) {
+    return null; // Return null if no active showcase items
+  }
 
   // Touch / Mouse Drag Controls
   const handleStartDrag = (clientX) => {
@@ -139,16 +84,25 @@ const Showcase360 = () => {
   };
 
   const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % GALLERY_PRODUCTS.length);
+    if (activeProducts.length === 0) return;
+    setActiveIndex((prev) => (prev + 1) % activeProducts.length);
     lastInteractionRef.current = Date.now();
   };
 
   const handlePrev = () => {
-    setActiveIndex((prev) => (prev - 1 + GALLERY_PRODUCTS.length) % GALLERY_PRODUCTS.length);
+    if (activeProducts.length === 0) return;
+    setActiveIndex((prev) => (prev - 1 + activeProducts.length) % activeProducts.length);
     lastInteractionRef.current = Date.now();
   };
 
-  const activeProduct = GALLERY_PRODUCTS[activeIndex];
+  const activeProduct = activeProducts[activeIndex] || activeProducts[0];
+
+  // Helper for bullet lines
+  const descriptionLines = Array.isArray(activeProduct.descriptionLines)
+    ? activeProduct.descriptionLines
+    : (typeof activeProduct.descriptionLines === 'string'
+        ? activeProduct.descriptionLines.split('\n').filter(Boolean)
+        : [activeProduct.descriptionLines || '']);
 
   return (
     <section id="showcase-360" className="py-20 md:py-28 bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-800 overflow-hidden relative border-b border-slate-200/80 select-none">
@@ -182,7 +136,7 @@ const Showcase360 = () => {
                   <span>{activeProduct.category}</span>
                 </span>
                 <span className="text-xs font-extrabold text-slate-500 font-mono tracking-widest">
-                  {activeProduct.code}
+                  {String(activeIndex + 1).padStart(2, '0')} / {String(activeProducts.length).padStart(2, '0')}
                 </span>
               </div>
 
@@ -193,7 +147,7 @@ const Showcase360 = () => {
 
               {/* Synchronized Description Lines for Active Image */}
               <div className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm text-optom-slate-body leading-relaxed font-medium">
-                {activeProduct.descriptionLines.map((line, idx) => (
+                {descriptionLines.map((line, idx) => (
                   <p key={idx} className="flex items-start gap-2.5 group">
                     <span className="w-2 h-2 rounded-full bg-optom-green mt-1.5 flex-shrink-0 group-hover:scale-150 transition-transform shadow-xs" />
                     <span>{line}</span>
@@ -228,7 +182,7 @@ const Showcase360 = () => {
 
               {/* Progress Step Bars */}
               <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1">
-                {GALLERY_PRODUCTS.map((_, idx) => {
+                {activeProducts.map((_, idx) => {
                   const isActive = idx === activeIndex;
                   return (
                     <button
@@ -270,14 +224,14 @@ const Showcase360 = () => {
               + OPTIC.360.GALLERY
             </div>
             <div className="absolute top-3 right-3 font-mono text-[9px] sm:text-[10px] font-extrabold text-slate-500 tracking-widest pointer-events-none">
-              POS: {activeIndex + 1}/{GALLERY_PRODUCTS.length}
+              POS: {activeIndex + 1}/{activeProducts.length}
             </div>
 
             {/* Arched Image Carousel (IMAGES ONLY) */}
             <div className="relative w-full h-full flex items-center justify-center min-h-[320px] sm:min-h-[380px] perspective-1200">
               
-              {GALLERY_PRODUCTS.map((product, idx) => {
-                const offset = (idx - activeIndex + GALLERY_PRODUCTS.length) % GALLERY_PRODUCTS.length;
+              {activeProducts.map((product, idx) => {
+                const offset = (idx - activeIndex + activeProducts.length) % activeProducts.length;
                 let positionClass = '';
                 let isVisible = false;
 
@@ -289,7 +243,7 @@ const Showcase360 = () => {
                   // Next image preview on right: Smaller, dimmed
                   positionClass = 'translate-x-[48%] sm:translate-x-[78%] scale-75 opacity-40 z-10 blur-[1px]';
                   isVisible = true;
-                } else if (offset === GALLERY_PRODUCTS.length - 1) {
+                } else if (offset === activeProducts.length - 1) {
                   // Previous image preview on left: Smaller, dimmed
                   positionClass = '-translate-x-[48%] sm:-translate-x-[78%] scale-75 opacity-40 z-10 blur-[1px]';
                   isVisible = true;
@@ -301,7 +255,7 @@ const Showcase360 = () => {
 
                 return (
                   <div
-                    key={product.id}
+                    key={product.id || idx}
                     onClick={() => {
                       if (!isActive) {
                         setActiveIndex(idx);

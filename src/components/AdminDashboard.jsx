@@ -42,6 +42,7 @@ import { getStoredFramesCollection, saveFramesCollection } from '../data/framesC
 import { getStoredCorePurpose, saveCorePurpose } from '../data/corePurpose';
 import { getStoredLensesCollection, saveLensesCollection } from '../data/lensesCollection';
 import { getStoredCategoryCards, saveCategoryCards } from '../data/productCategoryCards';
+import { getStoredShowcase360, saveShowcase360 } from '../data/showcase360';
 import ImageUploaderInput from './ImageUploaderInput';
 
 const HERO_PRESET_IMAGES = [
@@ -61,7 +62,7 @@ const POSTER_PRESET_IMAGES = [
 ];
 
 const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) => {
-  const [activeTab, setActiveTab] = useState('topbar'); // 'topbar' | 'footer' | 'categoryCards' | 'appeal' | 'products' | 'frames' | 'purpose' | 'lenses' | 'hero' | 'posters'
+  const [activeTab, setActiveTab] = useState('topbar'); // 'topbar' | 'footer' | 'categoryCards' | 'appeal' | 'products' | 'frames' | 'purpose' | 'lenses' | 'showcase360' | 'hero' | 'posters'
   
   // Data states
   const [posters, setPosters] = useState([]);
@@ -74,6 +75,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
   const [framesCollection, setFramesCollection] = useState([]);
   const [corePurposeItems, setCorePurposeItems] = useState([]);
   const [lensesCollection, setLensesCollection] = useState([]);
+  const [showcase360Items, setShowcase360Items] = useState([]);
 
   // Form & Action states
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -154,6 +156,15 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     isActive: true,
   });
 
+  const [showcaseFormData, setShowcaseFormData] = useState({
+    id: '',
+    title: '',
+    category: 'PREMIUM FRAMES',
+    descriptionLinesText: '',
+    imageUrl: '',
+    isActive: true,
+  });
+
   useEffect(() => {
     if (isOpen) {
       loadData();
@@ -171,11 +182,82 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     setFramesCollection(getStoredFramesCollection());
     setCorePurposeItems(getStoredCorePurpose());
     setLensesCollection(getStoredLensesCollection());
+    setShowcase360Items(getStoredShowcase360());
   };
 
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 3000);
+  };
+
+  // --- 360 GALLERY SHOWCASE HANDLERS ---
+  const handleOpenAddShowcaseForm = () => {
+    setEditingItem(null);
+    setFormType('showcase');
+    setShowcaseFormData({
+      id: `showcase-${Date.now()}`,
+      title: '',
+      category: 'PREMIUM FRAMES',
+      descriptionLinesText: '',
+      imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=1200&q=80',
+      isActive: true,
+    });
+    setIsFormOpen(true);
+  };
+
+  const handleOpenEditShowcaseForm = (item) => {
+    setEditingItem(item);
+    setFormType('showcase');
+    setShowcaseFormData({
+      ...item,
+      descriptionLinesText: Array.isArray(item.descriptionLines) 
+        ? item.descriptionLines.join('\n') 
+        : (item.descriptionLines || '')
+    });
+    setIsFormOpen(true);
+  };
+
+  const handleSaveShowcaseForm = (e) => {
+    e.preventDefault();
+    const lines = (showcaseFormData.descriptionLinesText || '')
+      .split('\n')
+      .map(l => l.trim())
+      .filter(Boolean);
+
+    const newItem = {
+      ...showcaseFormData,
+      descriptionLines: lines.length > 0 ? lines : ['High-precision optical grade lens and frame craftsmanship.']
+    };
+    delete newItem.descriptionLinesText;
+
+    let updatedList;
+    if (editingItem) {
+      updatedList = showcase360Items.map(s => s.id === editingItem.id ? newItem : s);
+      showToast('360 Showcase slide updated!');
+    } else {
+      updatedList = [newItem, ...showcase360Items];
+      showToast('New 360 Showcase slide added!');
+    }
+    setShowcase360Items(updatedList);
+    saveShowcase360(updatedList);
+    setIsFormOpen(false);
+  };
+
+  const handleToggleShowcaseActive = (id) => {
+    const updatedList = showcase360Items.map(item =>
+      item.id === id ? { ...item, isActive: !item.isActive } : item
+    );
+    setShowcase360Items(updatedList);
+    saveShowcase360(updatedList);
+    showToast('360 Showcase slide visibility updated!');
+  };
+
+  const handleDeleteShowcase = (id) => {
+    const updatedList = showcase360Items.filter(item => item.id !== id);
+    setShowcase360Items(updatedList);
+    saveShowcase360(updatedList);
+    setDeleteConfirmInfo(null);
+    showToast('360 Showcase slide deleted.');
   };
 
   // --- CATEGORY BANNER CARDS CRUD HANDLERS ---
@@ -823,6 +905,18 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
             >
               <Eye className="w-4 h-4 text-cyan-500" />
               <span>Lenses ({lensesCollection.length})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('showcase360')}
+              className={`px-4 py-2.5 rounded-2xl text-xs transition-all duration-200 flex items-center gap-2 ${
+                activeTab === 'showcase360'
+                  ? 'bg-slate-900 text-white font-black shadow-md scale-[1.02]'
+                  : 'bg-white/70 text-slate-600 hover:bg-white hover:text-slate-900 font-bold border border-slate-200/60'
+              }`}
+            >
+              <Scan className="w-4 h-4 text-emerald-500" />
+              <span>360 Gallery ({showcase360Items.length})</span>
             </button>
 
             <button
@@ -1810,6 +1904,116 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
             </div>
           )}
 
+          {/* TAB: 360 GALLERY SHOWCASE CRUD */}
+          {activeTab === 'showcase360' && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs">
+                <div>
+                  <h3 className="text-lg font-serif font-extrabold text-optom-slate-heading flex items-center gap-2">
+                    <Scan className="w-5 h-5 text-emerald-600" />
+                    <span>Arched 360 Gallery Showcase Slides ({showcase360Items.length})</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5 font-medium">
+                    Manage title, category badge, feature bullet lines, photo, and active visibility for the 360 Arched Product Showcase Viewer.
+                  </p>
+                </div>
+                <button
+                  onClick={handleOpenAddShowcaseForm}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-600 text-white text-xs font-extrabold uppercase tracking-wider hover:bg-emerald-700 transition-all shadow-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Showcase Slide</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {showcase360Items.map((item, idx) => (
+                  <div
+                    key={item.id || idx}
+                    className={`bg-white rounded-3xl overflow-hidden border transition-all flex flex-col justify-between ${
+                      item.isActive !== false ? 'border-emerald-300 shadow-md' : 'border-slate-200 opacity-60'
+                    }`}
+                  >
+                    <div className="relative aspect-[4/3] bg-slate-900 overflow-hidden">
+                      <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                      
+                      <div className="absolute top-3 left-3">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black text-white bg-emerald-600/90 uppercase tracking-wider">
+                          {item.category}
+                        </span>
+                      </div>
+
+                      <div className="absolute top-3 right-3">
+                        <button
+                          onClick={() => handleToggleShowcaseActive(item.id)}
+                          className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1.5 shadow-md ${
+                            item.isActive !== false ? 'bg-emerald-500 text-white' : 'bg-white text-slate-600'
+                          }`}
+                        >
+                          <Power className="w-3 h-3" />
+                          <span>{item.isActive !== false ? 'Live' : 'Hidden'}</span>
+                        </button>
+                      </div>
+
+                      <div className="absolute bottom-3 left-3 right-3 text-white">
+                        <h4 className="text-base font-extrabold font-serif line-clamp-1">{item.title}</h4>
+                      </div>
+                    </div>
+
+                    <div className="p-4 space-y-2">
+                      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                        Feature Bullet Lines ({Array.isArray(item.descriptionLines) ? item.descriptionLines.length : 1})
+                      </div>
+                      <div className="space-y-1">
+                        {(Array.isArray(item.descriptionLines) ? item.descriptionLines : [item.descriptionLines]).slice(0, 3).map((line, lIdx) => (
+                          <p key={lIdx} className="text-xs text-slate-600 line-clamp-1 flex items-start gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1 flex-shrink-0" />
+                            <span>{line}</span>
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-2">
+                      <button
+                        onClick={() => handleToggleShowcaseActive(item.id)}
+                        className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                          item.isActive !== false 
+                            ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' 
+                            : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                        }`}
+                      >
+                        <Power className="w-3.5 h-3.5" />
+                        <span>{item.isActive !== false ? 'Active' : 'Show'}</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleOpenEditShowcaseForm(item)}
+                        className="p-2 rounded-xl bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors"
+                        title="Edit Slide"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+
+                      <button
+                        onClick={() => setDeleteConfirmInfo({
+                          type: '360 Showcase Slide',
+                          name: item.title,
+                          onConfirm: () => handleDeleteShowcase(item.id)
+                        })}
+                        className="p-2 rounded-xl bg-rose-100 text-rose-800 hover:bg-rose-200 transition-colors"
+                        title="Delete Slide"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
         </div>
 
       </div>
@@ -2322,6 +2526,63 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
               </form>
             )}
 
+            {/* 9. 360 GALLERY SHOWCASE FORM */}
+            {formType === 'showcase' && (
+              <form onSubmit={handleSaveShowcaseForm} className="space-y-5">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Slide Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={showcaseFormData.title}
+                    onChange={(e) => setShowcaseFormData({ ...showcaseFormData, title: e.target.value })}
+                    placeholder="e.g. Handcrafted Acetate Eyewear"
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Category Badge Text *</label>
+                  <input
+                    type="text"
+                    required
+                    value={showcaseFormData.category}
+                    onChange={(e) => setShowcaseFormData({ ...showcaseFormData, category: e.target.value.toUpperCase() })}
+                    placeholder="e.g. PREMIUM FRAMES, LENSES COLLECTION, SUNGLASSES"
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">
+                    Feature Bullet Points (1 bullet line per line) *
+                  </label>
+                  <textarea
+                    rows={4}
+                    required
+                    value={showcaseFormData.descriptionLinesText}
+                    onChange={(e) => setShowcaseFormData({ ...showcaseFormData, descriptionLinesText: e.target.value })}
+                    placeholder={"Handcrafted bio-cellulose acetate frame engineered for superior durability.\nFeatures 5-barrel German stainless steel hinges.\nErgonomically contoured nose bridge.\nRich deep tortoise finish."}
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 leading-relaxed font-sans"
+                  />
+                  <span className="text-[10px] text-slate-500 block">Type each feature on a separate line. It will display as individual bullet points on the slide.</span>
+                </div>
+
+                <ImageUploaderInput
+                  label="Showcase Slide Photo (Camera, Local File, or Image URL)"
+                  value={showcaseFormData.imageUrl}
+                  onChange={(newUrl) => setShowcaseFormData({ ...showcaseFormData, imageUrl: newUrl })}
+                  required
+                  accentColor="emerald"
+                />
+
+                <div className="pt-2 flex items-center justify-end gap-3">
+                  <button type="button" onClick={() => setIsFormOpen(false)} className="px-5 py-3 rounded-2xl bg-slate-100 text-slate-700 text-xs font-bold">Cancel</button>
+                  <button type="submit" className="px-6 py-3 rounded-2xl bg-emerald-600 text-white text-xs font-extrabold uppercase shadow-md hover:bg-emerald-700">Save 360 Slide</button>
+                </div>
+              </form>
+            )}
+
           </div>
         </div>
       )}
@@ -2348,7 +2609,9 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
               </button>
               <button
                 onClick={() => {
-                  if (deleteConfirmInfo.type === 'hero') {
+                  if (deleteConfirmInfo.onConfirm) {
+                    deleteConfirmInfo.onConfirm();
+                  } else if (deleteConfirmInfo.type === 'hero') {
                     handleDeleteHeroSlide(deleteConfirmInfo.id);
                   } else if (deleteConfirmInfo.type === 'poster') {
                     handleDeletePoster(deleteConfirmInfo.id);
