@@ -31,6 +31,16 @@ export const DEFAULT_CATEGORY_CARDS = [
     badgeColor: 'bg-amber-500/90',
     targetTab: 'frames',
     isActive: true
+  },
+  { 
+    id: 'sunglasses', 
+    label: 'Sunglasses', 
+    tagline: 'UV400 & POLARIZED SUN WEAR',
+    description: 'Aviators, retro round, wayfarers & UV protected outdoor sunglasses for Men, Women & Kids.',
+    imageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80',
+    badgeColor: 'bg-rose-500/90',
+    targetTab: 'sunglasses',
+    isActive: true
   }
 ];
 
@@ -42,6 +52,16 @@ export const getStoredCategoryCards = () => {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
+        let hasChanges = false;
+        DEFAULT_CATEGORY_CARDS.forEach(dc => {
+          if (!parsed.some(c => c.id === dc.id || c.targetTab === dc.targetTab)) {
+            parsed.push(dc);
+            hasChanges = true;
+          }
+        });
+        if (hasChanges) {
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(parsed));
+        }
         return parsed;
       }
     }

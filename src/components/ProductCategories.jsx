@@ -16,7 +16,9 @@ import {
   SlidersHorizontal,
   Sun,
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  User,
+  UserCheck
 } from 'lucide-react';
 
 const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) => {
@@ -27,6 +29,10 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'carousel'
   const [isPaused, setIsPaused] = useState(false);
   const sliderRef = useRef(null);
+
+  // Dual-tier filter state
+  const [selectedCategory, setSelectedCategory] = useState(activeTab || 'all');
+  const [genderFilter, setGenderFilter] = useState('all'); // 'all' | 'male' | 'female' | 'kids'
 
   useEffect(() => {
     const handleProductsUpdate = () => {
@@ -44,6 +50,36 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
     };
   }, []);
 
+  // Sync external activeTab prop with internal state
+  useEffect(() => {
+    if (!activeTab || activeTab === 'all') {
+      setSelectedCategory('all');
+      setGenderFilter('all');
+    } else {
+      const lower = activeTab.toLowerCase().trim();
+      if (lower === 'male' || lower === 'men' || lower === 'female' || lower === 'women' || lower === 'kids') {
+        if (lower === 'men') setGenderFilter('male');
+        else if (lower === 'women') setGenderFilter('female');
+        else setGenderFilter(lower);
+      } else if (lower.includes('sunglass') && (lower.includes('male') || lower.includes('men') || lower.includes('man'))) {
+        setSelectedCategory('sunglasses');
+        setGenderFilter('male');
+      } else if (lower.includes('sunglass') && (lower.includes('female') || lower.includes('women') || lower.includes('lady'))) {
+        setSelectedCategory('sunglasses');
+        setGenderFilter('female');
+      } else if (lower.includes('sunglass') && lower.includes('kid')) {
+        setSelectedCategory('sunglasses');
+        setGenderFilter('kids');
+      } else if (lower === 'spectacles' || lower === 'eyeglasses') {
+        setSelectedCategory('frames');
+        setGenderFilter('all');
+      } else {
+        setSelectedCategory(activeTab);
+        setGenderFilter('all');
+      }
+    }
+  }, [activeTab]);
+
   // Core Main Categories with visual details & icons dynamically loaded from state/API
   const coreCategories = useMemo(() => {
     return categoryCards
@@ -53,6 +89,7 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
         if (c.id === 'eye-solutions' || c.targetTab === 'eye-solutions') icon = Droplets;
         else if (c.id === 'lenses' || c.targetTab === 'lenses') icon = Eye;
         else if (c.id === 'frames' || c.targetTab === 'frames') icon = Glasses;
+        else if (c.id === 'sunglasses' || c.targetTab === 'sunglasses') icon = Sun;
 
         return {
           ...c,
@@ -62,36 +99,45 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
       });
   }, [categoryCards]);
 
-  // Additional Demographic & Feature Filter Pills
-  const quickFilters = [
+  // Primary Category Filter Pills
+  const primaryCategories = [
     { id: 'all', label: 'All Catalogue', icon: Layers },
-    { id: 'women', label: 'Women', icon: Sparkles },
-    { id: 'men', label: 'Men', icon: Glasses },
-    { id: 'kids', label: 'Kids', icon: Eye },
     { id: 'sunglasses', label: 'Sunglasses', icon: Sun },
-    { id: 'clipon', label: 'Clip-On', icon: SlidersHorizontal },
     { id: 'frames', label: 'Frames', icon: Glasses },
     { id: 'lenses', label: 'Lenses', icon: Eye },
     { id: 'eye-solutions', label: 'Care Solutions', icon: Droplets },
+    { id: 'kids', label: 'Kids', icon: Eye },
   ];
 
-  // Dynamic Product Counts calculation for categories
+  // Demographic / Gender Sub-filter Pills (Male, Female, Kids, All)
+  const genderFilters = [
+    { id: 'all', label: 'All', icon: Layers },
+    { id: 'male', label: 'Male', icon: User },
+    { id: 'female', label: 'Female', icon: Sparkles },
+    { id: 'kids', label: 'Kids', icon: Eye },
+  ];
+
+  // Dynamic Product Counts calculation
   const categoryCounts = useMemo(() => {
     const counts = {
       all: products.length,
       'eye-solutions': 0,
       lenses: 0,
       frames: 0,
+      sunglasses: 0,
+      kids: 0,
     };
 
     products.forEach((product) => {
-      if (counts[product.category] !== undefined) {
-        counts[product.category] += 1;
+      const cat = product.category?.toLowerCase();
+      if (counts[cat] !== undefined) {
+        counts[cat] += 1;
       }
       if (product.tags) {
         product.tags.forEach((tag) => {
-          if (!counts[tag]) counts[tag] = 0;
-          counts[tag] += 1;
+          const t = tag.toLowerCase();
+          if (counts[t] !== undefined) counts[t] += 1;
+          else counts[t] = (counts[t] || 0) + 1;
         });
       }
     });
@@ -99,34 +145,63 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
     return counts;
   }, [products]);
 
-  // Filtered Products computation based on activeTab and searchQuery
+  // Filtered Products computation based on selectedCategory, genderFilter and searchQuery
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      // 1. Tab / Category Filter
-      let matchesTab = true;
-      if (activeTab && activeTab !== 'all') {
-        const queryTab = activeTab.toLowerCase().trim();
-        const isCategoryMatch = product.category?.toLowerCase() === queryTab;
-        const isTagMatch = product.tags && product.tags.some(t => t.toLowerCase() === queryTab);
-        
-        let isAliasMatch = false;
-        if (queryTab === 'spectacles' || queryTab === 'eyeglasses' || queryTab === 'frames') {
-          isAliasMatch = product.category === 'frames' || product.category === 'eyeglasses' || product.category === 'spectacles' ||
+      // 1. Category Filter
+      let matchesCategory = true;
+      if (selectedCategory && selectedCategory !== 'all') {
+        const catQuery = selectedCategory.toLowerCase().trim();
+        if (catQuery === 'sunglasses') {
+          matchesCategory = product.category?.toLowerCase() === 'sunglasses' ||
+            (product.tags && product.tags.some(t => t.toLowerCase() === 'sunglasses'));
+        } else if (catQuery === 'frames' || catQuery === 'eyeglasses' || catQuery === 'spectacles') {
+          matchesCategory = ['frames', 'eyeglasses', 'spectacles'].includes(product.category?.toLowerCase()) ||
             (product.tags && product.tags.some(t => ['frames', 'eyeglasses', 'spectacles'].includes(t.toLowerCase())));
-        } else if (queryTab === 'sunglasses') {
-          isAliasMatch = product.category === 'sunglasses' || (product.tags && product.tags.includes('sunglasses'));
-        } else if (queryTab === 'kids') {
-          isAliasMatch = product.category === 'kids' || (product.tags && product.tags.includes('kids'));
-        } else if (queryTab === 'lenses') {
-          isAliasMatch = product.category === 'lenses' || (product.tags && product.tags.includes('lenses'));
-        } else if (queryTab === 'eye-solutions' || queryTab === 'care' || queryTab === 'solutions') {
-          isAliasMatch = product.category === 'eye-solutions' || (product.tags && product.tags.includes('eye-solutions'));
+        } else if (catQuery === 'lenses') {
+          matchesCategory = product.category?.toLowerCase() === 'lenses' ||
+            (product.tags && product.tags.some(t => t.toLowerCase() === 'lenses'));
+        } else if (catQuery === 'eye-solutions' || catQuery === 'care' || catQuery === 'solutions') {
+          matchesCategory = product.category?.toLowerCase() === 'eye-solutions' ||
+            (product.tags && product.tags.some(t => t.toLowerCase() === 'eye-solutions'));
+        } else if (catQuery === 'kids') {
+          matchesCategory = product.category?.toLowerCase() === 'kids' ||
+            (product.tags && product.tags.some(t => t.toLowerCase() === 'kids'));
+        } else {
+          matchesCategory = product.category?.toLowerCase() === catQuery ||
+            (product.tags && product.tags.some(t => t.toLowerCase() === catQuery));
         }
-
-        matchesTab = isCategoryMatch || isTagMatch || isAliasMatch;
       }
 
-      // 2. Search Query Filter
+      // 2. Gender / Demographic Sub-Filter (Male, Female, Kids)
+      let matchesGender = true;
+      if (genderFilter && genderFilter !== 'all') {
+        const gQuery = genderFilter.toLowerCase().trim();
+        const tagMatch = product.tags && product.tags.some(t => {
+          const tLower = t.toLowerCase();
+          if (gQuery === 'male' || gQuery === 'men') {
+            return ['male', 'men', 'mens', 'man'].includes(tLower);
+          }
+          if (gQuery === 'female' || gQuery === 'women') {
+            return ['female', 'women', 'womens', 'woman', 'lady'].includes(tLower);
+          }
+          if (gQuery === 'kids') {
+            return ['kids', 'junior', 'child', 'children'].includes(tLower);
+          }
+          return tLower === gQuery;
+        });
+
+        const nameLower = product.name?.toLowerCase() || '';
+        const descLower = product.shortDescription?.toLowerCase() || '';
+        const textMatch = 
+          ((gQuery === 'male' || gQuery === 'men') && (nameLower.includes('men') || nameLower.includes('male') || descLower.includes('men') || descLower.includes('male'))) ||
+          ((gQuery === 'female' || gQuery === 'women') && (nameLower.includes('women') || nameLower.includes('female') || descLower.includes('women') || descLower.includes('female'))) ||
+          (gQuery === 'kids' && (nameLower.includes('kids') || nameLower.includes('junior') || descLower.includes('kids')));
+
+        matchesGender = tagMatch || textMatch;
+      }
+
+      // 3. Search Query Filter
       let matchesSearch = true;
       if (searchQuery.trim() !== '') {
         const query = searchQuery.toLowerCase().trim();
@@ -140,18 +215,33 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
         matchesSearch = nameMatch || descMatch || categoryMatch || tagMatch || featureMatch;
       }
 
-      return matchesTab && matchesSearch;
+      return matchesCategory && matchesGender && matchesSearch;
     });
-  }, [products, activeTab, searchQuery]);
+  }, [products, selectedCategory, genderFilter, searchQuery]);
 
-  // Current category info object if activeTab matches core category
-  const currentCategoryInfo = coreCategories.find(c => c.id === activeTab || c.targetTab === activeTab) ||
-    ((activeTab === 'eyeglasses' || activeTab === 'spectacles') ? coreCategories.find(c => c.id === 'frames') : null);
+  // Current category info object if selectedCategory matches core category
+  const currentCategoryInfo = coreCategories.find(c => c.id === selectedCategory || c.targetTab === selectedCategory) ||
+    ((selectedCategory === 'eyeglasses' || selectedCategory === 'spectacles') ? coreCategories.find(c => c.id === 'frames') : null);
+
+  // Dynamic context headline text
+  const getContextTitle = () => {
+    let catLabel = 'Optical Products';
+    if (selectedCategory === 'sunglasses') catLabel = 'Sunglasses';
+    else if (selectedCategory === 'frames') catLabel = 'Frames & Eyeglasses';
+    else if (selectedCategory === 'lenses') catLabel = 'Lenses';
+    else if (selectedCategory === 'eye-solutions') catLabel = 'Care Solutions';
+    else if (selectedCategory === 'kids') catLabel = 'Kids Eyewear';
+
+    if (genderFilter === 'male' || genderFilter === 'men') return `Male ${catLabel}`;
+    if (genderFilter === 'female' || genderFilter === 'women') return `Female ${catLabel}`;
+    if (genderFilter === 'kids') return `Kids ${catLabel}`;
+    return `All ${catLabel}`;
+  };
 
   // Reset slider index whenever filters or search change
   useEffect(() => {
     setCurrentSlideIndex(0);
-  }, [activeTab, searchQuery, viewMode]);
+  }, [selectedCategory, genderFilter, searchQuery, viewMode]);
 
   // Auto-advance carousel every 4 seconds when in carousel mode & not paused
   useEffect(() => {
@@ -175,16 +265,22 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
   };
 
   const handleCategoryClick = (catId) => {
-    if (activeTab === catId) {
-      // Toggle off if clicked twice
-      setActiveTab(null);
-    } else {
-      setActiveTab(catId);
+    const targetCat = catId || 'all';
+    setSelectedCategory(targetCat);
+    setGenderFilter('all');
+    if (setActiveTab) {
+      setActiveTab(targetCat === 'all' ? null : targetCat);
     }
   };
 
+  const handleGenderClick = (gId) => {
+    setGenderFilter(gId);
+  };
+
   const clearFilters = () => {
-    setActiveTab(null);
+    setSelectedCategory('all');
+    setGenderFilter('all');
+    if (setActiveTab) setActiveTab(null);
     setSearchQuery('');
   };
 
@@ -202,21 +298,22 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
       <div id="eye-solutions" className="absolute top-0"></div>
       <div id="lenses" className="absolute top-0"></div>
       <div id="frames" className="absolute top-0"></div>
+      <div id="sunglasses" className="absolute top-0"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12 relative z-10">
         
-        {/* Core Category Visual Showcase (Row Layout on Mobile) */}
-        <div className="flex md:grid md:grid-cols-3 gap-3 sm:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 max-w-6xl mx-auto">
+        {/* Core Category Visual Showcase Cards */}
+        <div className="flex md:grid md:grid-cols-4 gap-3 sm:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 max-w-7xl mx-auto">
           {coreCategories.map((cat) => {
-            const isActive = activeTab === cat.id;
+            const isActive = selectedCategory === cat.id || selectedCategory === cat.targetTab;
             const IconComponent = cat.icon;
-            const itemCount = categoryCounts[cat.id] || 0;
+            const itemCount = categoryCounts[cat.id] || categoryCounts[cat.targetTab] || 0;
 
             return (
               <div
                 key={cat.id}
-                onClick={() => handleCategoryClick(cat.id)}
-                className={`group relative rounded-3xl overflow-hidden aspect-[16/10] sm:aspect-[16/11] cursor-pointer transition-all duration-500 transform hover:-translate-y-1.5 focus:outline-none shadow-md w-[80vw] xs:w-[260px] md:w-auto flex-shrink-0 snap-center ${
+                onClick={() => handleCategoryClick(cat.targetTab || cat.id)}
+                className={`group relative rounded-3xl overflow-hidden aspect-[16/10] sm:aspect-[16/11] cursor-pointer transition-all duration-500 transform hover:-translate-y-1.5 focus:outline-none shadow-md w-[75vw] xs:w-[240px] md:w-auto flex-shrink-0 snap-center ${
                   isActive
                     ? 'ring-4 ring-emerald-400 scale-[1.02] shadow-2xl bg-slate-900'
                     : 'hover:shadow-xl border border-slate-200/90 opacity-95 hover:opacity-100 bg-slate-900'
@@ -242,7 +339,7 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
                 <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 animate-shimmer-sheen pointer-events-none" />
 
                 {/* Top Badge Overlay */}
-                <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-10">
+                <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
                   <div className={`p-2 sm:p-2.5 rounded-2xl backdrop-blur-md shadow-md transition-colors duration-300 ${
                     isActive ? 'bg-optom-green text-white' : 'bg-white/95 text-optom-green group-hover:bg-optom-green group-hover:text-white'
                   }`}>
@@ -250,28 +347,28 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
                   </div>
 
                   <span className={`px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-black text-white shadow-md backdrop-blur-md border border-white/20 uppercase tracking-wider ${cat.badgeColor}`}>
-                    {itemCount} Products
+                    {itemCount} Items
                   </span>
                 </div>
 
                 {/* Card Content Footer */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 text-white space-y-0.5 sm:space-y-1 z-10 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 p-3.5 sm:p-4 text-white space-y-0.5 z-10 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] sm:text-[11px] font-black text-emerald-400 uppercase tracking-widest">
+                    <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest truncate">
                       {cat.tagline}
                     </span>
                     {isActive && (
-                      <span className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] bg-emerald-500 text-white font-black px-2 py-0.5 rounded-full shadow-xs animate-pulse">
-                        <CheckCircle2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Selected
+                      <span className="inline-flex items-center gap-1 text-[9px] bg-emerald-500 text-white font-black px-2 py-0.5 rounded-full shadow-xs animate-pulse">
+                        <CheckCircle2 className="w-2.5 h-2.5" /> Active
                       </span>
                     )}
                   </div>
 
-                  <h3 className="text-base sm:text-xl font-serif font-extrabold tracking-tight group-hover:translate-x-1 transition-transform duration-300 flex items-center gap-2 text-white">
+                  <h3 className="text-sm sm:text-lg font-serif font-extrabold tracking-tight group-hover:translate-x-1 transition-transform duration-300 flex items-center gap-2 text-white">
                     <span>{cat.label}</span>
                   </h3>
 
-                  <p className="text-[11px] sm:text-xs text-slate-300 line-clamp-1 sm:line-clamp-2 leading-relaxed font-light opacity-90 group-hover:opacity-100 transition-opacity">
+                  <p className="text-[10px] sm:text-xs text-slate-300 line-clamp-1 leading-relaxed font-light opacity-90 group-hover:opacity-100 transition-opacity">
                     {cat.description}
                   </p>
                 </div>
@@ -280,28 +377,69 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
           })}
         </div>
 
-        {/* Category Quick Filter Pills Bar */}
-        <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto no-scrollbar py-2 max-w-7xl mx-auto px-1">
-          {quickFilters.map((filter) => {
-            const IconComp = filter.icon;
-            const isSelected = (activeTab === filter.id) || 
-              (filter.id === 'all' && !activeTab) || 
-              ((filter.id === 'eyeglasses' || filter.id === 'frames') && (activeTab === 'spectacles' || activeTab === 'eyeglasses' || activeTab === 'frames'));
-            return (
-              <button
-                key={filter.id}
-                onClick={() => handleCategoryClick(filter.id === 'all' ? null : filter.id)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-extrabold whitespace-nowrap transition-all duration-300 shadow-xs cursor-pointer ${
-                  isSelected
-                    ? 'bg-optom-green text-white ring-2 ring-emerald-400 scale-105 shadow-md'
-                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80 hover:border-emerald-300'
-                }`}
-              >
-                <IconComp className="w-3.5 h-3.5" />
-                <span>{filter.label}</span>
-              </button>
-            );
-          })}
+        {/* Dynamic Category & Demographic Sub-Filter System */}
+        <div className="space-y-4 max-w-7xl mx-auto">
+          
+          {/* Tier 1: Primary Category Pills */}
+          <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto no-scrollbar py-1.5 px-1">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mr-1 hidden sm:inline-block">Category:</span>
+            {primaryCategories.map((cat) => {
+              const IconComp = cat.icon;
+              const isSelected = selectedCategory === cat.id || 
+                (cat.id === 'all' && (!selectedCategory || selectedCategory === 'all')) || 
+                ((cat.id === 'frames') && (selectedCategory === 'spectacles' || selectedCategory === 'eyeglasses'));
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => handleCategoryClick(cat.id === 'all' ? null : cat.id)}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-extrabold whitespace-nowrap transition-all duration-300 shadow-xs cursor-pointer ${
+                    isSelected
+                      ? 'bg-optom-green text-white ring-2 ring-emerald-400 scale-105 shadow-md'
+                      : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200/80 hover:border-emerald-300'
+                  }`}
+                >
+                  <IconComp className="w-3.5 h-3.5" />
+                  <span>{cat.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Tier 2: Demographic / Gender Sub-Filters (Male, Female, Kids, All) */}
+          <div className="flex items-center justify-center">
+            <div className="inline-flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-slate-700/80 max-w-full overflow-x-auto no-scrollbar">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400 px-3 py-1 flex items-center gap-1.5 whitespace-nowrap">
+                <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{selectedCategory === 'sunglasses' ? 'Sunglasses For:' : 'Select Demographic:'}</span>
+              </span>
+              {genderFilters.map((g) => {
+                const IconComp = g.icon;
+                const isSelected = genderFilter === g.id || (g.id === 'male' && genderFilter === 'men') || (g.id === 'female' && genderFilter === 'women');
+                
+                // Dynamic label for sub-filter button
+                let subLabel = g.label;
+                if (selectedCategory === 'sunglasses') {
+                  subLabel = g.id === 'all' ? 'All Sunglasses' : `${g.label} Sunglasses`;
+                }
+
+                return (
+                  <button
+                    key={g.id}
+                    onClick={() => handleGenderClick(g.id)}
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all duration-300 cursor-pointer ${
+                      isSelected
+                        ? 'bg-optom-green text-white shadow-md ring-2 ring-emerald-400 scale-105'
+                        : 'text-slate-300 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <IconComp className="w-3.5 h-3.5 text-amber-300" />
+                    <span>{subLabel}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
         </div>
 
         {/* Dynamic Context Header Bar */}
@@ -310,14 +448,17 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
             <div className="p-2.5 sm:p-3 rounded-2xl bg-emerald-100 text-optom-green font-bold shadow-xs">
               {currentCategoryInfo ? (
                 React.createElement(currentCategoryInfo.icon, { className: 'w-5 h-5 sm:w-6 sm:h-6' })
+              ) : selectedCategory === 'sunglasses' ? (
+                <Sun className="w-5 h-5 sm:w-6 sm:h-6" />
               ) : (
                 <Glasses className="w-5 h-5 sm:w-6 sm:h-6" />
               )}
             </div>
             <div>
               <h3 className="text-lg sm:text-2xl font-extrabold text-optom-slate-heading capitalize flex items-center gap-2">
-                <span>
-                  {activeTab ? `${activeTab.replace('-', ' ')} Collection` : 'All Optical Products'}
+                <span>{getContextTitle()}</span>
+                <span className="text-xs font-extrabold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">
+                  {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
                 </span>
               </h3>
               {searchQuery && (

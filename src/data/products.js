@@ -241,6 +241,60 @@ export const DEFAULT_PRODUCTS = [
     },
     imageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80',
     hoverImageUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'sunglass-04',
+    name: 'Executive Matte Black Square Sunglasses',
+    category: 'sunglasses',
+    categoryLabel: 'Sunglasses',
+    tags: ['sunglasses', 'men', 'executive', 'polarized', 'square'],
+    shortDescription: 'Bold matte black square frame sunglasses with polarized anti-glare lenses, tailored for men.',
+    fullDescription: 'Designed with sharp executive square framing and high-density matte black acetate. Premium polarized lenses block glare, reduce eye fatigue, and offer complete UV400 protection.',
+    features: ['Executive Square Styling', 'TAC Anti-Glare Polarized', 'Matte Black Finish', 'UV400 Shield'],
+    specifications: {
+      'Category': "Men's Polarized Sunglasses",
+      'UV Shield': 'UV400 (100% Protection)',
+      'Frame Material': 'TR90 Matte Acetate',
+      'Gender': 'Men'
+    },
+    imageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'sunglass-05',
+    name: 'Vintage Wayfarer Polarized Sunglasses',
+    category: 'sunglasses',
+    categoryLabel: 'Sunglasses',
+    tags: ['sunglasses', 'men', 'male', 'women', 'female', 'wayfarer', 'classic'],
+    shortDescription: 'Iconic wayfarer silhouette with dark gradient polarized lenses and durable reinforced hinges.',
+    fullDescription: 'The ultimate classic wayfarer style for outdoor elegance. Features dark polarized UV-blocking lenses that eliminate reflections while keeping your vision crisp and natural.',
+    features: ['Iconic Wayfarer Silhouette', 'Polarized Lens Filter', '5-Barrel Metal Hinges', 'UV400 Protection'],
+    specifications: {
+      'Category': 'Polarized Sunglasses',
+      'UV Shield': 'UV400',
+      'Frame Material': 'Hand-crafted Acetate',
+      'Gender': 'Unisex / Male / Female'
+    },
+    imageUrl: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'sunglass-06',
+    name: 'Cat-Eye Glamour Rose Gold Sunglasses',
+    category: 'sunglasses',
+    categoryLabel: 'Sunglasses',
+    tags: ['sunglasses', 'women', 'female', 'cateye', 'glamour'],
+    shortDescription: 'Chic cat-eye silhouette in rose gold metal with gradient UV400 lenses tailored for women.',
+    fullDescription: 'Make a bold luxury statement with high-fashion cat-eye framing. Features dark tint gradient UV-blocking optics set in lightweight rose gold metal alloy frames.',
+    features: ['Glamour Cat-Eye Design', 'Gradient UV400 Shield', 'Lightweight Metal Alloy', 'Scratch Resistant Tint'],
+    specifications: {
+      'Category': "Women's Fashion Sunglasses",
+      'UV Shield': 'UV400 Category 3',
+      'Frame Material': 'Rose Gold Alloy & Acetate',
+      'Gender': 'Female'
+    },
+    imageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80',
+    hoverImageUrl: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80'
   }
 ];
 
@@ -285,7 +339,16 @@ export const getStoredProducts = () => {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length >= 8) {
         const restored = restoreAdvancedLensSolution(parsed);
-        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(restored));
+        let hasChanges = false;
+        DEFAULT_PRODUCTS.forEach(dp => {
+          if (!restored.some(p => p.id === dp.id)) {
+            restored.push(dp);
+            hasChanges = true;
+          }
+        });
+        if (hasChanges) {
+          localStorage.setItem(PRODUCTS_KEY, JSON.stringify(restored));
+        }
         return restored;
       }
     }
