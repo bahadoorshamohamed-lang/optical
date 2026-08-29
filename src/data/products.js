@@ -337,19 +337,8 @@ export const getStoredProducts = () => {
     const saved = localStorage.getItem(PRODUCTS_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length >= 8) {
-        const restored = restoreAdvancedLensSolution(parsed);
-        let hasChanges = false;
-        DEFAULT_PRODUCTS.forEach(dp => {
-          if (!restored.some(p => p.id === dp.id)) {
-            restored.push(dp);
-            hasChanges = true;
-          }
-        });
-        if (hasChanges) {
-          localStorage.setItem(PRODUCTS_KEY, JSON.stringify(restored));
-        }
-        return restored;
+      if (Array.isArray(parsed)) {
+        return restoreAdvancedLensSolution(parsed);
       }
     }
   } catch (error) {
