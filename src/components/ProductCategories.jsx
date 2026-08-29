@@ -405,46 +405,11 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
             })}
           </div>
 
-          {/* Tier 2: Demographic / Gender Sub-Filters (Male, Female, Kids, All) */}
-          <div className="flex items-center justify-center">
-            <div className="inline-flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-slate-700/80 max-w-full overflow-x-auto no-scrollbar">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400 px-3 py-1 flex items-center gap-1.5 whitespace-nowrap">
-                <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-400" />
-                <span>{selectedCategory === 'sunglasses' ? 'Sunglasses For:' : 'Select Demographic:'}</span>
-              </span>
-              {genderFilters.map((g) => {
-                const IconComp = g.icon;
-                const isSelected = genderFilter === g.id || (g.id === 'male' && genderFilter === 'men') || (g.id === 'female' && genderFilter === 'women');
-                
-                // Dynamic label for sub-filter button
-                let subLabel = g.label;
-                if (selectedCategory === 'sunglasses') {
-                  subLabel = g.id === 'all' ? 'All Sunglasses' : `${g.label} Sunglasses`;
-                }
-
-                return (
-                  <button
-                    key={g.id}
-                    onClick={() => handleGenderClick(g.id)}
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all duration-300 cursor-pointer ${
-                      isSelected
-                        ? 'bg-optom-green text-white shadow-md ring-2 ring-emerald-400 scale-105'
-                        : 'text-slate-300 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <IconComp className="w-3.5 h-3.5 text-amber-300" />
-                    <span>{subLabel}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
         </div>
 
         {/* Dynamic Context Header Bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-200 pb-4 gap-4 max-w-7xl mx-auto">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <div className="p-2.5 sm:p-3 rounded-2xl bg-emerald-100 text-optom-green font-bold shadow-xs">
               {currentCategoryInfo ? (
                 React.createElement(currentCategoryInfo.icon, { className: 'w-5 h-5 sm:w-6 sm:h-6' })
@@ -454,19 +419,62 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
                 <Glasses className="w-5 h-5 sm:w-6 sm:h-6" />
               )}
             </div>
-            <div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 flex-wrap">
               <h3 className="text-lg sm:text-2xl font-extrabold text-optom-slate-heading capitalize flex items-center gap-2">
-                <span>{getContextTitle()}</span>
+                <span>{selectedCategory === 'sunglasses' ? 'Sunglasses Collection' : getContextTitle()}</span>
                 <span className="text-xs font-extrabold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">
                   {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
                 </span>
               </h3>
-              {searchQuery && (
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Showing matches for "<span className="font-bold text-optom-slate-heading">{searchQuery}</span>"
-                </p>
+
+              {/* Male & Female Option Buttons Directly In Header Bar for Sunglasses */}
+              {selectedCategory === 'sunglasses' && (
+                <div className="flex items-center gap-1.5 bg-slate-900 text-white p-1 rounded-2xl shadow-md border border-slate-700">
+                  <button
+                    onClick={() => handleGenderClick('all')}
+                    className={`px-3 py-1 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                      genderFilter === 'all' ? 'bg-optom-green text-white shadow-xs scale-105' : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => handleGenderClick('male')}
+                    className={`flex items-center gap-1 px-3.5 py-1 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                      (genderFilter === 'male' || genderFilter === 'men') ? 'bg-optom-green text-white shadow-xs scale-105 ring-2 ring-emerald-400' : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    <User className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Male</span>
+                  </button>
+                  <button
+                    onClick={() => handleGenderClick('female')}
+                    className={`flex items-center gap-1 px-3.5 py-1 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                      (genderFilter === 'female' || genderFilter === 'women') ? 'bg-optom-green text-white shadow-xs scale-105 ring-2 ring-emerald-400' : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-rose-300" />
+                    <span>Female</span>
+                  </button>
+                  <button
+                    onClick={() => handleGenderClick('kids')}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                      genderFilter === 'kids' ? 'bg-optom-green text-white shadow-xs scale-105 ring-2 ring-emerald-400' : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    <Eye className="w-3.5 h-3.5 text-cyan-300" />
+                    <span>Kids</span>
+                  </button>
+                </div>
               )}
             </div>
+
+            {searchQuery && (
+              <p className="text-xs text-slate-500 mt-0.5 w-full">
+                Showing matches for "<span className="font-bold text-optom-slate-heading">{searchQuery}</span>"
+              </p>
+            )}
           </div>
 
           {/* Carousel Navigation Buttons (Visible when in carousel mode) */}
