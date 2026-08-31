@@ -93,9 +93,9 @@ const SHOWCASE_360_KEY = 'vision_care_showcase_360_v1';
 export const getStoredShowcase360 = () => {
   try {
     const saved = localStorage.getItem(SHOWCASE_360_KEY);
-    if (saved) {
+    if (saved !== null) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed;
       }
     }

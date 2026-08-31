@@ -49,19 +49,9 @@ const LOCAL_STORAGE_KEY = 'vision_care_category_cards_v1';
 export const getStoredCategoryCards = () => {
   try {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (saved) {
+    if (saved !== null) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        let hasChanges = false;
-        DEFAULT_CATEGORY_CARDS.forEach(dc => {
-          if (!parsed.some(c => c.id === dc.id || c.targetTab === dc.targetTab)) {
-            parsed.push(dc);
-            hasChanges = true;
-          }
-        });
-        if (hasChanges) {
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(parsed));
-        }
+      if (Array.isArray(parsed)) {
         return parsed;
       }
     }

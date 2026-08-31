@@ -63,9 +63,9 @@ const FRAMES_KEY = 'vision_care_marquee_frames_v1';
 export const getStoredFramesCollection = () => {
   try {
     const saved = localStorage.getItem(FRAMES_KEY);
-    if (saved) {
+    if (saved !== null) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed;
       }
     }

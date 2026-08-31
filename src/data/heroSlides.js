@@ -44,9 +44,9 @@ const LOCAL_STORAGE_KEY = 'vision_care_hero_slides_v1';
 export const getStoredHeroSlides = () => {
   try {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (saved) {
+    if (saved !== null) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed;
       }
     }

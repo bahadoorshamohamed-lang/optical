@@ -59,9 +59,9 @@ const LENSES_KEY = 'vision_care_lenses_collection_v1';
 export const getStoredLensesCollection = () => {
   try {
     const saved = localStorage.getItem(LENSES_KEY);
-    if (saved) {
+    if (saved !== null) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed;
       }
     }

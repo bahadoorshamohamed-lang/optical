@@ -33,9 +33,9 @@ const CORE_PURPOSE_KEY = 'vision_care_core_purpose_v1';
 export const getStoredCorePurpose = () => {
   try {
     const saved = localStorage.getItem(CORE_PURPOSE_KEY);
-    if (saved) {
+    if (saved !== null) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed;
       }
     }
