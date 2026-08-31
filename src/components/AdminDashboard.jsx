@@ -436,10 +436,11 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
   const handleOpenEditProductForm = (prod) => {
     setEditingItem(prod);
     setFormType('product');
+    const existingHover = prod.hoverImageUrl !== undefined ? prod.hoverImageUrl : (prod.secondaryImageUrl || prod.hoverImage || '');
     setProductFormData({
       ...prod,
+      hoverImageUrl: existingHover,
       gender: prod.gender || (prod.tags?.includes('kids') ? 'kids' : prod.tags?.includes('men') && !prod.tags?.includes('women') ? 'male' : prod.tags?.includes('women') && !prod.tags?.includes('men') ? 'female' : 'unisex'),
-      hoverImageUrl: prod.hoverImageUrl || prod.secondaryImageUrl || prod.hoverImage || ''
     });
     setIsFormOpen(true);
   };
@@ -458,10 +459,14 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     if (gender === 'female' || gender === 'unisex') autoTags.push('women', 'female');
     if (gender === 'kids') autoTags.push('kids', 'junior');
 
-    const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
+    const cleanHover = (productFormData.hoverImageUrl || '').trim();
+
     const finalProduct = {
       ...productFormData,
-      imageUrl: productFormData.imageUrl && productFormData.imageUrl.trim() ? productFormData.imageUrl.trim() : DEFAULT_FALLBACK_IMAGE,
+      imageUrl: productFormData.imageUrl ? productFormData.imageUrl.trim() : '',
+      hoverImageUrl: cleanHover,
+      secondaryImageUrl: cleanHover,
+      hoverImage: cleanHover,
       tags: Array.from(new Set([...(productFormData.tags || []), ...autoTags]))
     };
 
@@ -2249,7 +2254,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
                       <ImageIcon className="w-4 h-4 text-emerald-600" />
-                      <span>Product Photos (2 Photo Support - Device, Camera or URL)</span>
+                      <span>Product Photos (Device, Camera or URL)</span>
                     </span>
                     <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">
                       Hover Effect Ready
@@ -2274,7 +2279,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
 
                 <div className="pt-2 flex items-center justify-end gap-3">
                   <button type="button" onClick={() => setIsFormOpen(false)} className="px-5 py-3 rounded-2xl bg-slate-100 text-slate-700 text-xs font-bold">Cancel</button>
-                  <button type="submit" className="px-6 py-3 rounded-2xl bg-emerald-600 text-white text-xs font-extrabold uppercase shadow-md hover:bg-emerald-700">Save Product (2 Photos)</button>
+                  <button type="submit" className="px-6 py-3 rounded-2xl bg-emerald-600 text-white text-xs font-extrabold uppercase shadow-md hover:bg-emerald-700">Save Product</button>
                 </div>
               </form>
             )}
