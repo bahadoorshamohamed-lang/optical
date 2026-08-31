@@ -459,14 +459,21 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     if (gender === 'female' || gender === 'unisex') autoTags.push('women', 'female');
     if (gender === 'kids') autoTags.push('kids', 'junior');
 
-    const cleanHover = (productFormData.hoverImageUrl || '').trim();
+    let primary = (productFormData.imageUrl || '').trim();
+    let secondary = (productFormData.hoverImageUrl || productFormData.secondaryImageUrl || productFormData.hoverImage || '').trim();
+
+    // If Primary photo was deleted but Secondary exists, promote Secondary to Primary!
+    if (!primary && secondary) {
+      primary = secondary;
+      secondary = '';
+    }
 
     const finalProduct = {
       ...productFormData,
-      imageUrl: productFormData.imageUrl ? productFormData.imageUrl.trim() : '',
-      hoverImageUrl: cleanHover,
-      secondaryImageUrl: cleanHover,
-      hoverImage: cleanHover,
+      imageUrl: primary,
+      hoverImageUrl: secondary,
+      secondaryImageUrl: secondary,
+      hoverImage: secondary,
       tags: Array.from(new Set([...(productFormData.tags || []), ...autoTags]))
     };
 
@@ -2267,8 +2274,21 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
                   <ImageUploaderInput
                     label="Photo 1: Primary Product Image"
                     value={productFormData.imageUrl}
-                    onChange={(newUrl) => setProductFormData({ ...productFormData, imageUrl: newUrl })}
-                    required
+                    onChange={(newUrl) => {
+                      if (!newUrl && (productFormData.hoverImageUrl || productFormData.secondaryImageUrl || productFormData.hoverImage)) {
+                        const existingHover = productFormData.hoverImageUrl || productFormData.secondaryImageUrl || productFormData.hoverImage;
+                        setProductFormData({
+                          ...productFormData,
+                          imageUrl: existingHover,
+                          hoverImageUrl: '',
+                          secondaryImageUrl: '',
+                          hoverImage: ''
+                        });
+                      } else {
+                        setProductFormData({ ...productFormData, imageUrl: newUrl });
+                      }
+                    }}
+                    required={!productFormData.hoverImageUrl && !productFormData.secondaryImageUrl && !productFormData.hoverImage}
                     accentColor="emerald"
                   />
 
