@@ -3,16 +3,19 @@ import React, { useState, useEffect } from 'react';
 const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
 
 const ProductCard = ({ product, onSelect }) => {
-  const hoverImage = product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage;
-  const rawImage = product.imageUrl && product.imageUrl.trim() ? product.imageUrl : DEFAULT_FALLBACK_IMAGE;
+  const img1 = product?.imageUrl && product.imageUrl.trim();
+  const img2 = (product?.hoverImageUrl || product?.secondaryImageUrl || product?.hoverImage) && (product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage).trim();
+  
+  const primarySrc = img1 || img2 || DEFAULT_FALLBACK_IMAGE;
+  const hoverSrcVal = (img1 && img2 && img1 !== img2) ? img2 : null;
 
-  const [mainSrc, setMainSrc] = useState(rawImage);
-  const [hoverSrc, setHoverSrc] = useState(hoverImage);
+  const [mainSrc, setMainSrc] = useState(primarySrc);
+  const [hoverSrc, setHoverSrc] = useState(hoverSrcVal);
 
   useEffect(() => {
-    setMainSrc(product.imageUrl && product.imageUrl.trim() ? product.imageUrl : DEFAULT_FALLBACK_IMAGE);
-    setHoverSrc(hoverImage);
-  }, [product.imageUrl, hoverImage]);
+    setMainSrc(primarySrc);
+    setHoverSrc(hoverSrcVal);
+  }, [product?.imageUrl, product?.hoverImageUrl, product?.secondaryImageUrl, product?.hoverImage]);
 
   return (
     <div 

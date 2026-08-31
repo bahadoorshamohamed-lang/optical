@@ -5,13 +5,17 @@ import { BUSINESS_INFO } from '../data/products';
 const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
 
 const ProductModal = ({ product, onClose }) => {
-  const hoverImage = product?.hoverImageUrl || product?.secondaryImageUrl || product?.hoverImage;
-  const initialImg = product?.imageUrl && product?.imageUrl.trim() ? product?.imageUrl : DEFAULT_FALLBACK_IMAGE;
-  const [activeImage, setActiveImage] = React.useState(initialImg);
+  const img1 = product?.imageUrl && product.imageUrl.trim();
+  const img2 = (product?.hoverImageUrl || product?.secondaryImageUrl || product?.hoverImage) && (product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage).trim();
+
+  const primarySrc = img1 || img2 || DEFAULT_FALLBACK_IMAGE;
+  const secondSrc = (img1 && img2 && img1 !== img2) ? img2 : null;
+
+  const [activeImage, setActiveImage] = React.useState(primarySrc);
 
   useEffect(() => {
-    setActiveImage(product?.imageUrl && product?.imageUrl.trim() ? product?.imageUrl : DEFAULT_FALLBACK_IMAGE);
-  }, [product]);
+    setActiveImage(primarySrc);
+  }, [product, primarySrc]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -79,7 +83,7 @@ const ProductModal = ({ product, onClose }) => {
               </div>
 
               {/* 2 Photos Thumbnail Switcher if 2nd image available */}
-              {hoverImage && (
+              {secondSrc && (
                 <div className="space-y-1.5">
                   <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
                     Product Photos (2 Views):
@@ -87,14 +91,14 @@ const ProductModal = ({ product, onClose }) => {
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
-                      onClick={() => setActiveImage(product.imageUrl)}
+                      onClick={() => setActiveImage(img1)}
                       className={`relative aspect-[4/3] rounded-xl overflow-hidden border-2 transition-all p-0.5 ${
-                        activeImage === product.imageUrl 
+                        activeImage === img1 
                           ? 'border-optom-green ring-2 ring-emerald-300 scale-102' 
                           : 'border-slate-200 opacity-70 hover:opacity-100'
                       }`}
                     >
-                      <img src={product.imageUrl} alt="Photo 1" className="w-full h-full object-cover rounded-lg" />
+                      <img src={img1} alt="Photo 1" className="w-full h-full object-cover rounded-lg" />
                       <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-black bg-slate-900/80 text-white">
                         Photo 1 (Front)
                       </span>
@@ -102,14 +106,14 @@ const ProductModal = ({ product, onClose }) => {
 
                     <button
                       type="button"
-                      onClick={() => setActiveImage(hoverImage)}
+                      onClick={() => setActiveImage(secondSrc)}
                       className={`relative aspect-[4/3] rounded-xl overflow-hidden border-2 transition-all p-0.5 ${
-                        activeImage === hoverImage 
+                        activeImage === secondSrc 
                           ? 'border-optom-green ring-2 ring-emerald-300 scale-102' 
                           : 'border-slate-200 opacity-70 hover:opacity-100'
                       }`}
                     >
-                      <img src={hoverImage} alt="Photo 2" className="w-full h-full object-cover rounded-lg" />
+                      <img src={secondSrc} alt="Photo 2" className="w-full h-full object-cover rounded-lg" />
                       <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-black bg-slate-900/80 text-emerald-400">
                         Photo 2 (Hover View)
                       </span>

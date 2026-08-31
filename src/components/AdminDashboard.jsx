@@ -1376,7 +1376,10 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
                 {products.map((product) => {
-                  const hImg = product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage;
+                  const img1 = product.imageUrl && product.imageUrl.trim();
+                  const img2 = (product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage) && (product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage).trim();
+                  const mainImg = img1 || img2 || 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
+                  const hImg = (img1 && img2 && img1 !== img2) ? img2 : null;
                   return (
                     <div
                       key={product.id}
@@ -1384,7 +1387,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
                     >
                       <div className="aspect-[4/3] bg-slate-100 relative overflow-hidden">
                         <img 
-                          src={product.imageUrl} 
+                          src={mainImg} 
                           alt={product.name} 
                           className={`w-full h-full object-cover transition-all duration-500 ${
                             hImg ? 'group-hover:opacity-0 group-hover:scale-105' : 'group-hover:scale-105'
