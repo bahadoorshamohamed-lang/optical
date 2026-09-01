@@ -21,7 +21,7 @@ import {
   UserCheck
 } from 'lucide-react';
 
-const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) => {
+const ProductCategories = ({ activeTab = null, setActiveTab }) => {
   const [products, setProducts] = useState(getStoredProducts());
   const [categoryCards, setCategoryCards] = useState(getStoredCategoryCards());
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -526,7 +526,6 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onSelect={onSelectProduct}
                   />
                 ))}
               </div>
@@ -554,7 +553,6 @@ const ProductCategories = ({ onSelectProduct, activeTab = null, setActiveTab }) 
                       >
                         <ProductCard
                           product={product}
-                          onSelect={onSelectProduct}
                         />
                       </div>
                     ))}

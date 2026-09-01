@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
 
-const ProductCard = ({ product, onSelect }) => {
+const ProductCard = ({ product }) => {
   const img1 = product?.imageUrl && product.imageUrl.trim();
   const img2 = (product?.hoverImageUrl || product?.secondaryImageUrl || product?.hoverImage) && (product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage).trim();
   
@@ -19,8 +19,7 @@ const ProductCard = ({ product, onSelect }) => {
 
   return (
     <div 
-      onClick={() => onSelect(product)}
-      className="group relative bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer transform hover:-translate-y-1.5 aspect-[4/3] sm:aspect-square flex items-center justify-center bg-slate-50"
+      className="group relative bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-default transform hover:-translate-y-1.5 aspect-[4/3] sm:aspect-square flex items-center justify-center bg-slate-50"
       title={product.name}
     >
       {/* Primary Optical Product Image */}

@@ -134,7 +134,6 @@ function App() {
 
         {/* Section 4: Showcase Product Catalogue */}
         <ProductCategories 
-          onSelectProduct={(product) => setSelectedProduct(product)}
           activeTab={activeCategoryTab}
           setActiveTab={setActiveCategoryTab}
         />
@@ -158,14 +157,6 @@ function App() {
         forceOpen={forceOpenPoster} 
         onClose={() => setForceOpenPoster(false)}
       />
-
-      {/* Product Detail Modal Popup */}
-      {selectedProduct && (
-        <ProductModal 
-          product={selectedProduct} 
-          onClose={() => setSelectedProduct(null)} 
-        />
-      )}
 
       {/* Admin Login Modal (admin / admin123) */}
       <AdminLoginModal
