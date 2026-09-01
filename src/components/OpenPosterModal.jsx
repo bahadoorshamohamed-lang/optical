@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Tag } from 'lucide-react';
+import { X, Tag, Pencil } from 'lucide-react';
 import { getStoredPosters } from '../data/posters';
 
-const OpenPosterModal = ({ forceOpen = false, onClose }) => {
+const OpenPosterModal = ({ forceOpen = false, onClose, isAdminLoggedIn = false, onOpenAdmin }) => {
   const [posters, setPosters] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -51,18 +51,30 @@ const OpenPosterModal = ({ forceOpen = false, onClose }) => {
     <>
       {/* Floating Re-Open Badge Button (Visible at bottom-right if active posters exist) */}
       {posters.length > 0 && !isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-40 group flex items-center gap-2.5 px-4 py-3 rounded-full bg-slate-900/90 text-white backdrop-blur-md border border-emerald-400/40 shadow-[0_10px_25px_rgba(11,79,55,0.4)] hover:bg-optom-green hover:scale-105 active:scale-95 transition-all duration-300 animate-bounce"
-          aria-label="View Open Offer Poster"
-        >
-          <div className="p-1.5 rounded-full bg-emerald-500/20 text-emerald-400 group-hover:bg-white/20 group-hover:text-white">
-            <Tag className="w-4 h-4" />
-          </div>
-          <span className="text-xs font-extrabold uppercase tracking-wider pr-1">
-            Special Store Offer ({posters.length})
-          </span>
-        </button>
+        <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2">
+          {isAdminLoggedIn && (
+            <button
+              onClick={() => onOpenAdmin && onOpenAdmin('posters')}
+              className="p-3 rounded-full bg-amber-500 text-slate-950 font-bold shadow-lg hover:bg-amber-400 transition-all hover:scale-105 border border-amber-300"
+              title="Edit Offer Posters in Admin Dashboard"
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
+          )}
+
+          <button
+            onClick={() => setIsOpen(true)}
+            className="group flex items-center gap-2.5 px-4 py-3 rounded-full bg-slate-900/90 text-white backdrop-blur-md border border-emerald-400/40 shadow-[0_10px_25px_rgba(11,79,55,0.4)] hover:bg-optom-green hover:scale-105 active:scale-95 transition-all duration-300 animate-bounce"
+            aria-label="View Open Offer Poster"
+          >
+            <div className="p-1.5 rounded-full bg-emerald-500/20 text-emerald-400 group-hover:bg-white/20 group-hover:text-white">
+              <Tag className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-extrabold uppercase tracking-wider pr-1">
+              Special Store Offer ({posters.length})
+            </span>
+          </button>
+        </div>
       )}
 
       {/* Main Pure Image Open Poster Pop-Up Modal */}
@@ -77,6 +89,22 @@ const OpenPosterModal = ({ forceOpen = false, onClose }) => {
             className="relative max-w-4xl max-h-[88vh] bg-transparent rounded-3xl overflow-hidden shadow-2xl flex flex-col items-center group"
           >
             
+            {/* Admin Direct Quick Edit Button (Visible when admin logged in) */}
+            {isAdminLoggedIn && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClose();
+                  if (onOpenAdmin) onOpenAdmin('posters');
+                }}
+                className="absolute top-4 left-4 z-30 px-3.5 py-2 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-black text-xs flex items-center gap-1.5 shadow-lg border border-amber-300 backdrop-blur-md transition-all hover:scale-105"
+                title="Open Admin Dashboard to Edit Poster Images"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+                <span>Edit Poster (Admin)</span>
+              </button>
+            )}
+
             {/* Close Button */}
             <button
               onClick={handleClose}

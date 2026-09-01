@@ -54,9 +54,13 @@ function App() {
   });
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [adminInitialTab, setAdminInitialTab] = useState('topbar');
   const [forceOpenPoster, setForceOpenPoster] = useState(false);
 
-  const handleOpenAdmin = () => {
+  const handleOpenAdmin = (targetTab = 'topbar') => {
+    if (typeof targetTab === 'string') {
+      setAdminInitialTab(targetTab);
+    }
     if (isAdminLoggedIn) {
       setShowAdminDashboard(true);
     } else {
@@ -156,6 +160,8 @@ function App() {
       <OpenPosterModal 
         forceOpen={forceOpenPoster} 
         onClose={() => setForceOpenPoster(false)}
+        isAdminLoggedIn={isAdminLoggedIn}
+        onOpenAdmin={handleOpenAdmin}
       />
 
       {/* Admin Login Modal (admin / admin123) */}
@@ -168,6 +174,7 @@ function App() {
       {/* Admin Control Panel & Open Poster Management Dashboard */}
       <AdminDashboard
         isOpen={showAdminDashboard}
+        initialTab={adminInitialTab}
         onClose={() => setShowAdminDashboard(false)}
         onLogout={handleAdminLogout}
         onTriggerPublicPoster={handleTriggerPublicPoster}

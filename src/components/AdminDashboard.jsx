@@ -61,8 +61,8 @@ const POSTER_PRESET_IMAGES = [
   'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=1200&q=80',
 ];
 
-const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) => {
-  const [activeTab, setActiveTab] = useState('topbar'); // 'topbar' | 'footer' | 'categoryCards' | 'appeal' | 'products' | 'frames' | 'purpose' | 'lenses' | 'showcase360' | 'hero' | 'posters'
+const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, initialTab = 'topbar' }) => {
+  const [activeTab, setActiveTab] = useState(initialTab); // 'topbar' | 'footer' | 'categoryCards' | 'appeal' | 'products' | 'frames' | 'purpose' | 'lenses' | 'showcase360' | 'hero' | 'posters'
   
   // Data states
   const [posters, setPosters] = useState([]);
