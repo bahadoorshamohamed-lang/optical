@@ -30,9 +30,21 @@ const ProductCategories = ({ activeTab = null, setActiveTab }) => {
   const [isPaused, setIsPaused] = useState(false);
   const sliderRef = useRef(null);
 
-  // Dual-tier filter state
+  // Multi-tier filter state
   const [selectedCategory, setSelectedCategory] = useState(activeTab || 'all');
   const [genderFilter, setGenderFilter] = useState('all'); // 'all' | 'male' | 'female' | 'kids'
+  const [selectedBrand, setSelectedBrand] = useState('all');
+
+  // Dynamic computation of unique brands present in products
+  const availableBrands = useMemo(() => {
+    const brandsSet = new Set();
+    products.forEach((p) => {
+      if (p.brand && p.brand.trim()) {
+        brandsSet.add(p.brand.trim());
+      }
+    });
+    return Array.from(brandsSet).sort();
+  }, [products]);
 
   useEffect(() => {
     const handleProductsUpdate = () => {
@@ -213,23 +225,32 @@ const ProductCategories = ({ activeTab = null, setActiveTab }) => {
         matchesGender = tagMatch || textMatch || !hasExplicitGenderTag;
       }
 
-      // 3. Search Query Filter
+      // 3. Brand Filter
+      let matchesBrand = true;
+      if (selectedBrand && selectedBrand !== 'all') {
+        const bQuery = selectedBrand.toLowerCase().trim();
+        const pBrand = (product.brand || '').toLowerCase().trim();
+        matchesBrand = pBrand === bQuery || (product.tags && product.tags.some(t => t.toLowerCase() === bQuery));
+      }
+
+      // 4. Search Query Filter
       let matchesSearch = true;
       if (searchQuery.trim() !== '') {
         const query = searchQuery.toLowerCase().trim();
         const nameMatch = product.name.toLowerCase().includes(query);
+        const brandMatch = product.brand?.toLowerCase().includes(query);
         const descMatch = product.shortDescription.toLowerCase().includes(query) || 
                           product.fullDescription?.toLowerCase().includes(query);
         const categoryMatch = product.categoryLabel.toLowerCase().includes(query);
         const tagMatch = product.tags?.some(tag => tag.toLowerCase().includes(query));
         const featureMatch = product.features?.some(f => f.toLowerCase().includes(query));
 
-        matchesSearch = nameMatch || descMatch || categoryMatch || tagMatch || featureMatch;
+        matchesSearch = nameMatch || brandMatch || descMatch || categoryMatch || tagMatch || featureMatch;
       }
 
-      return matchesCategory && matchesGender && matchesSearch;
+      return matchesCategory && matchesGender && matchesBrand && matchesSearch;
     });
-  }, [products, selectedCategory, genderFilter, searchQuery]);
+  }, [products, selectedCategory, genderFilter, selectedBrand, searchQuery]);
 
   // Current category info object if selectedCategory matches core category
   const currentCategoryInfo = coreCategories.find(c => c.id === selectedCategory || c.targetTab === selectedCategory) ||
@@ -292,6 +313,7 @@ const ProductCategories = ({ activeTab = null, setActiveTab }) => {
   const clearFilters = () => {
     setSelectedCategory('all');
     setGenderFilter('all');
+    setSelectedBrand('all');
     if (setActiveTab) setActiveTab(null);
     setSearchQuery('');
   };
@@ -389,11 +411,11 @@ const ProductCategories = ({ activeTab = null, setActiveTab }) => {
           })}
         </div>
 
-        {/* Dynamic Category & Demographic Sub-Filter System */}
-        <div className="space-y-4 max-w-7xl mx-auto">
+        {/* Dynamic Category, Brand & Demographic Sub-Filter System */}
+        <div className="space-y-3 max-w-7xl mx-auto">
           
           {/* Tier 1: Primary Category Pills */}
-          <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto no-scrollbar py-1.5 px-1">
+          <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto no-scrollbar py-1 px-1">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mr-1 hidden sm:inline-block">Category:</span>
             {primaryCategories.map((cat) => {
               const IconComp = cat.icon;
@@ -416,6 +438,38 @@ const ProductCategories = ({ activeTab = null, setActiveTab }) => {
               );
             })}
           </div>
+
+          {/* Tier 2: Dynamic Brand Filter Selector Bar */}
+          {availableBrands.length > 0 && (
+            <div className="flex items-center justify-start sm:justify-center gap-1.5 overflow-x-auto no-scrollbar py-1 px-1">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-600 mr-1 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-amber-500" /> Brand:
+              </span>
+              <button
+                onClick={() => setSelectedBrand('all')}
+                className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  selectedBrand === 'all'
+                    ? 'bg-slate-900 text-amber-300 ring-2 ring-amber-400 scale-105 shadow-md'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                }`}
+              >
+                All Brands
+              </button>
+              {availableBrands.map((bName) => (
+                <button
+                  key={bName}
+                  onClick={() => setSelectedBrand(bName)}
+                  className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                    selectedBrand === bName
+                      ? 'bg-slate-900 text-amber-300 ring-2 ring-amber-400 scale-105 shadow-md'
+                      : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                  }`}
+                >
+                  {bName}
+                </button>
+              ))}
+            </div>
+          )}
 
         </div>
 

@@ -75,10 +75,15 @@ const ProductModal = ({ product, onClose }) => {
                   onError={() => setActiveImage(DEFAULT_FALLBACK_IMAGE)}
                   className="w-full h-full object-cover transition-all duration-500"
                 />
-                <div className="absolute top-3 left-3">
+                <div className="absolute top-3 left-3 flex items-center gap-2">
                   <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-optom-green text-white shadow-md">
                     {product.categoryLabel}
                   </span>
+                  {product.brand && (
+                    <span className="px-3 py-1 rounded-full text-xs font-black bg-slate-900 text-amber-300 border border-amber-400/40 shadow-md">
+                      {product.brand}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -136,9 +141,16 @@ const ProductModal = ({ product, onClose }) => {
             <div className="md:col-span-7 space-y-6">
               
               <div>
-                <span className="text-xs font-semibold text-optom-maroon uppercase tracking-widest block mb-1">
-                  Product Overview
-                </span>
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <span className="text-xs font-semibold text-optom-maroon uppercase tracking-widest block">
+                    Product Overview
+                  </span>
+                  {product.brand && (
+                    <span className="text-xs font-black text-amber-700 bg-amber-100 border border-amber-300/80 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                      Brand: {product.brand}
+                    </span>
+                  )}
+                </div>
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-optom-slate-heading">
                   {product.name}
                 </h2>

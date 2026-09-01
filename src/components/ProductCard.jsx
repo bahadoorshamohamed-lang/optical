@@ -46,16 +46,32 @@ const ProductCard = ({ product }) => {
         />
       )}
 
+      {/* Brand Badge Top-Left */}
+      {product.brand && (
+        <div className="absolute top-3 left-3 z-20 pointer-events-none">
+          <span className="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider bg-slate-950/85 text-amber-300 border border-amber-400/40 backdrop-blur-md shadow-md">
+            {product.brand}
+          </span>
+        </div>
+      )}
+
       {/* Product Title Label Overlay Strip */}
       <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent text-white pointer-events-none z-10">
         <h4 className="text-[11px] sm:text-xs font-bold font-serif line-clamp-1 text-white shadow-xs">
           {product.name}
         </h4>
-        {product.categoryLabel && (
-          <span className="text-[9px] font-extrabold text-emerald-400 uppercase tracking-wider block font-mono">
-            {product.categoryLabel}
-          </span>
-        )}
+        <div className="flex items-center justify-between gap-1 mt-0.5">
+          {product.categoryLabel && (
+            <span className="text-[9px] font-extrabold text-emerald-400 uppercase tracking-wider block font-mono truncate">
+              {product.categoryLabel}
+            </span>
+          )}
+          {product.brand && (
+            <span className="text-[9px] font-bold text-amber-300 uppercase tracking-wider block font-mono truncate">
+              {product.brand}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Subtle Gradient Sheen Overlay on Hover */}

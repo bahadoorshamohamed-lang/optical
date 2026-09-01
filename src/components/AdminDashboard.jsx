@@ -421,10 +421,11 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     setProductFormData({
       id: `prod-${Date.now()}`,
       name: '',
+      brand: 'Ray-Ban',
       category: 'sunglasses',
       categoryLabel: 'Sunglasses',
       gender: 'unisex',
-      tags: ['sunglasses', 'men', 'male', 'women', 'female'],
+      tags: ['sunglasses', 'men', 'male', 'women', 'female', 'ray-ban'],
       shortDescription: '',
       fullDescription: '',
       imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80',
@@ -439,6 +440,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     const existingHover = prod.hoverImageUrl !== undefined ? prod.hoverImageUrl : (prod.secondaryImageUrl || prod.hoverImage || '');
     setProductFormData({
       ...prod,
+      brand: prod.brand || '',
       hoverImageUrl: existingHover,
       gender: prod.gender || (prod.tags?.includes('kids') ? 'kids' : prod.tags?.includes('men') && !prod.tags?.includes('women') ? 'male' : prod.tags?.includes('women') && !prod.tags?.includes('men') ? 'female' : 'unisex'),
     });
@@ -449,6 +451,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     e.preventDefault();
     const cat = productFormData.category || 'sunglasses';
     const gender = productFormData.gender || 'unisex';
+    const brand = (productFormData.brand || '').trim();
     
     let catLabel = productFormData.categoryLabel;
     if (!catLabel || (catLabel === 'Sunglasses' && cat !== 'sunglasses')) {
@@ -470,6 +473,8 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     if (gender === 'female' || gender === 'unisex') autoTags.push('women', 'female');
     if (gender === 'kids') autoTags.push('kids', 'junior');
 
+    if (brand) autoTags.push(brand.toLowerCase());
+
     let primary = (productFormData.imageUrl || '').trim();
     let secondary = (productFormData.hoverImageUrl || productFormData.secondaryImageUrl || productFormData.hoverImage || '').trim();
 
@@ -481,6 +486,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
 
     const finalProduct = {
       ...productFormData,
+      brand,
       category: cat,
       categoryLabel: catLabel,
       imageUrl: primary,
@@ -2195,16 +2201,29 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
             {/* 4. OPTICAL PRODUCT FORM */}
             {formType === 'product' && (
               <form onSubmit={handleSaveProductForm} className="space-y-5">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Product Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={productFormData.name}
-                    onChange={(e) => setProductFormData({ ...productFormData, name: e.target.value })}
-                    placeholder="e.g. Zeiss Anti-Reflective Blue-Cut Lens"
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Product Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={productFormData.name}
+                      onChange={(e) => setProductFormData({ ...productFormData, name: e.target.value })}
+                      placeholder="e.g. Vintage Wayfarer Polarized"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-optom-slate-heading uppercase tracking-wider block">Brand Name</label>
+                    <input
+                      type="text"
+                      value={productFormData.brand || ''}
+                      onChange={(e) => setProductFormData({ ...productFormData, brand: e.target.value })}
+                      placeholder="e.g. Ray-Ban, Oakley, Titan, Essilor, Fastrack"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
