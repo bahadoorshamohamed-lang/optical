@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Tag, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getStoredPosters } from '../data/posters';
 
 const OpenPosterModal = ({ forceOpen = false, onClose }) => {
@@ -99,22 +99,6 @@ const OpenPosterModal = ({ forceOpen = false, onClose }) => {
             className="relative max-w-4xl max-h-[88vh] bg-transparent rounded-3xl overflow-hidden shadow-2xl flex flex-col items-center group"
           >
             
-            {/* Close Button */}
-            <button
-              onClick={handleClose}
-              className="absolute top-4 right-4 z-30 p-2.5 rounded-full bg-slate-950/80 text-white hover:bg-optom-maroon backdrop-blur-md border border-white/20 transition-all shadow-lg hover:scale-110 cursor-pointer"
-              aria-label="Close Poster"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Poster Counter Badge */}
-            {posters.length > 1 && (
-              <div className="absolute top-4 left-4 z-30 px-3 py-1 rounded-full bg-slate-950/80 text-amber-300 border border-white/20 backdrop-blur-md text-[11px] font-black uppercase tracking-wider shadow-md">
-                Offer {currentIndex + 1} of {posters.length}
-              </div>
-            )}
-
             {/* Left Navigation Arrow */}
             {posters.length > 1 && (
               <button
