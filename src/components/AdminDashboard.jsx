@@ -1829,26 +1829,44 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
                 <div>
                   <h3 className="text-lg font-serif font-extrabold text-optom-slate-heading flex items-center gap-2">
                     <ImageIcon className="w-5 h-5 text-optom-green" />
-                    <span>Open Poster Management (Image Only)</span>
+                    <span>Open Poster Management ({posters.length} Active / Unlimited)</span>
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5 font-medium">
-                    Upload image posters that pop up when visitors open the site. No text required.
+                    Upload unlimited pop-up image posters. All active posters will slide automatically for visitors!
                   </p>
                 </div>
 
                 <button
                   onClick={handleOpenAddPosterForm}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-optom-green text-white text-xs font-extrabold uppercase tracking-wider hover:bg-optom-green-hover transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-optom-green text-white text-xs font-extrabold uppercase tracking-wider hover:bg-optom-green-hover transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Add New Image Poster</span>
+                  <span>+ Add New Poster (Unlimited)</span>
                 </button>
               </div>
 
               {/* Posters Grid Cards */}
-              {posters.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-3 gap-6">
-                  {posters.map((poster) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                {/* 1. Interactive Add Poster Grid Card */}
+                <button
+                  type="button"
+                  onClick={handleOpenAddPosterForm}
+                  className="relative border-2 border-dashed border-emerald-300 hover:border-emerald-500 bg-emerald-50/40 hover:bg-emerald-50 rounded-3xl p-6 transition-all duration-300 flex flex-col items-center justify-center text-center group min-h-[260px] aspect-[4/3] shadow-2xs hover:shadow-md cursor-pointer"
+                >
+                  <div className="p-4 rounded-full bg-emerald-100 text-optom-green group-hover:scale-110 transition-transform mb-3 shadow-xs">
+                    <Plus className="w-8 h-8" />
+                  </div>
+                  <span className="text-base font-extrabold text-optom-slate-heading group-hover:text-optom-green transition-colors">
+                    Add New Offer Poster
+                  </span>
+                  <span className="text-xs text-slate-500 font-semibold mt-1 max-w-[200px]">
+                    Click here to upload unlimited poster images (3, 4, 5+ pictures)!
+                  </span>
+                </button>
+
+                {/* 2. Existing Poster Cards */}
+                {posters.map((poster) => (
                     <div
                       key={poster.id}
                       className={`relative bg-white rounded-3xl overflow-hidden border transition-all duration-300 flex flex-col justify-between ${
@@ -1924,18 +1942,6 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-16 px-4 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-3">
-                  <Sparkles className="w-8 h-8 text-optom-green mx-auto" />
-                  <h4 className="text-base font-serif font-extrabold text-optom-slate-heading">No Image Posters Created</h4>
-                  <button
-                    onClick={handleOpenAddPosterForm}
-                    className="px-6 py-3 rounded-2xl bg-optom-green text-white text-xs font-extrabold uppercase tracking-wider"
-                  >
-                    Upload Image Poster
-                  </button>
-                </div>
-              )}
 
             </div>
           )}

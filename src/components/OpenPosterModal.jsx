@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { X, Tag, Pencil } from 'lucide-react';
+import { X, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getStoredPosters } from '../data/posters';
 
-const OpenPosterModal = ({ forceOpen = false, onClose, isAdminLoggedIn = false, onOpenAdmin }) => {
+const OpenPosterModal = ({ forceOpen = false, onClose }) => {
   const [posters, setPosters] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   // Load active posters
   const loadActivePosters = () => {
@@ -39,13 +40,32 @@ const OpenPosterModal = ({ forceOpen = false, onClose, isAdminLoggedIn = false, 
     return () => window.removeEventListener('posters-updated', handleUpdate);
   }, [forceOpen]);
 
+  // Auto-play slide transition for multiple active posters
+  useEffect(() => {
+    if (!isOpen || isPaused || posters.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % posters.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [isOpen, isPaused, posters.length]);
+
   const handleClose = () => {
     setIsOpen(false);
     sessionStorage.setItem('open_poster_dismissed', 'true');
     if (onClose) onClose();
   };
 
-  const currentPoster = posters[currentIndex];
+  const handleNext = (e) => {
+    if (e) e.stopPropagation();
+    setCurrentIndex((prev) => (prev + 1) % posters.length);
+  };
+
+  const handlePrev = (e) => {
+    if (e) e.stopPropagation();
+    setCurrentIndex((prev) => (prev - 1 + posters.length) % posters.length);
+  };
+
+  const currentPoster = posters[currentIndex] || posters[0];
 
   return (
     <>
@@ -60,7 +80,7 @@ const OpenPosterModal = ({ forceOpen = false, onClose, isAdminLoggedIn = false, 
             <Tag className="w-4 h-4" />
           </div>
           <span className="text-xs font-extrabold uppercase tracking-wider pr-1">
-            Special Store Offer ({posters.length})
+            Special Store Offers ({posters.length})
           </span>
         </button>
       )}
@@ -74,19 +94,50 @@ const OpenPosterModal = ({ forceOpen = false, onClose, isAdminLoggedIn = false, 
           
           <div 
             onClick={(e) => e.stopPropagation()}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
             className="relative max-w-4xl max-h-[88vh] bg-transparent rounded-3xl overflow-hidden shadow-2xl flex flex-col items-center group"
           >
             
             {/* Close Button */}
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 z-30 p-2.5 rounded-full bg-slate-950/70 text-white hover:bg-optom-maroon backdrop-blur-md border border-white/20 transition-all shadow-lg hover:scale-110"
+              className="absolute top-4 right-4 z-30 p-2.5 rounded-full bg-slate-950/80 text-white hover:bg-optom-maroon backdrop-blur-md border border-white/20 transition-all shadow-lg hover:scale-110 cursor-pointer"
               aria-label="Close Poster"
             >
               <X className="w-5 h-5" />
             </button>
 
-            {/* Pure Poster Image Container (No Navigation Arrows) */}
+            {/* Poster Counter Badge */}
+            {posters.length > 1 && (
+              <div className="absolute top-4 left-4 z-30 px-3 py-1 rounded-full bg-slate-950/80 text-amber-300 border border-white/20 backdrop-blur-md text-[11px] font-black uppercase tracking-wider shadow-md">
+                Offer {currentIndex + 1} of {posters.length}
+              </div>
+            )}
+
+            {/* Left Navigation Arrow */}
+            {posters.length > 1 && (
+              <button
+                onClick={handlePrev}
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-slate-950/80 text-white hover:bg-optom-green border border-white/20 backdrop-blur-md transition-all shadow-xl hover:scale-110 cursor-pointer opacity-90 hover:opacity-100"
+                aria-label="Previous Offer Poster"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+            )}
+
+            {/* Right Navigation Arrow */}
+            {posters.length > 1 && (
+              <button
+                onClick={handleNext}
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-slate-950/80 text-white hover:bg-optom-green border border-white/20 backdrop-blur-md transition-all shadow-xl hover:scale-110 cursor-pointer opacity-90 hover:opacity-100"
+                aria-label="Next Offer Poster"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            )}
+
+            {/* Pure Poster Image Container */}
             <div className="relative overflow-hidden rounded-3xl bg-slate-900 border-2 border-white/10 shadow-2xl">
               <a
                 href={currentPoster.ctaLink || '#categories'}
@@ -101,8 +152,8 @@ const OpenPosterModal = ({ forceOpen = false, onClose, isAdminLoggedIn = false, 
               >
                 <img
                   src={currentPoster.imageUrl}
-                  alt="Vision Care Open Poster"
-                  className="max-h-[80vh] w-auto max-w-full object-contain rounded-3xl transition-transform duration-500 hover:scale-[1.01]"
+                  alt={`Vision Care Open Poster ${currentIndex + 1}`}
+                  className="max-h-[80vh] w-auto max-w-full object-contain rounded-3xl transition-all duration-500 hover:scale-[1.01]"
                 />
               </a>
             </div>
@@ -114,9 +165,10 @@ const OpenPosterModal = ({ forceOpen = false, onClose, isAdminLoggedIn = false, 
                   <button
                     key={idx}
                     onClick={() => setCurrentIndex(idx)}
-                    className={`h-2 rounded-full transition-all ${
+                    className={`h-2 rounded-full transition-all cursor-pointer ${
                       idx === currentIndex ? 'w-7 bg-emerald-400' : 'w-2.5 bg-white/40 hover:bg-white/70'
                     }`}
+                    aria-label={`Go to slide ${idx + 1}`}
                   />
                 ))}
               </div>
