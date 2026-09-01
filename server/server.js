@@ -187,11 +187,17 @@ const createMongoRoutes = (path, Model) => {
   app.post(`/api/${path}`, async (req, res) => {
     try {
       if (Array.isArray(req.body)) {
+        const cleanItems = req.body.map(item => {
+          if (!item || typeof item !== 'object') return item;
+          const { _id, __v, ...rest } = item;
+          return rest;
+        });
         await Model.deleteMany({});
-        const list = await Model.insertMany(req.body);
+        const list = await Model.insertMany(cleanItems);
         return res.json({ success: true, count: list.length, data: list });
       }
-      const item = await Model.findOneAndUpdate({ id: req.body.id }, req.body, { upsert: true, new: true });
+      const { _id, __v, ...rest } = req.body;
+      const item = await Model.findOneAndUpdate({ id: req.body.id }, rest, { upsert: true, new: true });
       res.json({ success: true, data: item });
     } catch (err) {
       console.error(`Error saving ${path}:`, err.message);
