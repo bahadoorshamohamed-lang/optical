@@ -641,6 +641,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
   // --- OPEN POSTERS CRUD HANDLERS ---
   const handleOpenAddPosterForm = () => {
     setEditingItem(null);
+    setFormType('poster');
     setPosterFormData({
       imageUrl: POSTER_PRESET_IMAGES[Math.floor(Math.random() * POSTER_PRESET_IMAGES.length)],
       validUntil: new Date(Date.now() + 60 * 86400000).toISOString().split('T')[0],
@@ -651,6 +652,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
 
   const handleOpenEditPosterForm = (poster) => {
     setEditingItem(poster);
+    setFormType('poster');
     setPosterFormData({
       imageUrl: poster.imageUrl || POSTER_PRESET_IMAGES[0],
       validUntil: poster.validUntil || '',
