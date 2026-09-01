@@ -58,9 +58,9 @@ const ImageUploaderInput = ({
   // Helper to convert & optimize image to HD quality (1080p Ultra-Sharp canvas render)
   const compressAndSetImage = (fileOrDataUrl) => {
     setIsCompressing(true);
-    const maxWidth = 1920;
-    const maxHeight = 1920;
-    const quality = 0.90; // High-Definition 90% JPEG quality
+    const maxWidth = 800;
+    const maxHeight = 800;
+    const quality = 0.75; // HD Quality compressed JPEG (30-60KB byte footprint)
 
     const processImageSource = (src) => {
       // Auto-boost Unsplash / external URLs to HD parameters

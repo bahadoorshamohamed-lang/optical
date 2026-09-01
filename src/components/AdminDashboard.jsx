@@ -449,11 +449,22 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
     e.preventDefault();
     const cat = productFormData.category || 'sunglasses';
     const gender = productFormData.gender || 'unisex';
+    
+    let catLabel = productFormData.categoryLabel;
+    if (!catLabel || (catLabel === 'Sunglasses' && cat !== 'sunglasses')) {
+      if (cat === 'sunglasses') catLabel = 'Sunglasses';
+      else if (cat === 'frames') catLabel = 'Eyeglasses';
+      else if (cat === 'lenses') catLabel = 'Lenses';
+      else if (cat === 'eye-solutions') catLabel = 'Eye Solutions';
+      else if (cat === 'kids') catLabel = 'Kids Eyewear';
+    }
+
     const autoTags = [cat];
     if (cat === 'sunglasses') autoTags.push('sunglasses');
-    if (cat === 'frames' || cat === 'spectacles') autoTags.push('frames', 'eyeglasses');
+    if (cat === 'frames' || cat === 'spectacles') autoTags.push('frames', 'eyeglasses', 'spectacles');
     if (cat === 'lenses') autoTags.push('lenses');
-    if (cat === 'eye-solutions') autoTags.push('eye-solutions');
+    if (cat === 'eye-solutions') autoTags.push('eye-solutions', 'care');
+    if (cat === 'kids') autoTags.push('kids', 'junior');
 
     if (gender === 'male' || gender === 'unisex') autoTags.push('men', 'male');
     if (gender === 'female' || gender === 'unisex') autoTags.push('women', 'female');
@@ -470,11 +481,13 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster }) =>
 
     const finalProduct = {
       ...productFormData,
+      category: cat,
+      categoryLabel: catLabel,
       imageUrl: primary,
       hoverImageUrl: secondary,
       secondaryImageUrl: secondary,
       hoverImage: secondary,
-      tags: Array.from(new Set([...(productFormData.tags || []), ...autoTags]))
+      tags: Array.from(new Set(autoTags))
     };
 
     let updatedList;

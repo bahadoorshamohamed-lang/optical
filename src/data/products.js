@@ -338,14 +338,26 @@ export const getStoredProducts = () => {
 
 export const syncProductsWithAPI = async () => {
   const remoteData = await fetchFromAPI('products');
-  if (remoteData && Array.isArray(remoteData)) {
+  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+    const local = getStoredProducts();
+    const map = new Map();
+    // Insert local items first
+    local.forEach((item) => {
+      if (item && item.id) map.set(item.id, item);
+    });
+    // Merge remote items
+    remoteData.forEach((item) => {
+      if (item && item.id) map.set(item.id, item);
+    });
+    const merged = Array.from(map.values());
+
     try {
-      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(remoteData));
-      window.dispatchEvent(new CustomEvent('products-updated', { detail: remoteData }));
-      return remoteData;
+      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(merged));
     } catch (e) {
-      console.error(e);
+      console.error('Error writing products to localStorage:', e);
     }
+    window.dispatchEvent(new CustomEvent('products-updated', { detail: merged }));
+    return merged;
   }
   return getStoredProducts();
 };
@@ -353,10 +365,10 @@ export const syncProductsWithAPI = async () => {
 export const saveProducts = (products) => {
   try {
     localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
-    window.dispatchEvent(new CustomEvent('products-updated', { detail: products }));
-    saveToAPI('products', products);
   } catch (error) {
-    console.error('Error saving products:', error);
+    console.error('Error saving products to localStorage:', error);
   }
+  window.dispatchEvent(new CustomEvent('products-updated', { detail: products }));
+  saveToAPI('products', products);
 };
 
