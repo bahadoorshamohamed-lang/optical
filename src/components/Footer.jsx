@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Logo from './Logo';
-import { ShieldCheck, Lock } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { getStoredFooterData } from '../data/siteConfig';
 
 const Footer = ({ onNavClick, onOpenAdmin, isAdminLoggedIn }) => {
@@ -91,10 +91,9 @@ const Footer = ({ onNavClick, onOpenAdmin, isAdminLoggedIn }) => {
             </button>
             <button 
               onClick={handleAdminTripleTap}
-              className="text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1 font-bold"
+              className="hover:text-emerald-400 transition-colors"
             >
-              {isAdminLoggedIn ? <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> : <Lock className="w-3.5 h-3.5 text-amber-400" />}
-              <span>{isAdminLoggedIn ? "Admin Dashboard" : "vision care opticals"}</span>
+              {isAdminLoggedIn ? "Admin Dashboard" : "vision care opticals"}
             </button>
           </div>
 
