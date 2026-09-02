@@ -1,18 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Logo from './Logo';
 import TopBar from './TopBar';
-import { Phone, MapPin, PhoneCall, ExternalLink, X } from 'lucide-react';
+import { Phone, MapPin, PhoneCall, ExternalLink, X, Search, Sparkles } from 'lucide-react';
 import { BUSINESS_INFO } from '../data/products';
 
-const Navbar = () => {
+const Navbar = ({ activeSection, setActiveSection, onSelectBrand, onSearchQuery }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [topBarVisible, setTopBarVisible] = useState(true);
   const [navbarVisible, setNavbarVisible] = useState(true);
   const [showPhonePopover, setShowPhonePopover] = useState(false);
   const [showLocationPopover, setShowLocationPopover] = useState(false);
+  const [showSearchPopover, setShowSearchPopover] = useState(false);
+  const [navSearchInput, setNavSearchInput] = useState('');
 
   const phoneRef = useRef(null);
   const locationRef = useRef(null);
+  const searchRef = useRef(null);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -36,12 +39,14 @@ const Navbar = () => {
         setNavbarVisible(false);
         setShowPhonePopover(false);
         setShowLocationPopover(false);
+        setShowSearchPopover(false);
       } else {
         // Scrolling UP: SHOW ONLY TOP BAR, HIDE NAVBAR
         setTopBarVisible(true);
         setNavbarVisible(false);
         setShowPhonePopover(false);
         setShowLocationPopover(false);
+        setShowSearchPopover(false);
       }
 
       lastScrollY.current = currentScrollY;
@@ -60,6 +65,9 @@ const Navbar = () => {
       if (locationRef.current && !locationRef.current.contains(event.target)) {
         setShowLocationPopover(false);
       }
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearchPopover(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -68,11 +76,13 @@ const Navbar = () => {
   const togglePhone = () => {
     setShowPhonePopover(!showPhonePopover);
     setShowLocationPopover(false);
+    setShowSearchPopover(false);
   };
 
   const toggleLocation = () => {
     setShowLocationPopover(!showLocationPopover);
     setShowPhonePopover(false);
+    setShowSearchPopover(false);
   };
 
   return (
@@ -107,9 +117,101 @@ const Navbar = () => {
               <Logo className="h-10 sm:h-14 md:h-16" />
             </a>
 
-            {/* Right: Phone & Location Icon Buttons with Interactive Popovers */}
-            <div className="flex items-center gap-2 sm:gap-4 relative">
+            {/* Right: Brand Search, Phone & Location Icon Buttons with Interactive Popovers */}
+            <div className="flex items-center gap-2 sm:gap-3 relative">
               
+              {/* Brand Search Icon Button & Popover */}
+              <div className="relative group" ref={searchRef}>
+                <button
+                  onClick={() => {
+                    setShowSearchPopover(!showSearchPopover);
+                    setShowPhonePopover(false);
+                    setShowLocationPopover(false);
+                  }}
+                  className={`relative px-3 py-2 sm:px-4 sm:py-3 rounded-2xl transition-all duration-500 focus:outline-none flex items-center gap-2 ${
+                    showSearchPopover 
+                      ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 ring-4 ring-amber-400/40 scale-105 shadow-[0_0_25px_rgba(245,158,11,0.45)] font-bold' 
+                      : 'bg-slate-900/80 backdrop-blur-xl text-amber-400 border border-amber-500/30 hover:border-amber-400/80 hover:bg-amber-500 hover:text-slate-950 hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] hover:-translate-y-0.5 shadow-md'
+                  }`}
+                  aria-label="Search Brand"
+                  title="Search Brand & Products"
+                >
+                  <Search className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="hidden sm:inline-block text-xs font-black uppercase tracking-wider">Search Brand</span>
+                </button>
+
+                {/* Brand Search Popover Dropdown Card */}
+                {showSearchPopover && (
+                  <div className="absolute right-0 mt-3 w-[calc(100vw-2rem)] sm:w-96 max-w-sm bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-modal border border-amber-500/30 p-4 sm:p-5 text-white animate-fadeIn z-50">
+                    <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+                      <span className="text-xs font-black uppercase tracking-widest text-amber-400 flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-amber-400 animate-spin" style={{ animationDuration: '4s' }} /> Brand Name Search
+                      </span>
+                      <button 
+                        onClick={() => setShowSearchPopover(false)}
+                        className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {/* Search Bar Input */}
+                      <div className="relative flex items-center">
+                        <Search className="absolute left-3.5 w-4 h-4 text-amber-400 pointer-events-none" />
+                        <input
+                          type="text"
+                          value={navSearchInput}
+                          onChange={(e) => setNavSearchInput(e.target.value)}
+                          placeholder="Type brand name (Ray-Ban, Titan, Oakley)..."
+                          className="w-full pl-10 pr-4 py-2.5 bg-slate-950 text-white rounded-xl border border-amber-500/30 focus:border-amber-400 focus:outline-none text-xs font-medium placeholder-slate-400"
+                          autoFocus
+                        />
+                      </div>
+
+                      {/* Popular Optical Brands Quick Pills */}
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">
+                          Popular Brands:
+                        </span>
+                        <div className="flex items-center gap-1.5 flex-wrap max-h-36 overflow-y-auto no-scrollbar">
+                          {['Ray-Ban', 'Titan', 'Oakley', 'Prada', 'Essilor', 'Zeiss', 'Crizal', 'Fastrack', 'Bausch & Lomb', 'Systane', 'Police', 'Vogue'].map((bName) => (
+                            <button
+                              key={bName}
+                              onClick={() => {
+                                if (onSelectBrand) onSelectBrand(bName);
+                                setShowSearchPopover(false);
+                                const catEl = document.getElementById('categories');
+                                if (catEl) catEl.scrollIntoView({ behavior: 'smooth' });
+                              }}
+                              className="px-3 py-1.5 rounded-full text-xs font-extrabold bg-slate-800 text-amber-300 border border-amber-400/30 hover:bg-amber-400 hover:text-slate-950 transition-all cursor-pointer transform hover:scale-105"
+                            >
+                              {bName}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Submit Keyword Search Button */}
+                      {navSearchInput.trim() && (
+                        <button
+                          onClick={() => {
+                            if (onSearchQuery) onSearchQuery(navSearchInput.trim());
+                            setShowSearchPopover(false);
+                            const catEl = document.getElementById('categories');
+                            if (catEl) catEl.scrollIntoView({ behavior: 'smooth' });
+                          }}
+                          className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-extrabold text-xs uppercase tracking-wider hover:opacity-90 transition-all shadow-md flex items-center justify-center gap-2"
+                        >
+                          <Search className="w-3.5 h-3.5" />
+                          <span>Search "{navSearchInput}"</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Phone Icon & Popover */}
               <div className="relative group" ref={phoneRef}>
                 <button

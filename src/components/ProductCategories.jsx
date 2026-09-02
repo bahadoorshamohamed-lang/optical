@@ -21,11 +21,18 @@ import {
   UserCheck
 } from 'lucide-react';
 
-const ProductCategories = ({ activeTab = null, setActiveTab }) => {
+const ProductCategories = ({ 
+  activeTab = null, 
+  setActiveTab,
+  activeBrand = 'all',
+  setActiveBrand,
+  externalSearchQuery = '',
+  setExternalSearchQuery
+}) => {
   const [products, setProducts] = useState(getStoredProducts());
   const [categoryCards, setCategoryCards] = useState(getStoredCategoryCards());
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(externalSearchQuery || '');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'carousel'
   const [isPaused, setIsPaused] = useState(false);
   const sliderRef = useRef(null);
@@ -33,7 +40,7 @@ const ProductCategories = ({ activeTab = null, setActiveTab }) => {
   // Multi-tier filter state
   const [selectedCategory, setSelectedCategory] = useState(activeTab || 'all');
   const [genderFilter, setGenderFilter] = useState('all'); // 'all' | 'male' | 'female' | 'kids'
-  const [selectedBrand, setSelectedBrand] = useState('all');
+  const [selectedBrand, setSelectedBrand] = useState(activeBrand || 'all');
 
   // Dynamic computation of unique brands present in products
   const availableBrands = useMemo(() => {
@@ -45,6 +52,31 @@ const ProductCategories = ({ activeTab = null, setActiveTab }) => {
     });
     return Array.from(brandsSet).sort();
   }, [products]);
+
+  // Dynamic item count per brand
+  const brandCounts = useMemo(() => {
+    const counts = {};
+    products.forEach((p) => {
+      if (p.brand && p.brand.trim()) {
+        const b = p.brand.trim();
+        counts[b] = (counts[b] || 0) + 1;
+      }
+    });
+    return counts;
+  }, [products]);
+
+  // Sync external brand and search query props with internal states
+  useEffect(() => {
+    if (activeBrand !== undefined) {
+      setSelectedBrand(activeBrand);
+    }
+  }, [activeBrand]);
+
+  useEffect(() => {
+    if (externalSearchQuery !== undefined) {
+      setSearchQuery(externalSearchQuery);
+    }
+  }, [externalSearchQuery]);
 
   useEffect(() => {
     const handleProductsUpdate = () => {
@@ -412,7 +444,67 @@ const ProductCategories = ({ activeTab = null, setActiveTab }) => {
         </div>
 
         {/* Dynamic Category, Brand & Demographic Sub-Filter System */}
-        <div className="space-y-3 max-w-7xl mx-auto">
+        <div className="space-y-4 max-w-7xl mx-auto">
+
+          {/* Tier 0: Interactive Brand & Keyword Search Bar */}
+          <div className="max-w-2xl mx-auto w-full px-1">
+            <div className="relative flex items-center group">
+              <div className="absolute left-4 flex items-center pointer-events-none text-emerald-400">
+                <Search className="w-5 h-5 group-focus-within:scale-110 transition-transform" />
+              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  if (setExternalSearchQuery) setExternalSearchQuery(e.target.value);
+                }}
+                placeholder="Search brand name (e.g. Ray-Ban, Titan, Oakley, Essilor)..."
+                className="w-full pl-12 pr-10 py-3.5 bg-slate-900 text-white rounded-2xl border border-emerald-500/30 focus:border-emerald-400 focus:ring-4 focus:ring-emerald-400/20 text-sm font-medium placeholder-slate-400 shadow-xl transition-all"
+              />
+              {searchQuery ? (
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    if (setExternalSearchQuery) setExternalSearchQuery('');
+                  }}
+                  className="absolute right-3.5 p-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
+                  title="Clear search"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              ) : (
+                <div className="absolute right-3.5 hidden sm:flex items-center gap-1.5 text-[10px] font-extrabold text-amber-300 bg-slate-800/90 px-2.5 py-1 rounded-xl border border-amber-400/30 pointer-events-none shadow-xs">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  <span>Brand Search</span>
+                </div>
+              )}
+            </div>
+
+            {/* Quick Auto-suggest Matching Brands when typing */}
+            {searchQuery.trim() !== '' && (
+              <div className="mt-2.5 flex items-center gap-1.5 flex-wrap px-1">
+                <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Matching Brands:</span>
+                {availableBrands
+                  .filter(b => b.toLowerCase().includes(searchQuery.toLowerCase().trim()))
+                  .slice(0, 6)
+                  .map(b => (
+                    <button
+                      key={b}
+                      onClick={() => {
+                        setSelectedBrand(b);
+                        if (setActiveBrand) setActiveBrand(b);
+                        setSearchQuery('');
+                        if (setExternalSearchQuery) setExternalSearchQuery('');
+                      }}
+                      className="px-2.5 py-1 rounded-full text-xs font-black bg-amber-400/20 text-amber-300 border border-amber-400/40 hover:bg-amber-400 hover:text-slate-950 transition-all cursor-pointer transform hover:scale-105"
+                    >
+                      {b} ({brandCounts[b] || 0})
+                    </button>
+                  ))}
+              </div>
+            )}
+          </div>
           
           {/* Tier 1: Primary Category Pills */}
           <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto no-scrollbar py-1 px-1">
@@ -442,32 +534,48 @@ const ProductCategories = ({ activeTab = null, setActiveTab }) => {
           {/* Tier 2: Dynamic Brand Filter Selector Bar */}
           {availableBrands.length > 0 && (
             <div className="flex items-center justify-start sm:justify-center gap-1.5 overflow-x-auto no-scrollbar py-1 px-1">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-600 mr-1 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-amber-500" /> Brand:
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-500 mr-1 flex items-center gap-1 flex-shrink-0">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Brand:
               </span>
               <button
-                onClick={() => setSelectedBrand('all')}
-                className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                onClick={() => {
+                  setSelectedBrand('all');
+                  if (setActiveBrand) setActiveBrand('all');
+                }}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold transition-all cursor-pointer flex-shrink-0 ${
                   selectedBrand === 'all'
-                    ? 'bg-slate-900 text-amber-300 ring-2 ring-amber-400 scale-105 shadow-md'
-                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                    ? 'bg-slate-900 text-amber-300 ring-2 ring-amber-400 scale-105 shadow-md border border-amber-400/50'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-xs'
                 }`}
               >
-                All Brands
+                All Brands ({products.length})
               </button>
-              {availableBrands.map((bName) => (
-                <button
-                  key={bName}
-                  onClick={() => setSelectedBrand(bName)}
-                  className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                    selectedBrand === bName
-                      ? 'bg-slate-900 text-amber-300 ring-2 ring-amber-400 scale-105 shadow-md'
-                      : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
-                  }`}
-                >
-                  {bName}
-                </button>
-              ))}
+              {availableBrands.map((bName) => {
+                const isSelected = selectedBrand.toLowerCase() === bName.toLowerCase();
+                const count = brandCounts[bName] || 0;
+                return (
+                  <button
+                    key={bName}
+                    onClick={() => {
+                      const nextBrand = isSelected ? 'all' : bName;
+                      setSelectedBrand(nextBrand);
+                      if (setActiveBrand) setActiveBrand(nextBrand);
+                    }}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 flex-shrink-0 ${
+                      isSelected
+                        ? 'bg-slate-900 text-amber-300 ring-2 ring-amber-400 scale-105 shadow-md border border-amber-400/50'
+                        : 'bg-white text-slate-700 hover:bg-emerald-50 hover:text-optom-green border border-slate-200 shadow-xs'
+                    }`}
+                  >
+                    <span>{bName}</span>
+                    <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${
+                      isSelected ? 'bg-amber-400 text-slate-950' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           )}
 
@@ -580,6 +688,10 @@ const ProductCategories = ({ activeTab = null, setActiveTab }) => {
                   <ProductCard
                     key={product.id}
                     product={product}
+                    onSelectBrand={(b) => {
+                      setSelectedBrand(b);
+                      if (setActiveBrand) setActiveBrand(b);
+                    }}
                   />
                 ))}
               </div>
@@ -607,6 +719,10 @@ const ProductCategories = ({ activeTab = null, setActiveTab }) => {
                       >
                         <ProductCard
                           product={product}
+                          onSelectBrand={(b) => {
+                            setSelectedBrand(b);
+                            if (setActiveBrand) setActiveBrand(b);
+                          }}
                         />
                       </div>
                     ))}

@@ -4,7 +4,7 @@ import { BUSINESS_INFO } from '../data/products';
 
 const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
 
-const ProductModal = ({ product, onClose }) => {
+const ProductModal = ({ product, onClose, onSelectBrand }) => {
   const img1 = product?.imageUrl && product.imageUrl.trim();
   const img2 = (product?.hoverImageUrl || product?.secondaryImageUrl || product?.hoverImage) && (product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage).trim();
 
@@ -25,48 +25,32 @@ const ProductModal = ({ product, onClose }) => {
     document.body.style.overflow = 'hidden';
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = 'unset';
     };
   }, [onClose]);
 
   if (!product) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 sm:p-6 lg:p-8 animate-fadeIn">
-      {/* Dark Overlay Backdrop */}
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
       <div 
-        className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" 
-        onClick={onClose}
-        aria-hidden="true"
-      />
+        className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 animate-scaleUp my-8"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Modal Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-slate-900/80 text-white hover:bg-slate-950 transition-colors shadow-md focus:outline-none"
+          aria-label="Close modal"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
-      {/* Modal Card Container */}
-      <div className="relative bg-white rounded-3xl shadow-modal border border-slate-100 w-full max-w-4xl max-h-[90vh] overflow-y-auto z-10 flex flex-col my-auto">
-        
-        {/* Modal Sticky Header Bar */}
-        <div className="sticky top-0 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-slate-100 flex items-center justify-between z-20">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-optom-green"></span>
-            <span className="text-xs font-bold uppercase tracking-wider text-optom-slate-muted">
-              Optical Showcase Catalogue Detail
-            </span>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="p-2 rounded-full text-slate-400 hover:text-optom-slate-heading hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-optom-green"
-            aria-label="Close modal"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-
-        {/* Modal Body Content */}
-        <div className="p-6 sm:p-8 space-y-8">
-          
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        {/* Modal Body */}
+        <div className="p-6 sm:p-8 max-h-[85vh] overflow-y-auto custom-scrollbar">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8">
             
-            {/* Left Image Section */}
+            {/* Left Image Showcase Section */}
             <div className="md:col-span-5 space-y-4">
               <div className="relative rounded-2xl overflow-hidden aspect-square bg-slate-100 border border-slate-200/80 shadow-inner group">
                 <img
@@ -80,9 +64,17 @@ const ProductModal = ({ product, onClose }) => {
                     {product.categoryLabel}
                   </span>
                   {product.brand && (
-                    <span className="px-3 py-1 rounded-full text-xs font-black bg-slate-900 text-amber-300 border border-amber-400/40 shadow-md">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (onSelectBrand) onSelectBrand(product.brand);
+                        onClose();
+                      }}
+                      className="px-3 py-1 rounded-full text-xs font-black bg-slate-900 text-amber-300 border border-amber-400/40 shadow-md hover:bg-amber-400 hover:text-slate-950 transition-colors cursor-pointer"
+                      title={`View all ${product.brand} products`}
+                    >
                       {product.brand}
-                    </span>
+                    </button>
                   )}
                 </div>
               </div>

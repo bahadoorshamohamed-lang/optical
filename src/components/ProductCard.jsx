@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onSelectBrand }) => {
   const img1 = product?.imageUrl && product.imageUrl.trim();
   const img2 = (product?.hoverImageUrl || product?.secondaryImageUrl || product?.hoverImage) && (product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage).trim();
   
@@ -48,10 +48,18 @@ const ProductCard = ({ product }) => {
 
       {/* Brand Badge Top-Left */}
       {product.brand && (
-        <div className="absolute top-3 left-3 z-20 pointer-events-none">
-          <span className="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider bg-slate-950/85 text-amber-300 border border-amber-400/40 backdrop-blur-md shadow-md">
+        <div className="absolute top-3 left-3 z-20 pointer-events-auto">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onSelectBrand) onSelectBrand(product.brand);
+            }}
+            className="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider bg-slate-950/85 text-amber-300 border border-amber-400/40 backdrop-blur-md shadow-md hover:bg-amber-400 hover:text-slate-950 transition-all cursor-pointer transform active:scale-95"
+            title={`Filter by brand: ${product.brand}`}
+          >
             {product.brand}
-          </span>
+          </button>
         </div>
       )}
 

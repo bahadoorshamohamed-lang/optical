@@ -26,6 +26,8 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [activeSection, setActiveSection] = useState('home');
   const [activeCategoryTab, setActiveCategoryTab] = useState(null);
+  const [activeBrandFilter, setActiveBrandFilter] = useState('all');
+  const [appSearchQuery, setAppSearchQuery] = useState('');
 
   // Live Multi-Device Sync Effect
   useEffect(() => {
@@ -95,6 +97,26 @@ function App() {
     }
   };
 
+  const handleSelectBrand = (brandName) => {
+    setActiveBrandFilter(brandName || 'all');
+    setAppSearchQuery('');
+    setActiveSection('categories');
+    const categoriesSection = document.getElementById('categories');
+    if (categoriesSection) {
+      categoriesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleSearchQuery = (query) => {
+    setAppSearchQuery(query || '');
+    setActiveBrandFilter('all');
+    setActiveSection('categories');
+    const categoriesSection = document.getElementById('categories');
+    if (categoriesSection) {
+      categoriesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const handleAppealCategorySelect = (item) => {
     const target = item?.targetTab || 
       (item?.id ? item.id.replace('cat-', '').replace('appeal-', '') : null) || 
@@ -123,6 +145,8 @@ function App() {
       <Navbar 
         activeSection={activeSection} 
         setActiveSection={handleNavClick}
+        onSelectBrand={handleSelectBrand}
+        onSearchQuery={handleSearchQuery}
       />
 
       {/* Main Showcase Page Sections */}
@@ -140,6 +164,10 @@ function App() {
         <ProductCategories 
           activeTab={activeCategoryTab}
           setActiveTab={setActiveCategoryTab}
+          activeBrand={activeBrandFilter}
+          setActiveBrand={setActiveBrandFilter}
+          externalSearchQuery={appSearchQuery}
+          setExternalSearchQuery={setAppSearchQuery}
         />
 
         {/* Section 4: Arched Optical Product Showcase Viewer */}
