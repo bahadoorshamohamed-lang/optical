@@ -83,7 +83,7 @@ export const getStoredFramesCollection = () => {
 
 export const syncFramesCollectionWithAPI = async () => {
   const remoteData = await fetchFromAPI('frames');
-  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+  if (remoteData && Array.isArray(remoteData)) {
     try {
       localStorage.setItem(FRAMES_KEY, JSON.stringify(remoteData));
       window.dispatchEvent(new CustomEvent('frames-collection-updated', { detail: remoteData }));

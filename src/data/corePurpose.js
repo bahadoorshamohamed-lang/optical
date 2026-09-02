@@ -53,7 +53,7 @@ export const getStoredCorePurpose = () => {
 
 export const syncCorePurposeWithAPI = async () => {
   const remoteData = await fetchFromAPI('purpose');
-  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+  if (remoteData && Array.isArray(remoteData)) {
     try {
       localStorage.setItem(CORE_PURPOSE_KEY, JSON.stringify(remoteData));
       window.dispatchEvent(new CustomEvent('core-purpose-updated', { detail: remoteData }));

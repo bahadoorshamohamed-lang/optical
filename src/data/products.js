@@ -354,26 +354,14 @@ export const getStoredProducts = () => {
 
 export const syncProductsWithAPI = async () => {
   const remoteData = await fetchFromAPI('products');
-  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
-    const local = getStoredProducts();
-    const map = new Map();
-    // Insert local items first
-    local.forEach((item) => {
-      if (item && item.id) map.set(item.id, item);
-    });
-    // Merge remote items
-    remoteData.forEach((item) => {
-      if (item && item.id) map.set(item.id, item);
-    });
-    const merged = Array.from(map.values());
-
+  if (remoteData && Array.isArray(remoteData)) {
     try {
-      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(merged));
+      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(remoteData));
+      window.dispatchEvent(new CustomEvent('products-updated', { detail: remoteData }));
     } catch (e) {
       console.error('Error writing products to localStorage:', e);
     }
-    window.dispatchEvent(new CustomEvent('products-updated', { detail: merged }));
-    return merged;
+    return remoteData;
   }
   return getStoredProducts();
 };

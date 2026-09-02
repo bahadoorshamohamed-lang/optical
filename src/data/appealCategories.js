@@ -65,7 +65,7 @@ export const getStoredAppealCategories = () => {
 
 export const syncAppealCategoriesWithAPI = async () => {
   const remoteData = await fetchFromAPI('appeal');
-  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+  if (remoteData && Array.isArray(remoteData)) {
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(remoteData));
       window.dispatchEvent(new CustomEvent('appeal-categories-updated', { detail: remoteData }));

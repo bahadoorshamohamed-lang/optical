@@ -69,7 +69,7 @@ export const getStoredCategoryCards = () => {
 
 export const syncCategoryCardsWithAPI = async () => {
   const remoteData = await fetchFromAPI('category-cards');
-  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+  if (remoteData && Array.isArray(remoteData)) {
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(remoteData));
       window.dispatchEvent(new CustomEvent('category-cards-updated', { detail: remoteData }));

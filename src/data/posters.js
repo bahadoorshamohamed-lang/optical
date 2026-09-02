@@ -50,7 +50,7 @@ export const getStoredPosters = () => {
 
 export const syncPostersWithAPI = async () => {
   const remoteData = await fetchFromAPI('posters');
-  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+  if (remoteData && Array.isArray(remoteData)) {
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(remoteData));
       window.dispatchEvent(new CustomEvent('posters-updated', { detail: remoteData }));

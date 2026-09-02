@@ -113,7 +113,7 @@ export const getStoredShowcase360 = () => {
 
 export const syncShowcase360WithAPI = async () => {
   const remoteData = await fetchFromAPI('showcase360');
-  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+  if (remoteData && Array.isArray(remoteData)) {
     try {
       localStorage.setItem(SHOWCASE_360_KEY, JSON.stringify(remoteData));
       window.dispatchEvent(new CustomEvent('showcase360-updated', { detail: remoteData }));

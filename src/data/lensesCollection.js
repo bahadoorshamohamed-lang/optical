@@ -79,7 +79,7 @@ export const getStoredLensesCollection = () => {
 
 export const syncLensesCollectionWithAPI = async () => {
   const remoteData = await fetchFromAPI('lenses');
-  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+  if (remoteData && Array.isArray(remoteData)) {
     try {
       localStorage.setItem(LENSES_KEY, JSON.stringify(remoteData));
       window.dispatchEvent(new CustomEvent('lenses-collection-updated', { detail: remoteData }));
