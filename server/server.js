@@ -119,7 +119,7 @@ const seedDatabase = async () => {
         { id: { $regex: '^drive-prod-' } },
         { imageUrl: { $regex: 'images.unsplash.com' } }
       ]
-    }); }
+    });
 
     console.log('✅ MongoDB Database seeded successfully!');
   } catch (err) {
