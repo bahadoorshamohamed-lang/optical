@@ -25,21 +25,10 @@ const Footer = ({ onNavClick, onOpenAdmin, isAdminLoggedIn }) => {
     };
   }, []);
 
-  // Secret Silent Triple Tap Handler
-  const handleAdminTripleTap = (e) => {
-    e.preventDefault();
-    tapCountRef.current += 1;
-
-    if (tapCountRef.current === 1) {
-      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
-      tapTimerRef.current = setTimeout(() => {
-        tapCountRef.current = 0;
-      }, 700);
-    } else if (tapCountRef.current >= 3) {
-      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
-      tapCountRef.current = 0;
-      onOpenAdmin();
-    }
+  // Direct Admin Portal Trigger
+  const handleAdminClick = (e) => {
+    if (e) e.preventDefault();
+    if (onOpenAdmin) onOpenAdmin('products');
   };
 
   return (
@@ -90,10 +79,11 @@ const Footer = ({ onNavClick, onOpenAdmin, isAdminLoggedIn }) => {
               About Showcase
             </button>
             <button 
-              onClick={handleAdminTripleTap}
-              className="hover:text-emerald-400 transition-colors"
+              onClick={handleAdminClick}
+              className="px-3.5 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500 hover:text-white transition-all shadow-xs font-bold text-xs cursor-pointer active:scale-95"
+              title="Click to open Admin Portal"
             >
-              {isAdminLoggedIn ? "Admin Dashboard" : "vision care opticals"}
+              {isAdminLoggedIn ? "Admin Dashboard" : "Admin Portal"}
             </button>
           </div>
 
