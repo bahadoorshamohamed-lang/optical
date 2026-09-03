@@ -7,8 +7,8 @@ const EyewearAppeal = ({ onSelectAppealCategory }) => {
 
   const loadCategories = () => {
     const all = getStoredAppealCategories();
-    const active = all.filter(c => c.isActive);
-    setCategories(active.length > 0 ? active : all);
+    const active = (all || []).filter(c => c && c.isActive);
+    setCategories(active.length > 0 ? active : (all || []));
   };
 
   useEffect(() => {

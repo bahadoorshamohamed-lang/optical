@@ -30,9 +30,10 @@ const About = () => {
     };
   }, []);
 
-  const activeFrames = frames.filter(f => f.isActive !== false);
+  const activeFrames = (frames || []).filter(f => f && f.isActive !== false);
   const marqueeTrack = activeFrames.length > 0 ? [...activeFrames, ...activeFrames, ...activeFrames] : [];
-  const activeCorePurpose = coreItems.filter(c => c.isActive !== false);
+  const activeCorePurpose = (coreItems || []).filter(c => c && c.isActive !== false);
+  const currentCoreItem = activeCorePurpose[activeCareIndex] || activeCorePurpose[0];
 
   return (
     <div id="about" className="bg-white text-slate-800 overflow-hidden font-sans select-none">
@@ -276,22 +277,22 @@ const About = () => {
             </div>
 
             {/* Right Active Focus Preview Card */}
-            {activeCorePurpose.length > 0 && (
+            {currentCoreItem && (
               <div className="lg:col-span-7 relative">
                 <div className="relative rounded-3xl overflow-hidden border border-slate-200/90 bg-white shadow-xl aspect-[16/10] sm:aspect-[16/9] group">
                   <img
-                    src={activeCorePurpose[Math.min(activeCareIndex, activeCorePurpose.length - 1)].bgImage}
-                    alt={activeCorePurpose[Math.min(activeCareIndex, activeCorePurpose.length - 1)].label}
+                    src={currentCoreItem.bgImage || 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=900&q=80'}
+                    alt={currentCoreItem.label || 'Vision Care Purpose'}
                     className="w-full h-full object-cover transition-all duration-700 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-transparent" />
 
                   <div className="absolute bottom-6 left-6 right-6 space-y-3 z-10">
                     <span className="text-xs font-extrabold text-white uppercase tracking-widest px-3.5 py-1 rounded-full bg-emerald-500/90 border border-emerald-400 shadow-xs inline-block">
-                      {activeCorePurpose[Math.min(activeCareIndex, activeCorePurpose.length - 1)].label} Focus
+                      {currentCoreItem.label || 'Optical'} Focus
                     </span>
                     <p className="text-sm sm:text-base text-slate-100 font-medium leading-relaxed">
-                      {activeCorePurpose[Math.min(activeCareIndex, activeCorePurpose.length - 1)].description}
+                      {currentCoreItem.description || ''}
                     </p>
                   </div>
                 </div>

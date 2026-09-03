@@ -8,8 +8,8 @@ const Hero = ({ onExploreClick }) => {
 
   const loadActiveSlides = () => {
     const all = getStoredHeroSlides();
-    const active = all.filter(s => s.isActive);
-    setSlides(active.length > 0 ? active : all);
+    const active = (all || []).filter(s => s && s.isActive);
+    setSlides(active.length > 0 ? active : (all || []));
   };
 
   useEffect(() => {

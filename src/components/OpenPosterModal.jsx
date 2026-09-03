@@ -11,7 +11,7 @@ const OpenPosterModal = ({ forceOpen = false, onClose }) => {
   // Load active posters
   const loadActivePosters = () => {
     const all = getStoredPosters();
-    const active = all.filter(p => p.isActive);
+    const active = (all || []).filter(p => p && p.isActive);
     setPosters(active);
     return active;
   };
