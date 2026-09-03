@@ -2668,6 +2668,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
                       <option value="sunglasses">Sunglasses</option>
                       <option value="kids">Kids</option>
                       <option value="all">All Catalogue</option>
+                      <option value="products">Optical Products (All)</option>
                     </select>
                   </div>
 

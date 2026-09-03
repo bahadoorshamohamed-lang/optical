@@ -131,7 +131,8 @@ const ProductCategories = ({
       .filter(c => c.isActive !== false)
       .map(c => {
         let icon = Glasses;
-        if (c.id === 'eye-solutions' || c.targetTab === 'eye-solutions') icon = Droplets;
+        if (c.id === 'products' || c.targetTab === 'all' || c.targetTab === 'products') icon = Layers;
+        else if (c.id === 'eye-solutions' || c.targetTab === 'eye-solutions') icon = Droplets;
         else if (c.id === 'lenses' || c.targetTab === 'lenses') icon = Eye;
         else if (c.id === 'frames' || c.targetTab === 'frames') icon = Glasses;
         else if (c.id === 'sunglasses' || c.targetTab === 'sunglasses') icon = Sun;
@@ -166,6 +167,7 @@ const ProductCategories = ({
   const categoryCounts = useMemo(() => {
     const counts = {
       all: products.length,
+      products: products.length,
       'eye-solutions': 0,
       lenses: 0,
       frames: 0,
@@ -383,7 +385,7 @@ const ProductCategories = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12 relative z-10">
         
         {/* Core Category Visual Showcase Cards */}
-        <div className="flex md:grid md:grid-cols-4 gap-3 sm:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 max-w-7xl mx-auto">
+        <div className="flex md:grid md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 max-w-7xl mx-auto">
           {coreCategories.map((cat) => {
             const isActive = selectedCategory === cat.id || selectedCategory === cat.targetTab;
             const IconComponent = cat.icon;
