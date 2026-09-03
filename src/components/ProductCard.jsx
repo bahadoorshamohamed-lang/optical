@@ -26,8 +26,9 @@ const ProductCard = ({ product, onSelectBrand, onClick }) => {
       {/* Primary Optical Product Image */}
       <img
         src={mainSrc}
-        alt={product.name}
+        alt={product?.name || 'Optical Product'}
         onError={() => setMainSrc(DEFAULT_FALLBACK_IMAGE)}
+        referrerPolicy="no-referrer"
         className={`w-full h-full object-cover transition-all duration-700 ease-out ${
           hoverSrc 
             ? 'group-hover:opacity-0 group-hover:scale-105' 
@@ -40,8 +41,9 @@ const ProductCard = ({ product, onSelectBrand, onClick }) => {
       {hoverSrc && (
         <img
           src={hoverSrc}
-          alt={`${product.name} - Hover View`}
+          alt={`${product?.name} - Hover View`}
           onError={() => setHoverSrc(null)}
+          referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out"
           loading="lazy"
         />
