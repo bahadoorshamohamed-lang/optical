@@ -37,7 +37,7 @@ import {
   saveFooterData 
 } from '../data/siteConfig';
 import { getStoredAppealCategories, saveAppealCategories } from '../data/appealCategories';
-import { getStoredProducts, saveProducts } from '../data/products';
+import { getStoredProducts, saveProducts, resetProductsToDefault } from '../data/products';
 import { getStoredFramesCollection, saveFramesCollection } from '../data/framesCollection';
 import { getStoredCorePurpose, saveCorePurpose } from '../data/corePurpose';
 import { getStoredLensesCollection, saveLensesCollection } from '../data/lensesCollection';
@@ -747,6 +747,13 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
     showToast('All products cleared from Live Cloud database.');
   };
 
+  const handleResetProductsToDefault = async () => {
+    showToast('Restoring default products to live cloud database...');
+    const list = await resetProductsToDefault();
+    setProducts(list);
+    showToast('Default products restored live across all devices!');
+  };
+
   // --- FRAMES COLLECTION MARQUEE HANDLERS ---
   const handleToggleFrameActive = (id) => {
     const updatedList = framesCollection.map(item =>
@@ -1411,16 +1418,26 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+                  <button
+                    onClick={handleResetProductsToDefault}
+                    className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold hover:bg-amber-500 hover:text-white transition-all shadow-xs"
+                    title="Restore sample optical products"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Restore Samples</span>
+                  </button>
+
                   {products.length > 0 && (
                     <button
                       onClick={() => setDeleteConfirmInfo({ id: 'ALL', type: 'clear_all_products' })}
-                      className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold hover:bg-rose-600 hover:text-white transition-all shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold hover:bg-rose-600 hover:text-white transition-all shadow-xs"
                       title="Delete all sample products to start adding your own new products"
                     >
-                      <Trash2 className="w-4 h-4" />
-                      <span>Delete All Products</span>
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Delete All</span>
                     </button>
                   )}
+
                   <button
                     onClick={handleOpenAddProductForm}
                     className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-600 text-white text-xs font-extrabold uppercase tracking-wider hover:bg-emerald-700 transition-all shadow-sm flex-1 sm:flex-none justify-center"

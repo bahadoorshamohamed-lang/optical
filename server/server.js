@@ -114,6 +114,48 @@ const seedDatabase = async () => {
       ]);
     }
 
+    const productCount = await ProductModel.countDocuments();
+    if (productCount === 0) {
+      await ProductModel.insertMany([
+        {
+          id: 'eye-sol-01',
+          name: 'Advanced Lens Cleaning Solution',
+          brand: 'Vision Care',
+          category: 'eye-solutions',
+          categoryLabel: 'Eye Solutions',
+          tags: ['eye-solutions', 'care', 'women', 'men', 'vision care'],
+          shortDescription: 'Gentle, streak-free cleaning formula tailored for multi-coated optical spectacle lenses and anti-reflective coatings.',
+          fullDescription: 'Our Advanced Lens Cleaning Solution is specially formulated by optical specialists to gently remove dust, smudges, and fingerprints without damaging delicate anti-reflective (AR) or blue-light protective coatings.',
+          imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80',
+          hoverImageUrl: 'https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          id: 'lens-01',
+          name: 'Single Vision Lenses',
+          brand: 'Essilor',
+          category: 'lenses',
+          categoryLabel: 'Lenses',
+          tags: ['lenses', 'single-vision', 'women', 'men', 'essilor'],
+          shortDescription: 'Precision ground single focal point lenses designed for accurate distance vision or close-up reading correction.',
+          fullDescription: 'Custom-crafted single vision prescription lenses tailored to your exact optical sphere and cylinder measurements.',
+          imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80',
+          hoverImageUrl: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          id: 'sunglass-01',
+          name: 'Classic Aviator Sunglasses',
+          brand: 'Ray-Ban',
+          category: 'sunglasses',
+          categoryLabel: 'Sunglasses',
+          tags: ['sunglasses', 'men', 'male', 'ray-ban'],
+          shortDescription: 'Iconic teardrop shape with polarized UV400 protective lenses.',
+          fullDescription: 'Timeless aviator styling with lightweight metal frame and maximum UV protection.',
+          imageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80',
+          hoverImageUrl: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80'
+        }
+      ]);
+    }
+
     console.log('✅ MongoDB Database seeded successfully!');
   } catch (err) {
     console.error('Seed Error:', err.message);

@@ -329,14 +329,14 @@ export const BUSINESS_INFO = {
   mapQuery: "No.+814+MIG,+Neithal+Street,+New+Housing+Unit,+Thanjavur+-+613005"
 };
 
-const PRODUCTS_KEY = 'vision_care_products_v6';
+const PRODUCTS_KEY = 'vision_care_products_v7';
 
 export const getStoredProducts = () => {
   try {
     const saved = localStorage.getItem(PRODUCTS_KEY);
     if (saved !== null) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         return parsed;
       }
     }
@@ -354,7 +354,7 @@ export const getStoredProducts = () => {
 
 export const syncProductsWithAPI = async () => {
   const remoteData = await fetchFromAPI('products');
-  if (remoteData && Array.isArray(remoteData)) {
+  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
     const cleanList = remoteData.map(item => {
       if (!item || typeof item !== 'object') return item;
       const { _id, __v, ...rest } = item;
@@ -368,7 +368,17 @@ export const syncProductsWithAPI = async () => {
     }
     return cleanList;
   }
-  return getStoredProducts();
+  
+  // If remote database is empty or offline, fallback to local stored products
+  const stored = getStoredProducts();
+  if (stored && stored.length > 0) {
+    if (remoteData && Array.isArray(remoteData) && remoteData.length === 0) {
+      saveToAPI('products', stored);
+    }
+    return stored;
+  }
+  
+  return DEFAULT_PRODUCTS;
 };
 
 export const saveProducts = async (products) => {
@@ -389,5 +399,16 @@ export const saveProducts = async (products) => {
   
   const cloudResult = await saveToAPI('products', cleanList);
   return cloudResult ? cleanList : cleanList;
+};
+
+export const resetProductsToDefault = async () => {
+  try {
+    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(DEFAULT_PRODUCTS));
+  } catch (e) {
+    console.error(e);
+  }
+  window.dispatchEvent(new CustomEvent('products-updated', { detail: DEFAULT_PRODUCTS }));
+  await saveToAPI('products', DEFAULT_PRODUCTS);
+  return DEFAULT_PRODUCTS;
 };
 
