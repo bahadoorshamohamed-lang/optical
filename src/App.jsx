@@ -29,25 +29,34 @@ function App() {
   const [activeBrandFilter, setActiveBrandFilter] = useState('all');
   const [appSearchQuery, setAppSearchQuery] = useState('');
 
-  // Live Multi-Device Sync Effect
+  // Live Multi-Device Sync Effect (Non-blocking background sync)
   useEffect(() => {
     const runGlobalSync = () => {
-      syncHeroSlidesWithAPI();
+      // 1. High-priority sync
+      syncProductsWithAPI();
       syncPostersWithAPI();
       syncAppealCategoriesWithAPI();
-      syncCategoryCardsWithAPI();
-      syncProductsWithAPI();
-      syncFramesCollectionWithAPI();
-      syncCorePurposeWithAPI();
-      syncLensesCollectionWithAPI();
-      syncShowcase360WithAPI();
       syncTopBarDataWithAPI();
-      syncFooterDataWithAPI();
+
+      // 2. Staggered secondary sync to avoid network blocking
+      setTimeout(() => {
+        syncHeroSlidesWithAPI();
+        syncCategoryCardsWithAPI();
+        syncFramesCollectionWithAPI();
+        syncCorePurposeWithAPI();
+        syncLensesCollectionWithAPI();
+        syncShowcase360WithAPI();
+        syncFooterDataWithAPI();
+      }, 1000);
     };
 
-    runGlobalSync();
-    const syncInterval = setInterval(runGlobalSync, 12000);
-    return () => clearInterval(syncInterval);
+    // Delay first sync by 500ms so initial DOM mount is 100% instant
+    const initialSyncTimer = setTimeout(runGlobalSync, 500);
+    const syncInterval = setInterval(runGlobalSync, 15000);
+    return () => {
+      clearTimeout(initialSyncTimer);
+      clearInterval(syncInterval);
+    };
   }, []);
 
   // Admin & Poster State Management
