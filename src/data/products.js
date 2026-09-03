@@ -336,7 +336,7 @@ export const getStoredProducts = () => {
     const saved = localStorage.getItem(PRODUCTS_KEY);
     if (saved !== null) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         return parsed;
       }
     }
@@ -354,7 +354,7 @@ export const getStoredProducts = () => {
 
 export const syncProductsWithAPI = async () => {
   const remoteData = await fetchFromAPI('products');
-  if (remoteData && Array.isArray(remoteData)) {
+  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
     try {
       localStorage.setItem(PRODUCTS_KEY, JSON.stringify(remoteData));
       window.dispatchEvent(new CustomEvent('products-updated', { detail: remoteData }));
@@ -367,12 +367,13 @@ export const syncProductsWithAPI = async () => {
 };
 
 export const saveProducts = (products) => {
+  const validList = (Array.isArray(products) && products.length > 0) ? products : DEFAULT_PRODUCTS;
   try {
-    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(validList));
   } catch (error) {
     console.error('Error saving products to localStorage:', error);
   }
-  window.dispatchEvent(new CustomEvent('products-updated', { detail: products }));
-  saveToAPI('products', products);
+  window.dispatchEvent(new CustomEvent('products-updated', { detail: validList }));
+  saveToAPI('products', validList);
 };
 

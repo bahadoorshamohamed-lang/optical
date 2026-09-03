@@ -61,7 +61,7 @@ export const getStoredLensesCollection = () => {
     const saved = localStorage.getItem(LENSES_KEY);
     if (saved !== null) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         return parsed;
       }
     }
@@ -79,7 +79,7 @@ export const getStoredLensesCollection = () => {
 
 export const syncLensesCollectionWithAPI = async () => {
   const remoteData = await fetchFromAPI('lenses');
-  if (remoteData && Array.isArray(remoteData)) {
+  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
     try {
       localStorage.setItem(LENSES_KEY, JSON.stringify(remoteData));
       window.dispatchEvent(new CustomEvent('lenses-collection-updated', { detail: remoteData }));

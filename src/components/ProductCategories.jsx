@@ -346,8 +346,14 @@ const ProductCategories = ({
     setSelectedCategory('all');
     setGenderFilter('all');
     setSelectedBrand('all');
-    if (setActiveTab) setActiveTab(null);
     setSearchQuery('');
+    if (setActiveTab) setActiveTab('all');
+    if (setActiveBrand) setActiveBrand('all');
+    if (setExternalSearchQuery) setExternalSearchQuery('');
+
+    // Ensure products list is populated with default items if it ever became empty
+    const currentList = getStoredProducts();
+    setProducts(currentList);
   };
 
   return (

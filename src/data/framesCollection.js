@@ -65,7 +65,7 @@ export const getStoredFramesCollection = () => {
     const saved = localStorage.getItem(FRAMES_KEY);
     if (saved !== null) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         return parsed;
       }
     }
@@ -83,7 +83,7 @@ export const getStoredFramesCollection = () => {
 
 export const syncFramesCollectionWithAPI = async () => {
   const remoteData = await fetchFromAPI('frames');
-  if (remoteData && Array.isArray(remoteData)) {
+  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
     try {
       localStorage.setItem(FRAMES_KEY, JSON.stringify(remoteData));
       window.dispatchEvent(new CustomEvent('frames-collection-updated', { detail: remoteData }));
