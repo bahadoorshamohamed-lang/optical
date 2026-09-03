@@ -815,6 +815,46 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// --- REAL-TIME SSE LIVE STREAM BROADCASTING ACROSS ALL DEVICES ---
+let sseClients = [];
+
+app.get('/api/stream', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  if (res.flushHeaders) res.flushHeaders();
+
+  res.write('event: connected\ndata: {"status":"connected"}\n\n');
+
+  const pinger = setInterval(() => {
+    try {
+      res.write(':\n\n');
+    } catch (e) {
+      clearInterval(pinger);
+    }
+  }, 15000);
+
+  sseClients.push(res);
+
+  req.on('close', () => {
+    clearInterval(pinger);
+    sseClients = sseClients.filter(c => c !== res);
+  });
+});
+
+const broadcastChange = (path, data) => {
+  if (!sseClients || sseClients.length === 0) return;
+  const payload = `data: ${JSON.stringify({ path, data })}\n\n`;
+  sseClients.forEach(client => {
+    try {
+      client.write(payload);
+    } catch (e) {
+      // client connection closed
+    }
+  });
+};
+
 // TopBar API
 app.get('/api/topbar', async (req, res) => {
   try {
@@ -827,6 +867,7 @@ app.get('/api/topbar', async (req, res) => {
 app.post('/api/topbar', async (req, res) => {
   try {
     const data = await TopBarModel.findOneAndUpdate({}, req.body, { upsert: true, new: true });
+    broadcastChange('topbar', data);
     res.json({ success: true, data });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -845,6 +886,7 @@ app.get('/api/footer', async (req, res) => {
 app.post('/api/footer', async (req, res) => {
   try {
     const data = await FooterModel.findOneAndUpdate({}, req.body, { upsert: true, new: true });
+    broadcastChange('footer', data);
     res.json({ success: true, data });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -864,6 +906,7 @@ const createMongoRoutes = (path, Model) => {
   });
   app.post(`/api/${path}`, async (req, res) => {
     try {
+      let resultList = [];
       if (Array.isArray(req.body)) {
         const cleanItems = req.body.map(item => {
           if (!item || typeof item !== 'object') return item;
@@ -872,11 +915,17 @@ const createMongoRoutes = (path, Model) => {
         });
         await Model.deleteMany({});
         const list = await Model.insertMany(cleanItems);
-        return res.json({ success: true, count: list.length, data: list });
+        resultList = list;
+        res.json({ success: true, count: list.length, data: list });
+      } else {
+        const { _id, __v, ...rest } = req.body;
+        await Model.findOneAndUpdate({ id: req.body.id }, rest, { upsert: true, new: true });
+        resultList = await Model.find().sort({ createdAt: -1 });
+        res.json({ success: true, data: resultList });
       }
-      const { _id, __v, ...rest } = req.body;
-      const item = await Model.findOneAndUpdate({ id: req.body.id }, rest, { upsert: true, new: true });
-      res.json({ success: true, data: item });
+
+      // Broadcast instant live update to all connected devices worldwide!
+      broadcastChange(path, resultList);
     } catch (err) {
       console.error(`Error saving ${path}:`, err.message);
       res.status(500).json({ success: false, error: err.message });

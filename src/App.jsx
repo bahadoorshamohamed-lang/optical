@@ -21,6 +21,7 @@ import { syncCorePurposeWithAPI } from './data/corePurpose';
 import { syncLensesCollectionWithAPI } from './data/lensesCollection';
 import { syncShowcase360WithAPI } from './data/showcase360';
 import { syncTopBarDataWithAPI, syncFooterDataWithAPI } from './data/siteConfig';
+import { API_BASE } from './services/api';
 
 function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -29,16 +30,76 @@ function App() {
   const [activeBrandFilter, setActiveBrandFilter] = useState('all');
   const [appSearchQuery, setAppSearchQuery] = useState('');
 
-  // Live Multi-Device Sync Effect (Non-blocking background sync)
+  // Live Multi-Device Real-Time Sync Effect (Instant SSE Stream + Fast Polling Fallback)
   useEffect(() => {
+    let eventSource = null;
+
+    const handleRemoteStreamUpdate = (payload) => {
+      if (!payload || !payload.path || !payload.data) return;
+      const { path, data } = payload;
+      const cleanData = Array.isArray(data) ? data.map(item => {
+        if (!item || typeof item !== 'object') return item;
+        const { _id, __v, ...rest } = item;
+        return rest;
+      }) : data;
+
+      if (path === 'products') {
+        localStorage.setItem('vision_care_products_v10', JSON.stringify(cleanData));
+        window.dispatchEvent(new CustomEvent('products-updated', { detail: cleanData }));
+      } else if (path === 'posters') {
+        localStorage.setItem('vision_care_posters_v1', JSON.stringify(cleanData));
+        window.dispatchEvent(new CustomEvent('posters-updated', { detail: cleanData }));
+      } else if (path === 'hero') {
+        localStorage.setItem('vision_care_hero_slides_v1', JSON.stringify(cleanData));
+        window.dispatchEvent(new CustomEvent('hero-slides-updated', { detail: cleanData }));
+      } else if (path === 'appeal') {
+        localStorage.setItem('vision_care_appeal_categories_v1', JSON.stringify(cleanData));
+        window.dispatchEvent(new CustomEvent('appeal-categories-updated', { detail: cleanData }));
+      } else if (path === 'topbar') {
+        localStorage.setItem('vision_care_topbar_v1', JSON.stringify(cleanData));
+        window.dispatchEvent(new CustomEvent('topbar-updated', { detail: cleanData }));
+      } else if (path === 'footer') {
+        localStorage.setItem('vision_care_footer_v1', JSON.stringify(cleanData));
+        window.dispatchEvent(new CustomEvent('footer-updated', { detail: cleanData }));
+      } else if (path === 'frames') {
+        localStorage.setItem('vision_care_frames_collection_v1', JSON.stringify(cleanData));
+        window.dispatchEvent(new CustomEvent('frames-collection-updated', { detail: cleanData }));
+      } else if (path === 'purpose') {
+        localStorage.setItem('vision_care_core_purpose_v1', JSON.stringify(cleanData));
+        window.dispatchEvent(new CustomEvent('core-purpose-updated', { detail: cleanData }));
+      } else if (path === 'lenses') {
+        localStorage.setItem('vision_care_lenses_collection_v1', JSON.stringify(cleanData));
+        window.dispatchEvent(new CustomEvent('lenses-collection-updated', { detail: cleanData }));
+      } else if (path === 'showcase360') {
+        localStorage.setItem('vision_care_showcase360_v1', JSON.stringify(cleanData));
+        window.dispatchEvent(new CustomEvent('showcase360-updated', { detail: cleanData }));
+      } else if (path === 'category-cards') {
+        localStorage.setItem('vision_care_category_cards_v1', JSON.stringify(cleanData));
+        window.dispatchEvent(new CustomEvent('category-cards-updated', { detail: cleanData }));
+      }
+    };
+
+    // 1. Establish SSE HTTP Stream Connection for <100ms Instant Updates Globally
+    try {
+      eventSource = new EventSource(`${API_BASE}/api/stream`);
+      eventSource.onmessage = (event) => {
+        try {
+          const parsed = JSON.parse(event.data);
+          handleRemoteStreamUpdate(parsed);
+        } catch (e) {
+          console.error('Error parsing live SSE event:', e);
+        }
+      };
+    } catch (err) {
+      console.warn('SSE Stream initialization fallback:', err);
+    }
+
     const runGlobalSync = () => {
-      // High-priority core catalogue sync
       syncProductsWithAPI();
       syncPostersWithAPI();
       syncAppealCategoriesWithAPI();
       syncTopBarDataWithAPI();
 
-      // Secondary staggered sync
       setTimeout(() => {
         syncHeroSlidesWithAPI();
         syncCategoryCardsWithAPI();
@@ -50,11 +111,9 @@ function App() {
       }, 500);
     };
 
-    // Instant sync on mount + 3-second fast live sync
     const initialSyncTimer = setTimeout(runGlobalSync, 100);
-    const syncInterval = setInterval(runGlobalSync, 3000);
+    const syncInterval = setInterval(runGlobalSync, 2000);
 
-    // Instant sync whenever user switches to or opens the page on mobile/desktop
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         runGlobalSync();
@@ -65,6 +124,7 @@ function App() {
     window.addEventListener('focus', runGlobalSync);
 
     return () => {
+      if (eventSource) eventSource.close();
       clearTimeout(initialSyncTimer);
       clearInterval(syncInterval);
       window.removeEventListener('visibilitychange', handleVisibilityChange);
