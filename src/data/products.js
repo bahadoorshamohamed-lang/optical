@@ -736,31 +736,30 @@ export const getStoredProducts = () => {
 
 export const syncProductsWithAPI = async () => {
   const remoteData = await fetchFromAPI('products');
-  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+  if (remoteData && Array.isArray(remoteData)) {
     const cleanList = remoteData.map(item => {
       if (!item || typeof item !== 'object') return item;
       const { _id, __v, ...rest } = item;
       return rest;
     });
-    try {
-      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(cleanList));
-      window.dispatchEvent(new CustomEvent('products-updated', { detail: cleanList }));
-    } catch (e) {
-      console.error('Error writing products to localStorage:', e);
+
+    const currentSaved = localStorage.getItem(PRODUCTS_KEY);
+    const newJson = JSON.stringify(cleanList);
+
+    if (currentSaved !== newJson) {
+      try {
+        localStorage.setItem(PRODUCTS_KEY, newJson);
+        window.dispatchEvent(new CustomEvent('products-updated', { detail: cleanList }));
+      } catch (e) {
+        console.error('Error writing products to localStorage:', e);
+      }
     }
     return cleanList;
   }
   
-  // If remote database is empty or offline, fallback to local stored products
+  // If remote database is offline, fallback to local stored products
   const stored = getStoredProducts();
-  if (stored && stored.length > 0) {
-    if (remoteData && Array.isArray(remoteData) && remoteData.length === 0) {
-      saveToAPI('products', stored);
-    }
-    return stored;
-  }
-  
-  return DEFAULT_PRODUCTS;
+  return stored || DEFAULT_PRODUCTS;
 };
 
 export const saveProducts = async (products) => {

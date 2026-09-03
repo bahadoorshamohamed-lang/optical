@@ -32,13 +32,13 @@ function App() {
   // Live Multi-Device Sync Effect (Non-blocking background sync)
   useEffect(() => {
     const runGlobalSync = () => {
-      // 1. High-priority sync
+      // High-priority core catalogue sync
       syncProductsWithAPI();
       syncPostersWithAPI();
       syncAppealCategoriesWithAPI();
       syncTopBarDataWithAPI();
 
-      // 2. Staggered secondary sync to avoid network blocking
+      // Secondary staggered sync
       setTimeout(() => {
         syncHeroSlidesWithAPI();
         syncCategoryCardsWithAPI();
@@ -47,15 +47,28 @@ function App() {
         syncLensesCollectionWithAPI();
         syncShowcase360WithAPI();
         syncFooterDataWithAPI();
-      }, 1000);
+      }, 500);
     };
 
-    // Delay first sync by 500ms so initial DOM mount is 100% instant
-    const initialSyncTimer = setTimeout(runGlobalSync, 500);
-    const syncInterval = setInterval(runGlobalSync, 15000);
+    // Instant sync on mount + 3-second fast live sync
+    const initialSyncTimer = setTimeout(runGlobalSync, 100);
+    const syncInterval = setInterval(runGlobalSync, 3000);
+
+    // Instant sync whenever user switches to or opens the page on mobile/desktop
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        runGlobalSync();
+      }
+    };
+
+    window.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', runGlobalSync);
+
     return () => {
       clearTimeout(initialSyncTimer);
       clearInterval(syncInterval);
+      window.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', runGlobalSync);
     };
   }, []);
 
