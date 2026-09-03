@@ -168,7 +168,17 @@ function App() {
           setActiveBrand={setActiveBrandFilter}
           externalSearchQuery={appSearchQuery}
           setExternalSearchQuery={setAppSearchQuery}
+          onSelectProduct={(p) => setSelectedProduct(p)}
         />
+
+        {/* Product Details Modal */}
+        {selectedProduct && (
+          <ProductModal
+            product={selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+            onSelectBrand={handleSelectBrand}
+          />
+        )}
 
         {/* Section 4: Arched Optical Product Showcase Viewer */}
         <Showcase360 />

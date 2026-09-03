@@ -27,7 +27,8 @@ const ProductCategories = ({
   activeBrand = 'all',
   setActiveBrand,
   externalSearchQuery = '',
-  setExternalSearchQuery
+  setExternalSearchQuery,
+  onSelectProduct
 }) => {
   const [products, setProducts] = useState(getStoredProducts());
   const [categoryCards, setCategoryCards] = useState(getStoredCategoryCards());
@@ -694,6 +695,7 @@ const ProductCategories = ({
                   <ProductCard
                     key={product.id}
                     product={product}
+                    onClick={() => onSelectProduct && onSelectProduct(product)}
                     onSelectBrand={(b) => {
                       setSelectedBrand(b);
                       if (setActiveBrand) setActiveBrand(b);
@@ -725,6 +727,7 @@ const ProductCategories = ({
                       >
                         <ProductCard
                           product={product}
+                          onClick={() => onSelectProduct && onSelectProduct(product)}
                           onSelectBrand={(b) => {
                             setSelectedBrand(b);
                             if (setActiveBrand) setActiveBrand(b);

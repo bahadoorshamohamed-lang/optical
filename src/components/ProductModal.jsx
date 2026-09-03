@@ -149,26 +149,28 @@ const ProductModal = ({ product, onClose, onSelectBrand }) => {
               </div>
 
               <p className="text-sm sm:text-base text-optom-slate-body leading-relaxed">
-                {product.fullDescription}
+                {product.fullDescription || product.shortDescription || 'Quality ophthalmic optical product.'}
               </p>
 
               {/* Key Features List */}
-              <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-optom-slate-heading">
-                  Key Advantages & Features
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {product.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-xs font-medium text-optom-slate-heading p-2 rounded-lg bg-slate-50 border border-slate-100">
-                      <CheckCircle2 className="w-4 h-4 text-optom-green flex-shrink-0" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
+              {product.features && Array.isArray(product.features) && product.features.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-optom-slate-heading">
+                    Key Advantages & Features
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {product.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-xs font-medium text-optom-slate-heading p-2 rounded-lg bg-slate-50 border border-slate-100">
+                        <CheckCircle2 className="w-4 h-4 text-optom-green flex-shrink-0" />
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Specifications Table */}
-              {product.specifications && (
+              {product.specifications && typeof product.specifications === 'object' && Object.keys(product.specifications).length > 0 && (
                 <div className="space-y-2">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-optom-slate-heading">
                     Technical Specifications
