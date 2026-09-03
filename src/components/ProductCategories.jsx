@@ -174,15 +174,18 @@ const ProductCategories = ({
     };
 
     products.forEach((product) => {
+      if (!product || typeof product !== 'object') return;
       const cat = product.category?.toLowerCase();
-      if (counts[cat] !== undefined) {
+      if (cat && counts[cat] !== undefined) {
         counts[cat] += 1;
       }
-      if (product.tags) {
+      if (Array.isArray(product.tags)) {
         product.tags.forEach((tag) => {
-          const t = tag.toLowerCase();
-          if (counts[t] !== undefined) counts[t] += 1;
-          else counts[t] = (counts[t] || 0) + 1;
+          if (typeof tag === 'string') {
+            const t = tag.toLowerCase();
+            if (counts[t] !== undefined) counts[t] += 1;
+            else counts[t] = (counts[t] || 0) + 1;
+          }
         });
       }
     });
@@ -193,6 +196,8 @@ const ProductCategories = ({
   // Filtered Products computation based on selectedCategory, genderFilter and searchQuery
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
+      if (!product || typeof product !== 'object') return false;
+
       // 1. Category Filter
       let matchesCategory = true;
       if (selectedCategory && selectedCategory !== 'all') {
@@ -202,22 +207,22 @@ const ProductCategories = ({
         
         if (catQuery === 'sunglasses') {
           matchesCategory = prodCat === 'sunglasses' || catLabel.includes('sunglass') ||
-            (product.tags && product.tags.some(t => t.toLowerCase().includes('sunglass')));
+            (Array.isArray(product.tags) && product.tags.some(t => typeof t === 'string' && t.toLowerCase().includes('sunglass')));
         } else if (catQuery === 'frames' || catQuery === 'eyeglasses' || catQuery === 'spectacles') {
           matchesCategory = ['frames', 'eyeglasses', 'spectacles'].includes(prodCat) || catLabel.includes('frame') || catLabel.includes('eyeglass') || catLabel.includes('spectacle') ||
-            (product.tags && product.tags.some(t => ['frames', 'eyeglasses', 'spectacles'].includes(t.toLowerCase())));
+            (Array.isArray(product.tags) && product.tags.some(t => typeof t === 'string' && ['frames', 'eyeglasses', 'spectacles'].includes(t.toLowerCase())));
         } else if (catQuery === 'lenses') {
           matchesCategory = prodCat === 'lenses' || catLabel.includes('lens') ||
-            (product.tags && product.tags.some(t => t.toLowerCase().includes('lens')));
+            (Array.isArray(product.tags) && product.tags.some(t => typeof t === 'string' && t.toLowerCase().includes('lens')));
         } else if (catQuery === 'eye-solutions' || catQuery === 'care' || catQuery === 'solutions') {
           matchesCategory = prodCat === 'eye-solutions' || catLabel.includes('solution') || catLabel.includes('care') ||
-            (product.tags && product.tags.some(t => t.toLowerCase().includes('eye-solutions')));
+            (Array.isArray(product.tags) && product.tags.some(t => typeof t === 'string' && t.toLowerCase().includes('eye-solutions')));
         } else if (catQuery === 'kids') {
           matchesCategory = prodCat === 'kids' || catLabel.includes('kid') ||
-            (product.tags && product.tags.some(t => t.toLowerCase().includes('kids')));
+            (Array.isArray(product.tags) && product.tags.some(t => typeof t === 'string' && t.toLowerCase().includes('kids')));
         } else {
           matchesCategory = prodCat === catQuery || catLabel.includes(catQuery) ||
-            (product.tags && product.tags.some(t => t.toLowerCase() === catQuery));
+            (Array.isArray(product.tags) && product.tags.some(t => typeof t === 'string' && t.toLowerCase() === catQuery));
         }
       }
 
@@ -227,12 +232,14 @@ const ProductCategories = ({
         const gQuery = genderFilter.toLowerCase().trim();
         
         // Check if product has explicit demographic tags
-        const hasExplicitGenderTag = product.tags && product.tags.some(t => {
+        const hasExplicitGenderTag = Array.isArray(product.tags) && product.tags.some(t => {
+          if (typeof t !== 'string') return false;
           const tLower = t.toLowerCase();
           return ['male', 'men', 'mens', 'man', 'female', 'women', 'womens', 'woman', 'lady', 'kids', 'junior', 'child', 'children'].includes(tLower);
         });
 
-        const tagMatch = product.tags && product.tags.some(t => {
+        const tagMatch = Array.isArray(product.tags) && product.tags.some(t => {
+          if (typeof t !== 'string') return false;
           const tLower = t.toLowerCase();
           if (gQuery === 'male' || gQuery === 'men') {
             return ['male', 'men', 'mens', 'man'].includes(tLower);
@@ -246,9 +253,9 @@ const ProductCategories = ({
           return tLower === gQuery;
         });
 
-        const nameLower = product.name?.toLowerCase() || '';
-        const descLower = product.shortDescription?.toLowerCase() || '';
-        const catLabelLower = product.categoryLabel?.toLowerCase() || '';
+        const nameLower = (product.name || '').toLowerCase();
+        const descLower = (product.shortDescription || '').toLowerCase();
+        const catLabelLower = (product.categoryLabel || '').toLowerCase();
         const textMatch = 
           ((gQuery === 'male' || gQuery === 'men') && (nameLower.includes('men') || nameLower.includes('male') || descLower.includes('men') || descLower.includes('male') || catLabelLower.includes('men'))) ||
           ((gQuery === 'female' || gQuery === 'women') && (nameLower.includes('women') || nameLower.includes('female') || descLower.includes('women') || descLower.includes('female') || catLabelLower.includes('women'))) ||
@@ -263,20 +270,20 @@ const ProductCategories = ({
       if (selectedBrand && selectedBrand !== 'all') {
         const bQuery = selectedBrand.toLowerCase().trim();
         const pBrand = (product.brand || '').toLowerCase().trim();
-        matchesBrand = pBrand === bQuery || (product.tags && product.tags.some(t => t.toLowerCase() === bQuery));
+        matchesBrand = pBrand === bQuery || (Array.isArray(product.tags) && product.tags.some(t => typeof t === 'string' && t.toLowerCase() === bQuery));
       }
 
       // 4. Search Query Filter
       let matchesSearch = true;
-      if (searchQuery.trim() !== '') {
+      if (searchQuery && searchQuery.trim() !== '') {
         const query = searchQuery.toLowerCase().trim();
-        const nameMatch = product.name.toLowerCase().includes(query);
-        const brandMatch = product.brand?.toLowerCase().includes(query);
-        const descMatch = product.shortDescription.toLowerCase().includes(query) || 
-                          product.fullDescription?.toLowerCase().includes(query);
-        const categoryMatch = product.categoryLabel.toLowerCase().includes(query);
-        const tagMatch = product.tags?.some(tag => tag.toLowerCase().includes(query));
-        const featureMatch = product.features?.some(f => f.toLowerCase().includes(query));
+        const nameMatch = (product.name || '').toLowerCase().includes(query);
+        const brandMatch = (product.brand || '').toLowerCase().includes(query);
+        const descMatch = (product.shortDescription || '').toLowerCase().includes(query) || 
+                          (product.fullDescription || '').toLowerCase().includes(query);
+        const categoryMatch = (product.categoryLabel || '').toLowerCase().includes(query);
+        const tagMatch = Array.isArray(product.tags) && product.tags.some(tag => typeof tag === 'string' && tag.toLowerCase().includes(query));
+        const featureMatch = Array.isArray(product.features) && product.features.some(f => typeof f === 'string' && f.toLowerCase().includes(query));
 
         matchesSearch = nameMatch || brandMatch || descMatch || categoryMatch || tagMatch || featureMatch;
       }
@@ -489,11 +496,11 @@ const ProductCategories = ({
             </div>
 
             {/* Quick Auto-suggest Matching Brands when typing */}
-            {searchQuery.trim() !== '' && (
+            {searchQuery && searchQuery.trim() !== '' && (
               <div className="mt-2.5 flex items-center gap-1.5 flex-wrap px-1">
                 <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Matching Brands:</span>
                 {availableBrands
-                  .filter(b => b.toLowerCase().includes(searchQuery.toLowerCase().trim()))
+                  .filter(b => typeof b === 'string' && b.toLowerCase().includes(searchQuery.toLowerCase().trim()))
                   .slice(0, 6)
                   .map(b => (
                     <button
@@ -558,7 +565,7 @@ const ProductCategories = ({
                 All Brands ({products.length})
               </button>
               {availableBrands.map((bName) => {
-                const isSelected = selectedBrand.toLowerCase() === bName.toLowerCase();
+                const isSelected = (selectedBrand || '').toLowerCase() === (bName || '').toLowerCase();
                 const count = brandCounts[bName] || 0;
                 return (
                   <button

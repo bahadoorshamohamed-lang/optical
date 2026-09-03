@@ -505,7 +505,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
 
     let updatedList;
     if (editingItem) {
-      updatedList = products.map(p => p.id === editingItem.id ? finalProduct : p);
+      updatedList = products.map(p => (p.id === editingItem.id || (p._id && editingItem._id && p._id === editingItem._id)) ? finalProduct : p);
       showToast('Updating product & syncing live cloud...');
     } else {
       updatedList = [finalProduct, ...products];
