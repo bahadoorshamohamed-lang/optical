@@ -3,16 +3,6 @@ import { fetchFromAPI, saveToAPI } from '../services/api';
 // Default Product Category Banner Cards
 export const DEFAULT_CATEGORY_CARDS = [
   { 
-    id: 'products', 
-    label: 'Optical Products', 
-    tagline: 'ALL OPTICAL CATALOGUE',
-    description: 'Browse spectacle frames, prescription lenses, sunglasses & eye care products.',
-    imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80',
-    badgeColor: 'bg-emerald-500/90',
-    targetTab: 'all',
-    isActive: true
-  },
-  { 
     id: 'eye-solutions', 
     label: 'Eye Solutions', 
     tagline: 'CLINICALLY FORMULATED CARE',
@@ -62,11 +52,6 @@ export const getStoredCategoryCards = () => {
     if (saved !== null) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Ensure products card exists in stored list
-        const hasProductsCard = parsed.some(c => c.id === 'products' || c.targetTab === 'all');
-        if (!hasProductsCard) {
-          return [DEFAULT_CATEGORY_CARDS[0], ...parsed];
-        }
         return parsed;
       }
     }

@@ -942,18 +942,6 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
             </button>
 
             <button
-              onClick={() => setActiveTab('products')}
-              className={`px-4 py-2.5 rounded-2xl text-xs transition-all duration-200 flex items-center gap-2 ${
-                activeTab === 'products'
-                  ? 'bg-slate-900 text-white font-black shadow-md scale-[1.02]'
-                  : 'bg-white/70 text-slate-600 hover:bg-white hover:text-slate-900 font-bold border border-slate-200/60'
-              }`}
-            >
-              <Glasses className="w-4 h-4 text-emerald-500" />
-              <span>Products ({products.length})</span>
-            </button>
-
-            <button
               onClick={() => setActiveTab('frames')}
               className={`px-4 py-2.5 rounded-2xl text-xs transition-all duration-200 flex items-center gap-2 ${
                 activeTab === 'frames'
@@ -1423,118 +1411,6 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 4: ALL OPTICAL PRODUCTS CRUD */}
-          {activeTab === 'products' && (
-            <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs">
-                <div>
-                  <h3 className="text-lg font-serif font-extrabold text-optom-slate-heading flex items-center gap-2">
-                    <Glasses className="w-5 h-5 text-emerald-600" />
-                    <span>All Optical Products Catalogue ({products.length})</span>
-                  </h3>
-                  <p className="text-xs text-slate-500 mt-0.5 font-medium">
-                    Manage spectacle frames, anti-glare lenses, and eye-care solutions in the main product showcase.
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-                  <button
-                    onClick={handleResetProductsToDefault}
-                    className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold hover:bg-amber-500 hover:text-white transition-all shadow-xs"
-                    title="Restore sample optical products"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Restore Samples</span>
-                  </button>
-
-                  {products.length > 0 && (
-                    <button
-                      onClick={() => setDeleteConfirmInfo({ id: 'ALL', type: 'clear_all_products' })}
-                      className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold hover:bg-rose-600 hover:text-white transition-all shadow-xs"
-                      title="Delete all sample products to start adding your own new products"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Delete All</span>
-                    </button>
-                  )}
-
-                  <button
-                    onClick={handleOpenAddProductForm}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-600 text-white text-xs font-extrabold uppercase tracking-wider hover:bg-emerald-700 transition-all shadow-sm flex-1 sm:flex-none justify-center"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Add New Product</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
-                {products.filter(Boolean).map((product) => {
-                  if (!product || typeof product !== 'object') return null;
-                  const img1 = typeof product.imageUrl === 'string' ? product.imageUrl.trim() : '';
-                  const img2 = typeof product.hoverImageUrl === 'string' ? product.hoverImageUrl.trim() : (typeof product.secondaryImageUrl === 'string' ? product.secondaryImageUrl.trim() : (typeof product.hoverImage === 'string' ? product.hoverImage.trim() : ''));
-                  const mainImg = img1 || img2 || 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
-                  const hImg = (img1 && img2 && img1 !== img2) ? img2 : null;
-                  return (
-                    <div
-                      key={product.id}
-                      className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all"
-                    >
-                      <div className="aspect-[4/3] bg-slate-100 relative overflow-hidden">
-                        <img 
-                          src={mainImg} 
-                          alt={product.name} 
-                          className={`w-full h-full object-cover transition-all duration-500 ${
-                            hImg ? 'group-hover:opacity-0 group-hover:scale-105' : 'group-hover:scale-105'
-                          }`} 
-                        />
-                        {hImg && (
-                          <img 
-                            src={hImg} 
-                            alt={`${product.name} 2nd Photo`} 
-                            className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" 
-                          />
-                        )}
-                        <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/90 text-optom-green border border-slate-200 shadow-2xs">
-                          {product.categoryLabel || product.category}
-                        </span>
-                        {hImg && (
-                          <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-900/80 text-emerald-400 border border-emerald-500/40 backdrop-blur-md shadow-2xs">
-                            2 Photos
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="p-3 space-y-1">
-                        <h5 className="text-xs font-bold text-optom-slate-heading line-clamp-1">{product.name}</h5>
-                        <p className="text-[10px] text-slate-500 line-clamp-1">{product.shortDescription}</p>
-                      </div>
-
-                      <div className="p-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-1.5">
-                        <span className="text-[10px] font-mono text-slate-400">#{product.id}</span>
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => handleOpenEditProductForm(product)}
-                            className="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors"
-                            title="Edit Product"
-                          >
-                            <Pencil className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => setDeleteConfirmInfo({ id: product.id, type: 'product' })}
-                            className="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-colors"
-                            title="Delete Product"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
               </div>
             </div>
           )}
