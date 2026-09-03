@@ -447,7 +447,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
     setIsFormOpen(true);
   };
 
-  const handleSaveProductForm = (e) => {
+  const handleSaveProductForm = async (e) => {
     e.preventDefault();
     const prodName = (productFormData.name || '').trim();
     if (!prodName) {
@@ -506,14 +506,15 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
     let updatedList;
     if (editingItem) {
       updatedList = products.map(p => p.id === editingItem.id ? finalProduct : p);
-      showToast('Product details updated!');
+      showToast('Updating product & syncing live cloud...');
     } else {
       updatedList = [finalProduct, ...products];
-      showToast('New optical product added!');
+      showToast('Adding new product & syncing live cloud...');
     }
     setProducts(updatedList);
-    saveProducts(updatedList);
     setIsFormOpen(false);
+    await saveProducts(updatedList);
+    showToast('Product saved to Live Cloud! Visible on all mobile devices.');
   };
 
   // --- MARQUEE FRAMES CRUD HANDLERS ---
@@ -729,19 +730,21 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
   };
 
   // --- ALL OPTICAL PRODUCTS HANDLERS ---
-  const handleDeleteProduct = (id) => {
+  const handleDeleteProduct = async (id) => {
     const updatedList = products.filter(p => p.id !== id);
     setProducts(updatedList);
-    saveProducts(updatedList);
     setDeleteConfirmInfo(null);
-    showToast('Optical product deleted.');
+    showToast('Deleting product from live cloud...');
+    await saveProducts(updatedList);
+    showToast('Product deleted from Live Cloud database.');
   };
 
-  const handleClearAllProducts = () => {
+  const handleClearAllProducts = async () => {
     setProducts([]);
-    saveProducts([]);
     setDeleteConfirmInfo(null);
-    showToast('All existing sample products deleted! You can now add your new products.');
+    showToast('Clearing products from live cloud...');
+    await saveProducts([]);
+    showToast('All products cleared from Live Cloud database.');
   };
 
   // --- FRAMES COLLECTION MARQUEE HANDLERS ---

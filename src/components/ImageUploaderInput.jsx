@@ -55,12 +55,12 @@ const ImageUploaderInput = ({
     }
   };
 
-  // Helper to convert & optimize image to HD quality (800x800 canvas render, ~30-50KB)
+  // Helper to convert & optimize image for fast multi-device cloud sync (500x500 canvas render, ~15-25KB)
   const compressAndSetImage = (fileOrDataUrl) => {
     setIsCompressing(true);
-    const maxWidth = 800;
-    const maxHeight = 800;
-    const quality = 0.75; // Compressed JPEG
+    const maxWidth = 500;
+    const maxHeight = 500;
+    const quality = 0.65; // High-efficiency compressed JPEG
 
     if (fileOrDataUrl instanceof File || fileOrDataUrl instanceof Blob) {
       const objectUrl = URL.createObjectURL(fileOrDataUrl);

@@ -329,8 +329,7 @@ export const BUSINESS_INFO = {
   mapQuery: "No.+814+MIG,+Neithal+Street,+New+Housing+Unit,+Thanjavur+-+613005"
 };
 
-const PRODUCTS_KEY = 'vision_care_products_v5';
-const PRODUCTS_MUTATED_KEY = 'vision_care_products_mutated_v5';
+const PRODUCTS_KEY = 'vision_care_products_v6';
 
 export const getStoredProducts = () => {
   try {
@@ -354,33 +353,41 @@ export const getStoredProducts = () => {
 };
 
 export const syncProductsWithAPI = async () => {
-  const isLocallyMutated = localStorage.getItem(PRODUCTS_MUTATED_KEY) === 'true';
-  if (isLocallyMutated) {
-    return getStoredProducts();
-  }
-
   const remoteData = await fetchFromAPI('products');
   if (remoteData && Array.isArray(remoteData)) {
+    const cleanList = remoteData.map(item => {
+      if (!item || typeof item !== 'object') return item;
+      const { _id, __v, ...rest } = item;
+      return rest;
+    });
     try {
-      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(remoteData));
-      window.dispatchEvent(new CustomEvent('products-updated', { detail: remoteData }));
+      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(cleanList));
+      window.dispatchEvent(new CustomEvent('products-updated', { detail: cleanList }));
     } catch (e) {
       console.error('Error writing products to localStorage:', e);
     }
-    return remoteData;
+    return cleanList;
   }
   return getStoredProducts();
 };
 
-export const saveProducts = (products) => {
-  const listToSave = Array.isArray(products) ? products : [];
+export const saveProducts = async (products) => {
+  const rawList = Array.isArray(products) ? products : [];
+  const cleanList = rawList.map(item => {
+    if (!item || typeof item !== 'object') return item;
+    const { _id, __v, ...rest } = item;
+    return rest;
+  });
+
   try {
-    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(listToSave));
-    localStorage.setItem(PRODUCTS_MUTATED_KEY, 'true');
+    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(cleanList));
   } catch (error) {
     console.error('Error saving products to localStorage:', error);
   }
-  window.dispatchEvent(new CustomEvent('products-updated', { detail: listToSave }));
-  saveToAPI('products', listToSave);
+
+  window.dispatchEvent(new CustomEvent('products-updated', { detail: cleanList }));
+  
+  const cloudResult = await saveToAPI('products', cleanList);
+  return cloudResult ? cleanList : cleanList;
 };
 
