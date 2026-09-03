@@ -449,6 +449,12 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
 
   const handleSaveProductForm = (e) => {
     e.preventDefault();
+    const prodName = (productFormData.name || '').trim();
+    if (!prodName) {
+      showToast('Please enter a valid product name!');
+      return;
+    }
+
     const cat = productFormData.category || 'sunglasses';
     const gender = productFormData.gender || 'unisex';
     const brand = (productFormData.brand || '').trim();
@@ -486,10 +492,11 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
 
     const finalProduct = {
       ...productFormData,
+      name: prodName,
       brand,
       category: cat,
       categoryLabel: catLabel,
-      imageUrl: primary,
+      imageUrl: primary || 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80',
       hoverImageUrl: secondary,
       secondaryImageUrl: secondary,
       hoverImage: secondary,
@@ -2064,8 +2071,8 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
 
       {/* CREATE / EDIT FORM MODAL FOR ALL SECTIONS */}
       {isFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fadeIn">
-          <div className="relative w-full max-w-lg bg-white text-slate-800 rounded-3xl overflow-hidden shadow-modal border border-slate-200 p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fadeIn">
+          <div className="relative w-full max-w-lg bg-white text-slate-800 rounded-3xl overflow-hidden shadow-modal border border-slate-200 p-5 sm:p-8 pb-10 sm:pb-8 space-y-5 max-h-[92vh] overflow-y-auto custom-scrollbar">
             
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h3 className="text-xl font-serif font-extrabold text-optom-slate-heading">

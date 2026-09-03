@@ -55,22 +55,16 @@ const ImageUploaderInput = ({
     }
   };
 
-  // Helper to convert & optimize image to HD quality (1080p Ultra-Sharp canvas render)
+  // Helper to convert & optimize image to HD quality (800x800 canvas render, ~30-50KB)
   const compressAndSetImage = (fileOrDataUrl) => {
     setIsCompressing(true);
     const maxWidth = 800;
     const maxHeight = 800;
-    const quality = 0.75; // HD Quality compressed JPEG (30-60KB byte footprint)
+    const quality = 0.75; // Compressed JPEG
 
-    const processImageSource = (src) => {
-      // Auto-boost Unsplash / external URLs to HD parameters
-      let hdSource = src;
-      if (typeof src === 'string' && src.includes('unsplash.com')) {
-        hdSource = src.replace(/w=\d+/, 'w=1600').replace(/q=\d+/, 'q=90');
-      }
-
+    if (fileOrDataUrl instanceof File || fileOrDataUrl instanceof Blob) {
+      const objectUrl = URL.createObjectURL(fileOrDataUrl);
       const img = new Image();
-      img.crossOrigin = 'anonymous';
       img.onload = () => {
         let width = img.width;
         let height = img.height;
@@ -89,33 +83,94 @@ const ImageUploaderInput = ({
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
-        
-        // High Quality HD Rendering settings
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, width, height);
 
         const hdDataUrl = canvas.toDataURL('image/jpeg', quality);
+        URL.revokeObjectURL(objectUrl);
         onChange(hdDataUrl);
         setIsCompressing(false);
       };
       img.onerror = () => {
-        if (typeof fileOrDataUrl === 'string') {
-          onChange(hdSource);
-        }
-        setIsCompressing(false);
+        URL.revokeObjectURL(objectUrl);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          onChange(e.target.result);
+          setIsCompressing(false);
+        };
+        reader.onerror = () => setIsCompressing(false);
+        reader.readAsDataURL(fileOrDataUrl);
       };
-      img.src = hdSource;
-    };
+      img.src = objectUrl;
+    } else if (typeof fileOrDataUrl === 'string') {
+      let hdSource = fileOrDataUrl;
+      if (hdSource.includes('unsplash.com')) {
+        hdSource = hdSource.replace(/w=\d+/, 'w=1600').replace(/q=\d+/, 'q=90');
+      }
 
-    if (typeof fileOrDataUrl === 'string') {
-      processImageSource(fileOrDataUrl);
+      if (hdSource.startsWith('data:')) {
+        const img = new Image();
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth || height > maxHeight) {
+            if (width / height > maxWidth / maxHeight) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, width, height);
+          onChange(canvas.toDataURL('image/jpeg', quality));
+          setIsCompressing(false);
+        };
+        img.onerror = () => {
+          onChange(hdSource);
+          setIsCompressing(false);
+        };
+        img.src = hdSource;
+      } else {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth || height > maxHeight) {
+            if (width / height > maxWidth / maxHeight) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, width, height);
+          onChange(canvas.toDataURL('image/jpeg', quality));
+          setIsCompressing(false);
+        };
+        img.onerror = () => {
+          onChange(hdSource);
+          setIsCompressing(false);
+        };
+        img.src = hdSource;
+      }
     } else {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        processImageSource(e.target.result);
-      };
-      reader.readAsDataURL(fileOrDataUrl);
+      setIsCompressing(false);
     }
   };
 
@@ -149,6 +204,17 @@ const ImageUploaderInput = ({
     setCapturedPhoto(null);
     stopCameraStream();
 
+    // Check WebRTC support
+    if (!navigator?.mediaDevices?.getUserMedia) {
+      if (cameraInputRef.current) {
+        cameraInputRef.current.click();
+      } else {
+        setCameraError('Live WebRTC camera stream is not supported over HTTP. Please select photo from device.');
+        setIsCameraModalOpen(true);
+      }
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -162,7 +228,6 @@ const ImageUploaderInput = ({
       setCameraStream(stream);
       setIsCameraModalOpen(true);
 
-      // Attach stream to video element
       setTimeout(() => {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -170,8 +235,12 @@ const ImageUploaderInput = ({
       }, 100);
     } catch (err) {
       console.warn('Camera stream error:', err);
-      setCameraError('Unable to open live camera stream. You can capture photo directly using native camera picker below.');
-      setIsCameraModalOpen(true);
+      if (cameraInputRef.current) {
+        cameraInputRef.current.click();
+      } else {
+        setCameraError('Unable to open live camera stream. Use mobile native photo selector below.');
+        setIsCameraModalOpen(true);
+      }
     }
   };
 
