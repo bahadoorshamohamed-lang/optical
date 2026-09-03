@@ -691,9 +691,9 @@ const ProductCategories = ({
             {/* MODE 1: GRID VIEW MODE (2 Cols on Mobile, 4 Cols on Desktop) */}
             {viewMode === 'grid' && (
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
-                {filteredProducts.map((product) => (
+                {filteredProducts.filter(Boolean).map((product) => (
                   <ProductCard
-                    key={product.id}
+                    key={product.id || product._id}
                     product={product}
                     onClick={() => onSelectProduct && onSelectProduct(product)}
                     onSelectBrand={(b) => {
@@ -720,9 +720,9 @@ const ProductCategories = ({
                       transform: `translateX(-${currentSlideIndex * 100}%)`
                     }}
                   >
-                    {filteredProducts.map((product) => (
+                    {filteredProducts.filter(Boolean).map((product) => (
                       <div 
-                        key={product.id} 
+                        key={product.id || product._id} 
                         className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] flex-shrink-0"
                       >
                         <ProductCard

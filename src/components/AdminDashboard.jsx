@@ -1449,9 +1449,10 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
-                {products.map((product) => {
-                  const img1 = product.imageUrl && product.imageUrl.trim();
-                  const img2 = (product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage) && (product.hoverImageUrl || product.secondaryImageUrl || product.hoverImage).trim();
+                {products.filter(Boolean).map((product) => {
+                  if (!product || typeof product !== 'object') return null;
+                  const img1 = typeof product.imageUrl === 'string' ? product.imageUrl.trim() : '';
+                  const img2 = typeof product.hoverImageUrl === 'string' ? product.hoverImageUrl.trim() : (typeof product.secondaryImageUrl === 'string' ? product.secondaryImageUrl.trim() : (typeof product.hoverImage === 'string' ? product.hoverImage.trim() : ''));
                   const mainImg = img1 || img2 || 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
                   const hImg = (img1 && img2 && img1 !== img2) ? img2 : null;
                   return (
