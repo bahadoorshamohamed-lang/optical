@@ -26,7 +26,8 @@ import {
   Layers,
   Scan,
   Target,
-  Pencil
+  Pencil,
+  RotateCcw
 } from 'lucide-react';
 import { getStoredPosters, savePosters } from '../data/posters';
 import { getStoredHeroSlides, saveHeroSlides } from '../data/heroSlides';
