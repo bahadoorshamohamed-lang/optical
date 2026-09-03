@@ -118,42 +118,678 @@ const seedDatabase = async () => {
     if (productCount === 0) {
       await ProductModel.insertMany([
         {
-          id: 'eye-sol-01',
-          name: 'Advanced Lens Cleaning Solution',
-          brand: 'Vision Care',
-          category: 'eye-solutions',
-          categoryLabel: 'Eye Solutions',
-          tags: ['eye-solutions', 'care', 'women', 'men', 'vision care'],
-          shortDescription: 'Gentle, streak-free cleaning formula tailored for multi-coated optical spectacle lenses and anti-reflective coatings.',
-          fullDescription: 'Our Advanced Lens Cleaning Solution is specially formulated by optical specialists to gently remove dust, smudges, and fingerprints without damaging delicate anti-reflective (AR) or blue-light protective coatings.',
-          imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80',
-          hoverImageUrl: 'https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?auto=format&fit=crop&w=800&q=80'
+                "id": "drive-prod-01",
+                "name": "HARZEL",
+                "brand": "Harzel",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "harzel",
+                        "eyeglasses",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Harzel HARZEL optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Harzel",
+                        "Model": "HARZEL",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1hVRZeec_1ukj3nUTz5mFtWU69alGSYbr",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1hVRZeec_1ukj3nUTz5mFtWU69alGSYbr"
         },
         {
-          id: 'lens-01',
-          name: 'Single Vision Lenses',
-          brand: 'Essilor',
-          category: 'lenses',
-          categoryLabel: 'Lenses',
-          tags: ['lenses', 'single-vision', 'women', 'men', 'essilor'],
-          shortDescription: 'Precision ground single focal point lenses designed for accurate distance vision or close-up reading correction.',
-          fullDescription: 'Custom-crafted single vision prescription lenses tailored to your exact optical sphere and cylinder measurements.',
-          imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80',
-          hoverImageUrl: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=800&q=80'
+                "id": "drive-prod-02",
+                "name": "LAURELDALE",
+                "brand": "Laureldale",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "laureldale",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Laureldale LAURELDALE optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Laureldale",
+                        "Model": "LAURELDALE",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1tWF0Vd2QMiqn8TrbYcJ5F3N77mKbR0gO",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1tWF0Vd2QMiqn8TrbYcJ5F3N77mKbR0gO"
         },
         {
-          id: 'sunglass-01',
-          name: 'Classic Aviator Sunglasses',
-          brand: 'Ray-Ban',
-          category: 'sunglasses',
-          categoryLabel: 'Sunglasses',
-          tags: ['sunglasses', 'men', 'male', 'ray-ban'],
-          shortDescription: 'Iconic teardrop shape with polarized UV400 protective lenses.',
-          fullDescription: 'Timeless aviator styling with lightweight metal frame and maximum UV protection.',
-          imageUrl: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80',
-          hoverImageUrl: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80'
+                "id": "drive-prod-03",
+                "name": "LAURELDALE 1",
+                "brand": "Laureldale",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "laureldale",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Laureldale LAURELDALE 1 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Laureldale",
+                        "Model": "LAURELDALE 1",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1a0j9jH8ukqthJz9XtWQ42GsRZH5KnhtI",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1a0j9jH8ukqthJz9XtWQ42GsRZH5KnhtI"
+        },
+        {
+                "id": "drive-prod-04",
+                "name": "LAURELDALE 2",
+                "brand": "Laureldale",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "laureldale",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Laureldale LAURELDALE 2 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Laureldale",
+                        "Model": "LAURELDALE 2",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1_eQ-m9ku0ykXiAFMuEGH6EbVDXwiSwFY",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1_eQ-m9ku0ykXiAFMuEGH6EbVDXwiSwFY"
+        },
+        {
+                "id": "drive-prod-05",
+                "name": "LAURELDALE 3",
+                "brand": "Laureldale",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "laureldale",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Laureldale LAURELDALE 3 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Laureldale",
+                        "Model": "LAURELDALE 3",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1mDX4eG7oNYv3n3fyhKLc5hBZUYjaW10K",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1mDX4eG7oNYv3n3fyhKLc5hBZUYjaW10K"
+        },
+        {
+                "id": "drive-prod-06",
+                "name": "LAURELDALE 4",
+                "brand": "Laureldale",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "laureldale",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Laureldale LAURELDALE 4 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Laureldale",
+                        "Model": "LAURELDALE 4",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1GxAbd106jrD1bYxF8P8RcDttvqpVHgWx",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1GxAbd106jrD1bYxF8P8RcDttvqpVHgWx"
+        },
+        {
+                "id": "drive-prod-07",
+                "name": "LAURELDALE 5",
+                "brand": "Laureldale",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "laureldale",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Laureldale LAURELDALE 5 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Laureldale",
+                        "Model": "LAURELDALE 5",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1KYNdqEx2Gml326yxj1-5D8FYKRpLn6Ws",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1KYNdqEx2Gml326yxj1-5D8FYKRpLn6Ws"
+        },
+        {
+                "id": "drive-prod-08",
+                "name": "LAURELDALE 6",
+                "brand": "Laureldale",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "laureldale",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Laureldale LAURELDALE 6 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Laureldale",
+                        "Model": "LAURELDALE 6",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1o1yRuV4bB4fQXFuy8SNuxikzZiyGsXR0",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1o1yRuV4bB4fQXFuy8SNuxikzZiyGsXR0"
+        },
+        {
+                "id": "drive-prod-09",
+                "name": "LAURELDALE 7",
+                "brand": "Laureldale",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "laureldale",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Laureldale LAURELDALE 7 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Laureldale",
+                        "Model": "LAURELDALE 7",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1b76xtiZYgmWZMJa-0gJjsYMXvEQJYgWL",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1b76xtiZYgmWZMJa-0gJjsYMXvEQJYgWL"
+        },
+        {
+                "id": "drive-prod-10",
+                "name": "LAURELDALE 8",
+                "brand": "Laureldale",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "laureldale",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Laureldale LAURELDALE 8 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Laureldale",
+                        "Model": "LAURELDALE 8",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1A7no95SiqjRDj_ceYzjmNeJe8sey8hq1",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1A7no95SiqjRDj_ceYzjmNeJe8sey8hq1"
+        },
+        {
+                "id": "drive-prod-11",
+                "name": "LAURELDALE 9",
+                "brand": "Laureldale",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "laureldale",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Laureldale LAURELDALE 9 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Laureldale",
+                        "Model": "LAURELDALE 9",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1XwYnnQdTEjp1zkAyE-t4fpHjfgCUedTu",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1XwYnnQdTEjp1zkAyE-t4fpHjfgCUedTu"
+        },
+        {
+                "id": "drive-prod-12",
+                "name": "OSIRIS",
+                "brand": "Osiris",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "osiris",
+                        "women",
+                        "eyeglasses",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Osiris OSIRIS optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Osiris",
+                        "Model": "OSIRIS",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/10OjNyhMergXLbdq-UY61m3e7yJnr5kuk",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/10OjNyhMergXLbdq-UY61m3e7yJnr5kuk"
+        },
+        {
+                "id": "drive-prod-13",
+                "name": "Ray-Ban RAY BAN",
+                "brand": "Ray-Ban",
+                "category": "sunglasses",
+                "categoryLabel": "Sunglasses",
+                "tags": [
+                        "sunglasses",
+                        "women",
+                        "ray-ban",
+                        "polarized",
+                        "unisex",
+                        "uv400",
+                        "men"
+                ],
+                "shortDescription": "Premium optical sunglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Ray-Ban RAY BAN optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Ray-Ban",
+                        "Model": "RAY BAN",
+                        "Type": "Sunglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1M3DG7b-iuThziA0VyIwsvksLQ6ocbpfV",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1M3DG7b-iuThziA0VyIwsvksLQ6ocbpfV"
+        },
+        {
+                "id": "drive-prod-14",
+                "name": "Ray-Ban RAY BAN 2",
+                "brand": "Ray-Ban",
+                "category": "sunglasses",
+                "categoryLabel": "Sunglasses",
+                "tags": [
+                        "sunglasses",
+                        "women",
+                        "ray-ban",
+                        "polarized",
+                        "unisex",
+                        "uv400",
+                        "men"
+                ],
+                "shortDescription": "Premium optical sunglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Ray-Ban RAY BAN 2 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Ray-Ban",
+                        "Model": "RAY BAN 2",
+                        "Type": "Sunglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1Xanb6ZMnO1hfqLO5r550d9z2tFvV2ES1",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1Xanb6ZMnO1hfqLO5r550d9z2tFvV2ES1"
+        },
+        {
+                "id": "drive-prod-15",
+                "name": "Ray-Ban RAY BAN 3",
+                "brand": "Ray-Ban",
+                "category": "sunglasses",
+                "categoryLabel": "Sunglasses",
+                "tags": [
+                        "sunglasses",
+                        "women",
+                        "ray-ban",
+                        "polarized",
+                        "unisex",
+                        "uv400",
+                        "men"
+                ],
+                "shortDescription": "Premium optical sunglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Ray-Ban RAY BAN 3 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Ray-Ban",
+                        "Model": "RAY BAN 3",
+                        "Type": "Sunglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/173KWUbBE6QReVMLcA8xLK8zFKWIgLhQ5",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/173KWUbBE6QReVMLcA8xLK8zFKWIgLhQ5"
+        },
+        {
+                "id": "drive-prod-16",
+                "name": "Ray-Ban RAY BAN 4",
+                "brand": "Ray-Ban",
+                "category": "sunglasses",
+                "categoryLabel": "Sunglasses",
+                "tags": [
+                        "sunglasses",
+                        "women",
+                        "ray-ban",
+                        "polarized",
+                        "unisex",
+                        "uv400",
+                        "men"
+                ],
+                "shortDescription": "Premium optical sunglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Ray-Ban RAY BAN 4 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Ray-Ban",
+                        "Model": "RAY BAN 4",
+                        "Type": "Sunglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1hzv0HcFP4X3usiWct6SKYd868CK9scAh",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1hzv0HcFP4X3usiWct6SKYd868CK9scAh"
+        },
+        {
+                "id": "drive-prod-17",
+                "name": "SALVADOR",
+                "brand": "Salvador",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "frames",
+                        "unisex",
+                        "salvador",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Salvador SALVADOR optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Salvador",
+                        "Model": "SALVADOR",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1SyOJnZ7GoqV7KpMrh2tNms6qtFq7E2Z4",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1SyOJnZ7GoqV7KpMrh2tNms6qtFq7E2Z4"
+        },
+        {
+                "id": "drive-prod-18",
+                "name": "SALVADOR 1",
+                "brand": "Salvador",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "frames",
+                        "unisex",
+                        "salvador",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Salvador SALVADOR 1 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Salvador",
+                        "Model": "SALVADOR 1",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1VWjBWLLTPsrWYYNNveB9gPuM_tZCgWMW",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1VWjBWLLTPsrWYYNNveB9gPuM_tZCgWMW"
+        },
+        {
+                "id": "drive-prod-19",
+                "name": "SALVADOR 2",
+                "brand": "Salvador",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "frames",
+                        "unisex",
+                        "salvador",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Salvador SALVADOR 2 optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Salvador",
+                        "Model": "SALVADOR 2",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1pUJ9tLIw_DZ8bigZqjpEMzZ09j-vEJE7",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1pUJ9tLIw_DZ8bigZqjpEMzZ09j-vEJE7"
+        },
+        {
+                "id": "drive-prod-20",
+                "name": "SPARTAN",
+                "brand": "Spartan",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "spartan",
+                        "eyeglasses",
+                        "frames",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Spartan SPARTAN optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Spartan",
+                        "Model": "SPARTAN",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1ESBl7ojScg3J-GKxK5hW7eNbCVTjhe8r",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1ESBl7ojScg3J-GKxK5hW7eNbCVTjhe8r"
+        },
+        {
+                "id": "drive-prod-21",
+                "name": "VELOCITY",
+                "brand": "Velocity",
+                "category": "frames",
+                "categoryLabel": "Eyeglasses",
+                "tags": [
+                        "spectacles",
+                        "women",
+                        "eyeglasses",
+                        "frames",
+                        "velocity",
+                        "unisex",
+                        "men"
+                ],
+                "shortDescription": "Premium optical eyeglasses crafted for comfort and clarity.",
+                "fullDescription": "Authentic Velocity VELOCITY optical spectacle frame featuring high-grade alloy construction, precision ergonomics, and ophthalmic lens compatibility.",
+                "features": [
+                        "Lightweight Fit",
+                        "Anti-Scratch Finish",
+                        "Precision Ergonomics",
+                        "Ophthalmic Ready"
+                ],
+                "specifications": {
+                        "Brand": "Velocity",
+                        "Model": "VELOCITY",
+                        "Type": "Eyeglasses",
+                        "Suitability": "Unisex / Men / Women"
+                },
+                "imageUrl": "https://lh3.googleusercontent.com/d/1_U2g3dzPERTTb4OZieUdItwhdfCX5I36",
+                "hoverImageUrl": "https://lh3.googleusercontent.com/d/1_U2g3dzPERTTb4OZieUdItwhdfCX5I36"
         }
-      ]);
+]);
     }
 
     console.log('✅ MongoDB Database seeded successfully!');
