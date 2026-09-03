@@ -329,14 +329,15 @@ export const BUSINESS_INFO = {
   mapQuery: "No.+814+MIG,+Neithal+Street,+New+Housing+Unit,+Thanjavur+-+613005"
 };
 
-const PRODUCTS_KEY = 'vision_care_products_v4';
+const PRODUCTS_KEY = 'vision_care_products_v5';
+const PRODUCTS_MUTATED_KEY = 'vision_care_products_mutated_v5';
 
 export const getStoredProducts = () => {
   try {
     const saved = localStorage.getItem(PRODUCTS_KEY);
     if (saved !== null) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed;
       }
     }
@@ -353,8 +354,13 @@ export const getStoredProducts = () => {
 };
 
 export const syncProductsWithAPI = async () => {
+  const isLocallyMutated = localStorage.getItem(PRODUCTS_MUTATED_KEY) === 'true';
+  if (isLocallyMutated) {
+    return getStoredProducts();
+  }
+
   const remoteData = await fetchFromAPI('products');
-  if (remoteData && Array.isArray(remoteData) && remoteData.length > 0) {
+  if (remoteData && Array.isArray(remoteData)) {
     try {
       localStorage.setItem(PRODUCTS_KEY, JSON.stringify(remoteData));
       window.dispatchEvent(new CustomEvent('products-updated', { detail: remoteData }));
@@ -367,13 +373,14 @@ export const syncProductsWithAPI = async () => {
 };
 
 export const saveProducts = (products) => {
-  const validList = (Array.isArray(products) && products.length > 0) ? products : DEFAULT_PRODUCTS;
+  const listToSave = Array.isArray(products) ? products : [];
   try {
-    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(validList));
+    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(listToSave));
+    localStorage.setItem(PRODUCTS_MUTATED_KEY, 'true');
   } catch (error) {
     console.error('Error saving products to localStorage:', error);
   }
-  window.dispatchEvent(new CustomEvent('products-updated', { detail: validList }));
-  saveToAPI('products', validList);
+  window.dispatchEvent(new CustomEvent('products-updated', { detail: listToSave }));
+  saveToAPI('products', listToSave);
 };
 

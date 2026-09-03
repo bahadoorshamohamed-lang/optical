@@ -737,6 +737,13 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
     showToast('Optical product deleted.');
   };
 
+  const handleClearAllProducts = () => {
+    setProducts([]);
+    saveProducts([]);
+    setDeleteConfirmInfo(null);
+    showToast('All existing sample products deleted! You can now add your new products.');
+  };
+
   // --- FRAMES COLLECTION MARQUEE HANDLERS ---
   const handleToggleFrameActive = (id) => {
     const updatedList = framesCollection.map(item =>
@@ -1400,13 +1407,25 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
                     Manage spectacle frames, anti-glare lenses, and eye-care solutions in the main product showcase.
                   </p>
                 </div>
-                <button
-                  onClick={handleOpenAddProductForm}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-600 text-white text-xs font-extrabold uppercase tracking-wider hover:bg-emerald-700 transition-all shadow-sm"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add New Product</span>
-                </button>
+                <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+                  {products.length > 0 && (
+                    <button
+                      onClick={() => setDeleteConfirmInfo({ id: 'ALL', type: 'clear_all_products' })}
+                      className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold hover:bg-rose-600 hover:text-white transition-all shadow-xs"
+                      title="Delete all sample products to start adding your own new products"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span>Delete All Products</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={handleOpenAddProductForm}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-600 text-white text-xs font-extrabold uppercase tracking-wider hover:bg-emerald-700 transition-all shadow-sm flex-1 sm:flex-none justify-center"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Product</span>
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
@@ -2698,6 +2717,8 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
                     handleDeleteCategoryCard(deleteConfirmInfo.id);
                   } else if (deleteConfirmInfo.type === 'product') {
                     handleDeleteProduct(deleteConfirmInfo.id);
+                  } else if (deleteConfirmInfo.type === 'clear_all_products') {
+                    handleClearAllProducts();
                   } else if (deleteConfirmInfo.type === 'frame') {
                     handleDeleteFrame(deleteConfirmInfo.id);
                   } else if (deleteConfirmInfo.type === 'purpose') {
