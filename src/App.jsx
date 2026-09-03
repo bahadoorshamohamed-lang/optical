@@ -3,9 +3,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import VisitingCard from './components/VisitingCard';
 import EyewearAppeal from './components/EyewearAppeal';
-import ProductCategories from './components/ProductCategories';
 import Showcase360 from './components/Showcase360';
-import ProductModal from './components/ProductModal';
 import About from './components/About';
 import Footer from './components/Footer';
 import OpenPosterModal from './components/OpenPosterModal';
@@ -24,11 +22,7 @@ import { syncTopBarDataWithAPI, syncFooterDataWithAPI } from './data/siteConfig'
 import { API_BASE } from './services/api';
 
 function App() {
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [activeSection, setActiveSection] = useState('home');
-  const [activeCategoryTab, setActiveCategoryTab] = useState(null);
-  const [activeBrandFilter, setActiveBrandFilter] = useState('all');
-  const [appSearchQuery, setAppSearchQuery] = useState('');
 
   // Live Multi-Device Real-Time Sync Effect (Instant SSE Stream + Fast Polling Fallback)
   useEffect(() => {
@@ -172,49 +166,15 @@ function App() {
   };
 
   const handleExploreClick = () => {
-    setActiveSection('categories');
-    const categoriesSection = document.getElementById('categories');
-    if (categoriesSection) {
-      categoriesSection.scrollIntoView({ behavior: 'smooth' });
+    setActiveSection('about');
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+      aboutSection.scrollIntoView({ behavior: 'smooth' });
     }
-  };
-
-  const handleSelectBrand = (brandName) => {
-    setActiveBrandFilter(brandName || 'all');
-    setAppSearchQuery('');
-    setActiveSection('categories');
-    const categoriesSection = document.getElementById('categories');
-    if (categoriesSection) {
-      categoriesSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleSearchQuery = (query) => {
-    setAppSearchQuery(query || '');
-    setActiveBrandFilter('all');
-    setActiveSection('categories');
-    const categoriesSection = document.getElementById('categories');
-    if (categoriesSection) {
-      categoriesSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleAppealCategorySelect = (item) => {
-    const target = item?.targetTab || 
-      (item?.id ? item.id.replace('cat-', '').replace('appeal-', '') : null) || 
-      (item?.label ? item.label.toLowerCase() : null);
-    
-    if (target) {
-      setActiveCategoryTab(target);
-    }
-    setActiveSection('categories');
   };
 
   const handleNavClick = (sectionId) => {
     setActiveSection(sectionId);
-    if (sectionId === 'eye-solutions' || sectionId === 'lenses' || sectionId === 'frames') {
-      setActiveCategoryTab(sectionId);
-    }
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -227,8 +187,6 @@ function App() {
       <Navbar 
         activeSection={activeSection} 
         setActiveSection={handleNavClick}
-        onSelectBrand={handleSelectBrand}
-        onSearchQuery={handleSearchQuery}
       />
 
       {/* Main Showcase Page Sections */}
@@ -240,27 +198,7 @@ function App() {
         <VisitingCard />
         
         {/* Section 3: Eyewear With Mass Appeal */}
-        <EyewearAppeal onSelectAppealCategory={handleAppealCategorySelect} />
-
-        {/* Section 4: Showcase Product Catalogue */}
-        <ProductCategories 
-          activeTab={activeCategoryTab}
-          setActiveTab={setActiveCategoryTab}
-          activeBrand={activeBrandFilter}
-          setActiveBrand={setActiveBrandFilter}
-          externalSearchQuery={appSearchQuery}
-          setExternalSearchQuery={setAppSearchQuery}
-          onSelectProduct={(p) => setSelectedProduct(p)}
-        />
-
-        {/* Product Details Modal */}
-        {selectedProduct && (
-          <ProductModal
-            product={selectedProduct}
-            onClose={() => setSelectedProduct(null)}
-            onSelectBrand={handleSelectBrand}
-          />
-        )}
+        <EyewearAppeal />
 
         {/* Section 4: Arched Optical Product Showcase Viewer */}
         <Showcase360 />
