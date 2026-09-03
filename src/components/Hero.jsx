@@ -75,7 +75,7 @@ const Hero = ({ onExploreClick }) => {
             onClick={onExploreClick}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-3.5 sm:py-4 rounded-2xl bg-optom-green text-white font-bold text-sm sm:text-base shadow-xl hover:bg-emerald-600 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 border border-emerald-400/30"
           >
-            <span>Explore Showcase</span>
+            <span>Explore Our Products</span>
             <ArrowDown className="w-4.5 h-4.5 sm:w-5 sm:h-5 animate-bounce" />
           </button>
         </div>

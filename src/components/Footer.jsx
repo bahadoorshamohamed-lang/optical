@@ -55,10 +55,22 @@ const Footer = ({ onNavClick, onOpenAdmin, isAdminLoggedIn }) => {
               Home
             </button>
             <button 
-              onClick={() => onNavClick('showcase-360')}
+              onClick={() => onNavClick('eye-solutions')}
               className="hover:text-emerald-400 transition-colors"
             >
-              360° Showcase
+              Eye Solutions
+            </button>
+            <button 
+              onClick={() => onNavClick('lenses')}
+              className="hover:text-emerald-400 transition-colors"
+            >
+              Lenses Collection
+            </button>
+            <button 
+              onClick={() => onNavClick('frames')}
+              className="hover:text-emerald-400 transition-colors"
+            >
+              Frames Showcase
             </button>
             <button 
               onClick={() => onNavClick('about')}

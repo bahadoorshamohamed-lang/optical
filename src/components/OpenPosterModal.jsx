@@ -124,7 +124,7 @@ const OpenPosterModal = ({ forceOpen = false, onClose }) => {
             {/* Pure Poster Image Container */}
             <div className="relative overflow-hidden rounded-3xl bg-slate-900 border-2 border-white/10 shadow-2xl">
               <a
-                href={currentPoster.ctaLink || '#about'}
+                href={currentPoster.ctaLink || '#categories'}
                 onClick={() => {
                   handleClose();
                   if (currentPoster.ctaLink?.startsWith('#')) {
