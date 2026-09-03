@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
-import { X, CheckCircle2, MapPin, Phone, ShieldCheck, Sparkles, AlertCircle } from 'lucide-react';
+import { X, CheckCircle2, MapPin, Phone, ShieldCheck, Sparkles, AlertCircle, Glasses } from 'lucide-react';
 import { BUSINESS_INFO } from '../data/products';
-
-const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
 
 const ProductModal = ({ product, onClose, onSelectBrand }) => {
   if (!product || typeof product !== 'object') return null;
@@ -10,13 +8,15 @@ const ProductModal = ({ product, onClose, onSelectBrand }) => {
   const img1 = typeof product.imageUrl === 'string' ? product.imageUrl.trim() : '';
   const img2 = typeof product.hoverImageUrl === 'string' ? product.hoverImageUrl.trim() : (typeof product.secondaryImageUrl === 'string' ? product.secondaryImageUrl.trim() : (typeof product.hoverImage === 'string' ? product.hoverImage.trim() : ''));
 
-  const primarySrc = img1 || img2 || DEFAULT_FALLBACK_IMAGE;
+  const primarySrc = img1 || img2 || null;
   const secondSrc = (img1 && img2 && img1 !== img2) ? img2 : null;
 
   const [activeImage, setActiveImage] = React.useState(primarySrc);
+  const [imageError, setImageError] = React.useState(!primarySrc);
 
   useEffect(() => {
     setActiveImage(primarySrc);
+    setImageError(!primarySrc);
   }, [product, primarySrc]);
 
   useEffect(() => {
@@ -54,13 +54,20 @@ const ProductModal = ({ product, onClose, onSelectBrand }) => {
             
             {/* Left Image Showcase Section */}
             <div className="md:col-span-5 space-y-4">
-              <div className="relative rounded-2xl overflow-hidden aspect-square bg-slate-100 border border-slate-200/80 shadow-inner group">
-                <img
-                  src={activeImage || DEFAULT_FALLBACK_IMAGE}
-                  alt={product.name}
-                  onError={() => setActiveImage(DEFAULT_FALLBACK_IMAGE)}
-                  className="w-full h-full object-cover transition-all duration-500"
-                />
+              <div className="relative rounded-2xl overflow-hidden aspect-square bg-slate-900 border border-slate-200/80 shadow-inner group flex items-center justify-center">
+                {activeImage && !imageError ? (
+                  <img
+                    src={activeImage}
+                    alt={product.name}
+                    onError={() => setImageError(true)}
+                    className="w-full h-full object-cover transition-all duration-500"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-6 text-slate-400 text-center">
+                    <Glasses className="w-12 h-12 text-amber-400 mb-2" />
+                    <span className="text-xs uppercase font-bold text-slate-300">No Image Uploaded</span>
+                  </div>
+                )}
                 <div className="absolute top-3 left-3 flex items-center gap-2">
                   <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-optom-green text-white shadow-md">
                     {product.categoryLabel}

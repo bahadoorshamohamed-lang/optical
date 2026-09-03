@@ -444,15 +444,15 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
     setProductFormData({
       id: `prod-${Date.now()}`,
       name: '',
-      brand: 'Ray-Ban',
+      brand: '',
       category: 'sunglasses',
       categoryLabel: 'Sunglasses',
       gender: 'unisex',
-      tags: ['sunglasses', 'men', 'male', 'women', 'female', 'ray-ban'],
+      tags: ['sunglasses', 'men', 'male', 'women', 'female'],
       shortDescription: '',
       fullDescription: '',
-      imageUrl: 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80',
-      hoverImageUrl: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=800&q=80',
+      imageUrl: '',
+      hoverImageUrl: '',
     });
     setIsFormOpen(true);
   };
@@ -519,7 +519,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
       brand,
       category: cat,
       categoryLabel: catLabel,
-      imageUrl: primary || 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80',
+      imageUrl: primary || '',
       hoverImageUrl: secondary,
       secondaryImageUrl: secondary,
       hoverImage: secondary,

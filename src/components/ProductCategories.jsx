@@ -767,23 +767,30 @@ const ProductCategories = ({
 
           </div>
         ) : (
-          /* Empty State when no products match filters */
-          <div className="text-center py-16 px-6 rounded-3xl bg-white/70 border border-slate-200/90 shadow-sm max-w-md mx-auto space-y-4">
-            <div className="w-14 h-14 rounded-full bg-emerald-50 text-optom-green flex items-center justify-center mx-auto">
-              <Search className="w-7 h-7" />
+          /* Empty State when no products match filters or no admin products exist */
+          <div className="text-center py-16 px-6 rounded-3xl bg-white/80 backdrop-blur-md border border-slate-200/90 shadow-lg max-w-lg mx-auto space-y-5">
+            <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 flex items-center justify-center mx-auto shadow-md">
+              <Glasses className="w-8 h-8" />
             </div>
-            <div className="space-y-1">
-              <h4 className="text-lg font-extrabold text-optom-slate-heading">No Products Found</h4>
-              <p className="text-xs text-optom-slate-body">
-                We couldn't find any optical products matching your filter or search query.
+            <div className="space-y-1.5">
+              <h4 className="text-xl font-serif font-black text-slate-900">
+                {products.length === 0 ? 'No Admin Products Added Yet' : 'No Products Match Filters'}
+              </h4>
+              <p className="text-xs text-slate-600 leading-relaxed max-w-md mx-auto font-medium">
+                {products.length === 0 
+                  ? 'All dummy product images have been removed. Add products with custom images in the Admin Panel to display them here live!'
+                  : 'We couldn\'t find any optical products matching your selected category, brand, or search query.'
+                }
               </p>
             </div>
-            <button
-              onClick={clearFilters}
-              className="px-5 py-2.5 rounded-2xl bg-optom-green text-white text-xs font-bold shadow-md hover:bg-optom-green-hover transition-colors"
-            >
-              Reset All Filters
-            </button>
+            {products.length > 0 && (
+              <button
+                onClick={clearFilters}
+                className="px-6 py-2.5 rounded-2xl bg-slate-900 text-amber-300 border border-amber-400/40 text-xs font-black uppercase tracking-wider shadow-md hover:bg-amber-400 hover:text-slate-950 transition-all cursor-pointer transform active:scale-95"
+              >
+                Reset All Filters
+              </button>
+            )}
           </div>
         )}
 
