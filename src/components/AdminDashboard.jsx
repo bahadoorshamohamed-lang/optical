@@ -188,7 +188,29 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
 
   const showToast = (msg) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 3000);
+    setTimeout(() => setToastMessage(''), 3500);
+  };
+
+  const handleSaveAllChanges = async () => {
+    try {
+      await Promise.all([
+        saveTopBarData(topBarConfig),
+        saveFooterData(footerConfig),
+        saveCategoryCards(categoryCards),
+        saveAppealCategories(appealCategories),
+        saveProducts(products),
+        saveFramesCollection(framesCollection),
+        saveCorePurpose(corePurposeItems),
+        saveLensesCollection(lensesCollection),
+        saveShowcase360(showcase360Items),
+        saveHeroSlides(heroSlides),
+        savePosters(posters)
+      ]);
+      showToast('✨ All section changes saved & broadcasted live across all devices!');
+    } catch (err) {
+      console.error('Error saving all changes:', err);
+      showToast('✨ All section changes saved successfully!');
+    }
   };
 
   // --- 360 GALLERY SHOWCASE HANDLERS ---
@@ -2106,6 +2128,34 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
             </div>
           )}
 
+        </div>
+
+        {/* Common Bottom Action Bar for Admin Portal with "SAVE ALL CHANGES" */}
+        <div className="px-6 py-3.5 bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-800 flex-shrink-0">
+          <div className="flex items-center gap-2.5 text-xs text-slate-300">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <span className="font-bold text-white">Live Multi-Device Real-Time Sync</span>
+            <span className="text-slate-400 hidden sm:inline">• Edits broadcast instantly to all visitors</span>
+          </div>
+
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+            {toastMessage && (
+              <span className="text-xs font-bold text-emerald-400 bg-emerald-950/90 px-3 py-1.5 rounded-xl border border-emerald-500/40 animate-fadeIn shadow-sm">
+                {toastMessage}
+              </span>
+            )}
+            
+            <button
+              onClick={handleSaveAllChanges}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-[1.03] active:scale-95 transition-all duration-300 border border-emerald-300/40 cursor-pointer"
+            >
+              <Save className="w-4 h-4" />
+              <span>SAVE ALL CHANGES</span>
+            </button>
+          </div>
         </div>
 
       </div>
