@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import ProductCard from './ProductCard';
-import { getStoredProducts } from '../data/products';
+import { getStoredProducts, syncProductsWithAPI } from '../data/products';
 import { getStoredCategoryCards } from '../data/productCategoryCards';
 import { 
   Eye, 
@@ -42,6 +42,15 @@ const ProductCategories = ({
   const [selectedCategory, setSelectedCategory] = useState(activeTab || 'all');
   const [genderFilter, setGenderFilter] = useState('all'); // 'all' | 'male' | 'female' | 'kids'
   const [selectedBrand, setSelectedBrand] = useState(activeBrand || 'all');
+
+  // Sync with Cloud API MongoDB Atlas on component mount
+  useEffect(() => {
+    syncProductsWithAPI().then(cloudProducts => {
+      if (cloudProducts && Array.isArray(cloudProducts)) {
+        setProducts(cloudProducts);
+      }
+    });
+  }, []);
 
   // Dynamic computation of unique brands present in products
   const availableBrands = useMemo(() => {

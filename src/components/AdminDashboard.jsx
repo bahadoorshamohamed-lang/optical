@@ -29,21 +29,23 @@ import {
   Pencil,
   RotateCcw
 } from 'lucide-react';
-import { getStoredPosters, savePosters } from '../data/posters';
-import { getStoredHeroSlides, saveHeroSlides } from '../data/heroSlides';
+import { getStoredPosters, savePosters, syncPostersWithAPI } from '../data/posters';
+import { getStoredHeroSlides, saveHeroSlides, syncHeroSlidesWithAPI } from '../data/heroSlides';
 import { 
   getStoredTopBarData, 
   saveTopBarData, 
+  syncTopBarDataWithAPI,
   getStoredFooterData, 
-  saveFooterData 
+  saveFooterData,
+  syncFooterDataWithAPI
 } from '../data/siteConfig';
-import { getStoredAppealCategories, saveAppealCategories } from '../data/appealCategories';
-import { getStoredProducts, saveProducts, resetProductsToDefault } from '../data/products';
-import { getStoredFramesCollection, saveFramesCollection } from '../data/framesCollection';
-import { getStoredCorePurpose, saveCorePurpose } from '../data/corePurpose';
-import { getStoredLensesCollection, saveLensesCollection } from '../data/lensesCollection';
-import { getStoredCategoryCards, saveCategoryCards } from '../data/productCategoryCards';
-import { getStoredShowcase360, saveShowcase360 } from '../data/showcase360';
+import { getStoredAppealCategories, saveAppealCategories, syncAppealCategoriesWithAPI } from '../data/appealCategories';
+import { getStoredProducts, saveProducts, resetProductsToDefault, syncProductsWithAPI } from '../data/products';
+import { getStoredFramesCollection, saveFramesCollection, syncFramesCollectionWithAPI } from '../data/framesCollection';
+import { getStoredCorePurpose, saveCorePurpose, syncCorePurposeWithAPI } from '../data/corePurpose';
+import { getStoredLensesCollection, saveLensesCollection, syncLensesCollectionWithAPI } from '../data/lensesCollection';
+import { getStoredCategoryCards, saveCategoryCards, syncCategoryCardsWithAPI } from '../data/productCategoryCards';
+import { getStoredShowcase360, saveShowcase360, syncShowcase360WithAPI } from '../data/showcase360';
 import ImageUploaderInput from './ImageUploaderInput';
 
 const HERO_PRESET_IMAGES = [
@@ -77,6 +79,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
   const [corePurposeItems, setCorePurposeItems] = useState([]);
   const [lensesCollection, setLensesCollection] = useState([]);
   const [showcase360Items, setShowcase360Items] = useState([]);
+  const [isLoadingCloud, setIsLoadingCloud] = useState(false);
 
   // Form & Action states
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -172,7 +175,8 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
     }
   }, [isOpen]);
 
-  const loadData = () => {
+  const loadData = async () => {
+    // 1. Initial fast local state load
     setPosters(getStoredPosters());
     setHeroSlides(getStoredHeroSlides());
     setTopBarConfig(getStoredTopBarData());
@@ -184,6 +188,52 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
     setCorePurposeItems(getStoredCorePurpose());
     setLensesCollection(getStoredLensesCollection());
     setShowcase360Items(getStoredShowcase360());
+
+    // 2. Live Cloud DB Fetch to guarantee fresh data from MongoDB Atlas on all devices
+    setIsLoadingCloud(true);
+    try {
+      const [
+        pData,
+        hData,
+        tbData,
+        fData,
+        aData,
+        cCardsData,
+        prodData,
+        frData,
+        purpData,
+        lData,
+        scData
+      ] = await Promise.all([
+        syncPostersWithAPI(),
+        syncHeroSlidesWithAPI(),
+        syncTopBarDataWithAPI(),
+        syncFooterDataWithAPI(),
+        syncAppealCategoriesWithAPI(),
+        syncCategoryCardsWithAPI(),
+        syncProductsWithAPI(),
+        syncFramesCollectionWithAPI(),
+        syncCorePurposeWithAPI(),
+        syncLensesCollectionWithAPI(),
+        syncShowcase360WithAPI()
+      ]);
+
+      if (pData && Array.isArray(pData)) setPosters(pData);
+      if (hData && Array.isArray(hData)) setHeroSlides(hData);
+      if (tbData && tbData.phone) setTopBarConfig(tbData);
+      if (fData && fData.phone) setFooterConfig(fData);
+      if (aData && Array.isArray(aData)) setAppealCategories(aData);
+      if (cCardsData && Array.isArray(cCardsData)) setCategoryCards(cCardsData);
+      if (prodData && Array.isArray(prodData)) setProducts(prodData);
+      if (frData && Array.isArray(frData)) setFramesCollection(frData);
+      if (purpData && Array.isArray(purpData)) setCorePurposeItems(purpData);
+      if (lData && Array.isArray(lData)) setLensesCollection(lData);
+      if (scData && Array.isArray(scData)) setShowcase360Items(scData);
+    } catch (err) {
+      console.warn('Error fetching live cloud data in Admin Dashboard:', err);
+    } finally {
+      setIsLoadingCloud(false);
+    }
   };
 
   const showToast = (msg) => {
@@ -193,6 +243,7 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
 
   const handleSaveAllChanges = async () => {
     try {
+      showToast('Syncing all changes to Live Cloud Database...');
       await Promise.all([
         saveTopBarData(topBarConfig),
         saveFooterData(footerConfig),
@@ -529,15 +580,19 @@ const AdminDashboard = ({ isOpen, onClose, onLogout, onTriggerPublicPoster, init
     let updatedList;
     if (editingItem) {
       updatedList = products.map(p => (p.id === editingItem.id || (p._id && editingItem._id && p._id === editingItem._id)) ? finalProduct : p);
-      showToast('Updating product & syncing live cloud...');
+      showToast('Updating product & syncing live cloud database...');
     } else {
       updatedList = [finalProduct, ...products];
-      showToast('Adding new product & syncing live cloud...');
+      showToast('Adding new product & syncing live cloud database...');
     }
     setProducts(updatedList);
     setIsFormOpen(false);
-    await saveProducts(updatedList);
-    showToast('Product saved to Live Cloud! Visible on all mobile devices.');
+    const saveResult = await saveProducts(updatedList);
+    if (saveResult) {
+      showToast('✨ Product saved & published live across all devices!');
+    } else {
+      showToast('✨ Product saved locally & queued for cloud broadcast.');
+    }
   };
 
   // --- MARQUEE FRAMES CRUD HANDLERS ---

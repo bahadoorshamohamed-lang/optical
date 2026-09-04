@@ -79,7 +79,7 @@ function App() {
       }
     };
 
-    // 1. Establish SSE HTTP Stream Connection for <100ms Instant Updates Globally
+    // 1. Establish SSE HTTP Stream Connection directly to Central Cloud API
     try {
       eventSource = new EventSource(`${API_BASE}/api/stream`);
       eventSource.onmessage = (event) => {

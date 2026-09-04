@@ -113,14 +113,6 @@ const seedDatabase = async () => {
         { id: 'cat-kids', label: 'Kids', title: 'Kids', subtitle: 'Flexible, Safe & Scratch Resistant', imageUrl: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=600&q=80', targetTab: 'kids', isActive: true }
       ]);
     }
-    // Purge legacy dummy drive-prod items from Product collection
-    await ProductModel.deleteMany({
-      $or: [
-        { id: { $regex: '^drive-prod-' } },
-        { imageUrl: { $regex: 'images.unsplash.com' } }
-      ]
-    });
-
     console.log('✅ MongoDB Database seeded successfully!');
   } catch (err) {
     console.error('Seed Error:', err.message);
@@ -237,20 +229,30 @@ const createMongoRoutes = (path, Model) => {
     try {
       let resultList = [];
       if (Array.isArray(req.body)) {
-        const cleanItems = req.body.map(item => {
-          if (!item || typeof item !== 'object') return item;
-          const { _id, __v, ...rest } = item;
-          return rest;
-        });
-        await Model.deleteMany({});
-        const list = await Model.insertMany(cleanItems);
-        resultList = list;
-        res.json({ success: true, count: list.length, data: list });
+        const cleanItems = req.body
+          .filter(item => item && typeof item === 'object')
+          .map((item, idx) => {
+            const { _id, __v, ...rest } = item;
+            if (!rest.id) {
+              rest.id = `${path}-${Date.now()}-${idx}`;
+            }
+            return rest;
+          });
+
+        if (cleanItems.length > 0) {
+          await Model.deleteMany({});
+          resultList = await Model.insertMany(cleanItems, { ordered: false });
+        } else {
+          resultList = [];
+        }
+        res.json({ success: true, count: resultList.length, data: resultList });
       } else {
         const { _id, __v, ...rest } = req.body;
-        await Model.findOneAndUpdate({ id: req.body.id }, rest, { upsert: true, new: true });
+        const itemId = rest.id || `${path}-${Date.now()}`;
+        rest.id = itemId;
+        await Model.findOneAndUpdate({ id: itemId }, rest, { upsert: true, new: true });
         resultList = await Model.find().sort({ createdAt: -1 });
-        res.json({ success: true, data: resultList });
+        res.json({ success: true, count: resultList.length, data: resultList });
       }
 
       // Broadcast instant live update to all connected devices worldwide!

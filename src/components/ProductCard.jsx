@@ -18,6 +18,24 @@ const ProductCard = ({ product, onSelectBrand, onClick }) => {
     setHasImageError(!primarySrc);
   }, [product?.imageUrl, product?.hoverImageUrl, product?.secondaryImageUrl, product?.hoverImage, primarySrc, hoverSrcVal]);
 
+  const getCategoryFallback = (cat) => {
+    const c = (cat || '').toLowerCase();
+    if (c === 'sunglasses') return 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80';
+    if (c === 'lenses') return 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=800&q=80';
+    if (c === 'eye-solutions') return 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80';
+    if (c === 'kids') return 'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80';
+    return 'https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80';
+  };
+
+  const handleMainImgError = () => {
+    const fallback = getCategoryFallback(product?.category);
+    if (mainSrc !== fallback) {
+      setMainSrc(fallback);
+    } else {
+      setHasImageError(true);
+    }
+  };
+
   return (
     <div 
       onClick={onClick}
@@ -30,7 +48,7 @@ const ProductCard = ({ product, onSelectBrand, onClick }) => {
           <img
             src={mainSrc}
             alt={product?.name || 'Optical Product'}
-            onError={() => setHasImageError(true)}
+            onError={handleMainImgError}
             referrerPolicy="no-referrer"
             className={`w-full h-full object-cover transition-all duration-700 ease-out ${
               hoverSrc 
